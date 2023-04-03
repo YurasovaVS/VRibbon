@@ -1,0 +1,8 @@
+C:\Users\ArchB\source\repos\SKRibbon\SKRibbon\bin\Debug\SKRibbon.dll
+C:\Users\ArchB\source\repos\SKRibbon\SKRibbon\bin\Debug\SKRibbon.pdb
+C:\Users\ArchB\source\repos\SKRibbon\SKRibbon\obj\Debug\SKRibbon.csproj.AssemblyReference.cache
+C:\Users\ArchB\source\repos\SKRibbon\SKRibbon\obj\Debug\SKRibbon.g.resources
+C:\Users\ArchB\source\repos\SKRibbon\SKRibbon\obj\Debug\SKRibbon.csproj.CoreCompileInputs.cache
+C:\Users\ArchB\source\repos\SKRibbon\SKRibbon\obj\Debug\SKRibbon.dll
+C:\Users\ArchB\source\repos\SKRibbon\SKRibbon\obj\Debug\SKRibbon.pdb
+C:\Users\ArchB\source\repos\SKRibbon\SKRibbon\bin\Debug\SKRibbon.addin

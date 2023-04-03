@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<RevitAddIns>
+	<AddIn Type="Application">
+		<Name>SK Tools</Name>
+		<Assembly>SKRibbon.dll</Assembly>
+		<AddInId>8e3d06c6-2a3b-4018-a593-7fb418a4cb47</AddInId>
+		<FullClassName>SKRibbon.App</FullClassName>
+		<VendorId>Yurasova V.S.</VendorId>
+		<VendorDescription>Yurasova V.S. - AM SK</VendorDescription>
+	</AddIn>
+</RevitAddIns>
