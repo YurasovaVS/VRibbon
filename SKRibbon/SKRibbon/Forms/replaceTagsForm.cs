@@ -97,6 +97,7 @@ namespace ReplaceAreaTags
             viewList.Anchor = AnchorStyles.Top;
             viewList.MinimumSize = new Size(500, 30);
             viewList.Height = 200;
+            viewList.CheckOnClick = true;
 
             //Добавляем виды в чеклист
             IEnumerable<Element> views = new FilteredElementCollector(doc).
@@ -126,6 +127,9 @@ namespace ReplaceAreaTags
 
             button.Text = "Заменить марки";
             button.Click += ReplaceChosenTags;
+
+            this.Width = formWrapper.Width + 5;
+            this.Height = formWrapper.Height + 5;
 
         }
 

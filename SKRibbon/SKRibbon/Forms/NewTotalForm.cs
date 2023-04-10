@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.Attributes;
+using System.Xml.Linq;
 
 namespace FakeArea
 {
@@ -21,6 +22,7 @@ namespace FakeArea
         public NewTotalForm(Document doc)
         {
             InitializeComponent();
+            
             Doc = doc;
             this.AutoSize = true;
             this.AutoScroll = true;
@@ -53,29 +55,36 @@ namespace FakeArea
             {
                 Parameter paramArea = room.LookupParameter("Площадь");
                 Parameter paramBuilding = room.LookupParameter("ADSK_Номер здания");
+                Parameter paramRole = room.LookupParameter("Назначение");
 
-                //Если помещение не относится ни к одному зданию, задаем ему здание NONE-NONE
-                string buildingName = "NONE-NONE";
-                if (paramBuilding != null)
+                if (paramRole != null)
                 {
-                    buildingName = paramBuilding.AsString();
-                }
-                if ((buildingName == "") | (buildingName == null))
-                {
-                    buildingName = "NONE-NONE";
-                }
+                    if (paramRole.AsString() == "Квартиры")
+                    {
+                        //Если помещение не относится ни к одному зданию, задаем ему здание NONE-NONE
+                        string buildingName = "NONE-NONE";
+                        if (paramBuilding != null)
+                        {
+                            buildingName = paramBuilding.AsString();
+                        }
+                        if ((buildingName == "") | (buildingName == null))
+                        {
+                            buildingName = "NONE-NONE";
+                        }
 
-                //Если такое здание еще не встречалось в словаре, добавляем его в словарь
-                if (!dictionary.ContainsKey(buildingName))
-                {
-                    dictionary.Add(buildingName, new BuildingAdjustments());
-                }
+                        //Если такое здание еще не встречалось в словаре, добавляем его в словарь
+                        if (!dictionary.ContainsKey(buildingName))
+                        {
+                            dictionary.Add(buildingName, new BuildingAdjustments());
+                        }
 
-                //Прибавляем площадь комнаты в общую площадь соответствующего здания
-                if (paramArea != null)
-                {
-                    double roomArea = paramArea.AsDouble();
-                    dictionary[buildingName].totalArea += roomArea;
+                        //Прибавляем площадь комнаты в общую площадь соответствующего здания
+                        if (paramArea != null)
+                        {
+                            double roomArea = paramArea.AsDouble();
+                            dictionary[buildingName].totalArea += roomArea;
+                        }
+                    }
                 }
             }
 
@@ -106,7 +115,8 @@ namespace FakeArea
                 newTotal.Parent = lineWrapper;
                 lineWrapper.Controls.Add(newTotal);
                 newTotal.Size = new Size(300, 30);
-                newTotal.Text = building.Value.totalArea.ToString();
+                double tA = Math.Round(building.Value.totalArea, 2);
+                newTotal.Text = tA.ToString();
                 newTotal.KeyPress += NewTotal_KeyPress;
             }           
 
@@ -119,6 +129,9 @@ namespace FakeArea
 
             button.Text = "Пересчитать площади";
             button.Click += CalculateAdjustedAreas;
+
+            this.Width = formWrapper.Width + 5;
+            this.Height = formWrapper.Height + 5;
         }
 
         public class BuildingAdjustments {
@@ -174,31 +187,55 @@ namespace FakeArea
             {
                 Parameter paramArea = room.LookupParameter("Площадь");
                 Parameter paramBuilding = room.LookupParameter("ADSK_Номер здания");
+                Parameter paramRole = room.LookupParameter("Назначение");
 
-                // Определяем, к какому зданию относится комната
-                string bName = "NONE-NONE";
-                if (paramBuilding != null)
+                if (paramRole != null)
                 {
-                    bName = paramBuilding.AsString();
-                }
-                if ((bName == "") | (bName == null))
-                {
-                    bName = "NONE-NONE";
-                }
-
-                // Определяем новую площадь и вставляем в проект
-                if (paramArea != null)
-                {
-                    double newArea = paramArea.AsDouble() * (1 + dictionary[bName].adjuster);
-                    newArea = UnitUtils.ConvertFromInternalUnits(newArea, UnitTypeId.SquareMeters);
-                    newArea = Math.Round(newArea, 2);
-
-                    Parameter paramNewArea = room.LookupParameter("Комментарии");
-                    if (paramNewArea != null)
+                    if (paramRole.AsString() == "Квартиры")
                     {
-                        paramNewArea.Set(newArea.ToString());
+
+                        // Определяем, к какому зданию относится комната
+                        string bName = "NONE-NONE";
+                        if (paramBuilding != null)
+                        {
+                            bName = paramBuilding.AsString();
+                        }
+                        if ((bName == "") | (bName == null))
+                        {
+                            bName = "NONE-NONE";
+                        }
+
+                        // Определяем новую площадь и вставляем в проект
+                        if (paramArea != null)
+                        {
+                            double newArea = paramArea.AsDouble() * (1 + dictionary[bName].adjuster);
+                            newArea = UnitUtils.ConvertFromInternalUnits(newArea, UnitTypeId.SquareMeters);
+                            newArea = Math.Round(newArea, 2);
+
+                            Parameter paramNewArea = room.LookupParameter("Комментарии");
+                            if (paramNewArea != null)
+                            {
+                                paramNewArea.Set(newArea.ToString());
+                            }
+                        }
+                    }
+                    else 
+                    {
+                        if (paramArea != null)
+                        {
+                            double newArea = paramArea.AsDouble();
+                            newArea = UnitUtils.ConvertFromInternalUnits(newArea, UnitTypeId.SquareMeters);
+                            newArea = Math.Round(newArea, 2);
+
+                            Parameter paramNewArea = room.LookupParameter("Комментарии");
+                            if (paramNewArea != null)
+                            {
+                                paramNewArea.Set(newArea.ToString());
+                            }
+                        }
                     }
                 }
+
             }
 
             t.Commit();

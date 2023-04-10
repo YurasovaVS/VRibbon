@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -18,6 +19,19 @@ namespace DeleteSignatures
             UIApplication uiApp = commandData.Application;
             Document doc = uiApp.ActiveUIDocument.Document;
 
+            using (System.Windows.Forms.Form form = new SKRibbon.Forms.DeleteSigForm(doc))
+            {
+                if (form.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                {
+                    return Result.Succeeded;
+                }
+                else
+                {
+                    return Result.Cancelled;
+                }
+            }
+
+            /*
             ICollection<Element> signatures = new FilteredElementCollector(doc).OfClass(typeof(ImportInstance)).ToElements();
             StringBuilder sb = new StringBuilder();
 
@@ -37,7 +51,7 @@ namespace DeleteSignatures
             }
             TaskDialog.Show("Результат", sb.ToString());
             t.Commit();
-
+            */
             return Result.Succeeded;  
         }
     }

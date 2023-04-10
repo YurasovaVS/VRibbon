@@ -57,7 +57,7 @@ namespace SKRibbon
                "FakeArea.AdjustExistingAreas");
 
             PushButton pb3 = rpAreas.AddItem(b3Data) as PushButton;
-            pb3.ToolTip = "Корректирует площади помещений, приводя общую площадь к искомому значению. Новая площадь прописывается в параметр...";
+            pb3.ToolTip = "Корректирует площади помещений КВАРТИР, приводя общую площадь КВАРТИР к искомому значению. Новая площадь прописывается в параметр \"Комментарий\"";
             BitmapImage pb3Image = new BitmapImage(new Uri("pack://application:,,,/SKRibbon;component/Resources/fakeArea.png"));
             pb3.LargeImage = pb3Image;
             

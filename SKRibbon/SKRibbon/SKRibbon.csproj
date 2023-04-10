@@ -52,6 +52,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Forms\AddSigForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\AddSigForm.Designer.cs">
+      <DependentUpon>AddSigForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\DeleteSigForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\DeleteSigForm.Designer.cs">
+      <DependentUpon>DeleteSigForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Functions\ReplaceTags.cs" />
     <Compile Include="Forms\replaceTagsForm.cs">
       <SubType>Form</SubType>
@@ -79,6 +91,20 @@
     <Content Include="SKRibbon.addin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Forms\AddSigForm.resx">
+      <DependentUpon>AddSigForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\DeleteSigForm.resx">
+      <DependentUpon>DeleteSigForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\NewTotalForm.resx">
+      <DependentUpon>NewTotalForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\replaceTagsForm.resx">
+      <DependentUpon>replaceTagsForm.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

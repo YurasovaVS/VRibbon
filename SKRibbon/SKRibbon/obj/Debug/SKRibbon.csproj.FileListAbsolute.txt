@@ -6,3 +6,8 @@ C:\Users\ArchB\source\repos\SKRibbon\SKRibbon\obj\Debug\SKRibbon.csproj.CoreComp
 C:\Users\ArchB\source\repos\SKRibbon\SKRibbon\obj\Debug\SKRibbon.dll
 C:\Users\ArchB\source\repos\SKRibbon\SKRibbon\obj\Debug\SKRibbon.pdb
 C:\Users\ArchB\source\repos\SKRibbon\SKRibbon\bin\Debug\SKRibbon.addin
+C:\Users\ArchB\source\repos\SKRibbon\SKRibbon\obj\Debug\SKRibbon.AddSigForm.resources
+C:\Users\ArchB\source\repos\SKRibbon\SKRibbon\obj\Debug\FakeArea.NewTotalForm.resources
+C:\Users\ArchB\source\repos\SKRibbon\SKRibbon\obj\Debug\ReplaceAreaTags.replaceTagsForm.resources
+C:\Users\ArchB\source\repos\SKRibbon\SKRibbon\obj\Debug\SKRibbon.csproj.GenerateResource.cache
+C:\Users\ArchB\source\repos\SKRibbon\SKRibbon\obj\Debug\SKRibbon.Forms.DeleteSigForm.resources

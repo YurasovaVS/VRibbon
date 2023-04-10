@@ -9,6 +9,7 @@ using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.DB.Structure;
+using FakeArea;
 
 namespace AddSignatures
 {
@@ -33,8 +34,21 @@ namespace AddSignatures
             Document doc = uiApp.ActiveUIDocument.Document;
             //Прописываем путь к подписям
             string path = "\\\\ABSKNAS\\переезд\\13_Пользователи\\_ПодписиСК\\";
+
+            using (System.Windows.Forms.Form form = new SKRibbon.AddSigForm(doc, path))
+            {
+                if (form.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                {
+                    return Result.Succeeded;
+                }
+                else
+                {
+                    return Result.Cancelled;
+                }
+            }
             //ДОПОЛНИТЕЛЬНО - реализовать выбор пути к подписям
 
+            /*
             DWGImportOptions importOptions = new DWGImportOptions();
 
             //ДОПОЛНИТЕЛЬНО - реализовать выбор листов, на которых необходимо проставить подписи
@@ -98,7 +112,7 @@ namespace AddSignatures
             TaskDialog.Show("Ошибки", sb.ToString());
             
             t.Commit();
-
+            */
             return Result.Succeeded;
         }
     }
