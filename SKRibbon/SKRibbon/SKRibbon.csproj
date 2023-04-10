@@ -42,6 +42,8 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -50,6 +52,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Functions\ReplaceTags.cs" />
+    <Compile Include="Forms\replaceTagsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\replaceTagsForm.Designer.cs" />
+    <Compile Include="Functions\AdjustExistingAreas.cs" />
+    <Compile Include="Forms\NewTotalForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\NewTotalForm.Designer.cs" />
     <Compile Include="Functions\AddSignatureDWG.cs" />
     <Compile Include="App.cs" />
     <Compile Include="Functions\DeleteSignatureDWG.cs" />
@@ -62,6 +74,8 @@
     <Resource Include="Resources\delete.png" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Resources\fakeArea.png" />
+    <Resource Include="Resources\replaceTags.png" />
     <Content Include="SKRibbon.addin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
