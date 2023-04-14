@@ -83,7 +83,6 @@ namespace SKRibbon
                     sheetList.Items.Add(sheet.Name);
                     sheetList.sheetCollection.Add(sheet);
                 }
-
             }
 
             //Добавляем кнопку

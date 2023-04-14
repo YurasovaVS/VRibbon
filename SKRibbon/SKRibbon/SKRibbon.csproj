@@ -52,6 +52,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Forms\CopyListsForm.Designer.cs" />
+    <Compile Include="Functions\CopyLists.cs" />
+    <Compile Include="Forms\CopyListsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\AddSigForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -88,6 +93,7 @@
   <ItemGroup>
     <Resource Include="Resources\fakeArea.png" />
     <Resource Include="Resources\replaceTags.png" />
+    <Resource Include="Resources\copyLists.png" />
     <Content Include="SKRibbon.addin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -107,4 +113,8 @@
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>if exist "$(AppData)\Autodesk\REVIT\Addins\2021" copy "$(ProjectDir)*.addin" "$(AppData)\Autodesk\REVIT\Addins\2021"
+if exist "$(AppData)\Autodesk\REVIT\Addins\2021" copy "$(ProjectDir)$(OutputPath)*.dll" "$(AppData)\Autodesk\REVIT\Addins\2021"</PostBuildEvent>
+  </PropertyGroup>
 </Project>

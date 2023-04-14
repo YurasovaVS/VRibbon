@@ -15,7 +15,6 @@ namespace SKRibbon
     [Transaction(TransactionMode.Manual)]
     public class App : IExternalApplication
     {
-
         static void AddRibbonPanel(UIControlledApplication application)
         {
             String tabName = "АМ СК";
@@ -32,7 +31,7 @@ namespace SKRibbon
                 "AddSignatures.AddSignaturesDWG");
 
             PushButton pb1 = ribbonPanel.AddItem(b1Data) as PushButton;
-            pb1.ToolTip = "Проставляет на листах подписи, связанные с внешним DWG файлом. Файлы подписей лежат в папке: Z:\\13_Пользователи\\_ПодписиСК";
+            pb1.ToolTip = "Проставляет на листах подписи, связанные с внешним DWG файлом. Подписи прикрепляются связью.";
             BitmapImage pb1Image = new BitmapImage(new Uri("pack://application:,,,/SKRibbon;component/Resources/add.png"));
             pb1.LargeImage = pb1Image;
 
@@ -43,7 +42,7 @@ namespace SKRibbon
                 "DeleteSignatures.DeleteSignaturesDWG");
 
             PushButton pb2 = ribbonPanel.AddItem(b2Data) as PushButton;
-            pb2.ToolTip = "Удаляет на листах подписи, связанные с внешним DWG файлом.";
+            pb2.ToolTip = "Удаляет на выбранных листах подписи, связанные с внешним DWG файлом.";
             BitmapImage pb2Image = new BitmapImage(new Uri("pack://application:,,,/SKRibbon;component/Resources/delete.png"));
             pb2.LargeImage = pb2Image;
             
@@ -57,7 +56,7 @@ namespace SKRibbon
                "FakeArea.AdjustExistingAreas");
 
             PushButton pb3 = rpAreas.AddItem(b3Data) as PushButton;
-            pb3.ToolTip = "Корректирует площади помещений КВАРТИР, приводя общую площадь КВАРТИР к искомому значению. Новая площадь прописывается в параметр \"Комментарий\"";
+            pb3.ToolTip = "Корректирует площади помещений выбранной категории (по функции), приводя их общую площадь к искомому значению. Новая площадь прописывается в параметр \"Комментарий\"";
             BitmapImage pb3Image = new BitmapImage(new Uri("pack://application:,,,/SKRibbon;component/Resources/fakeArea.png"));
             pb3.LargeImage = pb3Image;
             
@@ -71,14 +70,26 @@ namespace SKRibbon
             PushButton pb4 = rpAreas.AddItem(b4Data) as PushButton;
             pb4.ToolTip = "Заменяет марки определенного типа на нужных листах";
             BitmapImage pb4Image = new BitmapImage(new Uri("pack://application:,,,/SKRibbon;component/Resources/replaceTags.png"));
-            pb4.LargeImage = pb4Image;         
-            
+            pb4.LargeImage = pb4Image;
+
+            // Добавляем панель копирования листов
+            RibbonPanel rpCopyLists = application.CreateRibbonPanel(tabName, "Копирование листов");
+            //Кнопка рассчета новых площадей
+            PushButtonData b5Data = new PushButtonData(
+               "cmdCopyLists",
+               "Дублировать" + System.Environment.NewLine + " в проекте ",
+               thisAssemblyPath,
+               "CopyListsTree.CopyLists");
+
+            PushButton pb5 = rpCopyLists.AddItem(b5Data) as PushButton;
+            pb5.ToolTip = "По выбору пользователя дублирует существующие в проекте листы";
+            BitmapImage pb5Image = new BitmapImage(new Uri("pack://application:,,,/SKRibbon;component/Resources/copyLists.png"));
+            pb5.LargeImage = pb5Image;
         }
         public Result OnShutdown(UIControlledApplication application)
         {
             return Result.Succeeded;
         }
-
         public Result OnStartup(UIControlledApplication application)
         {
             AddRibbonPanel(application);

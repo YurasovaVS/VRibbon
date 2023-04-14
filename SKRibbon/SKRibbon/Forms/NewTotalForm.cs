@@ -19,11 +19,17 @@ namespace FakeArea
     {
         Document Doc;
         Dictionary<string, BuildingAdjustments> dictionary = new Dictionary<string, BuildingAdjustments>();
+        ICollection<Element> rooms;
+        string currentRoomPurpose;
         public NewTotalForm(Document doc)
         {
             InitializeComponent();
             
             Doc = doc;
+            rooms = new FilteredElementCollector(doc).
+                                    OfClass(typeof(SpatialElement)).
+                                    WhereElementIsNotElementType().
+                                    ToElements();
             this.AutoSize = true;
             this.AutoScroll = true;
 
@@ -37,20 +43,218 @@ namespace FakeArea
             formWrapper.BorderStyle = BorderStyle.FixedSingle;
             formWrapper.Padding = new Padding(5, 5, 5, 5);
 
-            //Создаем заголовок
+            //Создаем заголовок выпадающего списка. Индекс во wrapper'е: [0]
+            Label comboHeader = new Label();
+            comboHeader.Parent = formWrapper;
+            formWrapper.Controls.Add(comboHeader);
+            comboHeader.Anchor = AnchorStyles.Top;
+            comboHeader.Size = new Size(500, 30);
+            comboHeader.Text = "Выберите назначение помещений";
+
+            //Создаем выпадающий список. Индекс во wrapper'е: [1]
+            System.Windows.Forms.ComboBox comboBox = new System.Windows.Forms.ComboBox();
+            comboBox.Parent = formWrapper;
+            formWrapper.Controls.Add(comboBox);
+            comboBox.Anchor = AnchorStyles.Top;
+            comboBox.Size = new Size(500, 30);
+
+            //Заполняем выпадающий список
+            HashSet<string> roomPurposes = new HashSet<string>();
+
+            foreach (SpatialElement room in rooms)
+            {
+                Parameter param = room.LookupParameter("Назначение");
+                if (param != null)
+                {
+                    
+                    if (param.AsString() == "")
+                    {
+                        currentRoomPurpose = "<НЕ ОПРЕДЕЛЕНО>";
+                    }
+                    else
+                    {
+                        currentRoomPurpose = param.AsString();
+                    }
+                    bool flag = roomPurposes.Add(currentRoomPurpose);
+                    if (flag)
+                    {
+                        comboBox.Items.Add(currentRoomPurpose);
+                    }
+                }
+            }
+            comboBox.SelectedIndex = 0;
+            currentRoomPurpose = comboBox.Items[0].ToString();
+            comboBox.SelectedValueChanged += OnSelectionChanged;
+
+            //Создаем заголовок. Индекс во wrapper'е: [2]
             Label header = new Label();
             header.Parent = formWrapper;
             formWrapper.Controls.Add(header);
             header.Anchor = AnchorStyles.Top;
             header.Size = new Size(500, 30);
             header.Text = "Введите новую общую площадь по каждому объекту";
-            
-            //Находим все помещения в проекте
-            ICollection<Element> rooms = new FilteredElementCollector(doc).
-                                    OfClass(typeof(SpatialElement)).
-                                    WhereElementIsNotElementType().
-                                    ToElements();
 
+            //Создаем wrapper для элементов зданий. Индекс во wrapper'е: [3]
+            FlowLayoutPanel buildingsWrapper = new FlowLayoutPanel();
+            buildingsWrapper.Parent = formWrapper;
+            formWrapper.Controls.Add(buildingsWrapper);
+
+            buildingsWrapper.FlowDirection = FlowDirection.TopDown;
+            buildingsWrapper.AutoSize = true;
+            buildingsWrapper.BorderStyle = BorderStyle.FixedSingle;
+            buildingsWrapper.Padding = new Padding(5, 5, 5, 5);
+
+            RecalculateAreas(currentRoomPurpose, buildingsWrapper);
+       
+            //Добавляем кнопку. Индекс во wrapper'е: [4]
+            Button button = new Button();
+            button.Parent = formWrapper;
+            formWrapper.Controls.Add(button);
+            button.Anchor = AnchorStyles.Top;
+            button.Width = 200;
+
+            button.Text = "Пересчитать площади";
+            button.Click += CalculateAdjustedAreas;
+
+            this.Width = formWrapper.Width + 5;
+            this.Height = formWrapper.Height + 5;
+        }
+
+        //----------------------------------------------------
+        // Классы
+        public class BuildingAdjustments {
+            public double totalArea;
+            public double newTotal;
+            public double adjuster;
+            public BuildingAdjustments()
+            {
+                totalArea = 0;
+                newTotal = 0;
+                adjuster = 0;
+            }
+        }
+       
+        //----------------------------------------------------
+        // События
+        public void OnSelectionChanged (object sender, EventArgs e)
+        {
+            System.Windows.Forms.ComboBox comboBox = (System.Windows.Forms.ComboBox)sender;
+            FlowLayoutPanel formWrapper = (FlowLayoutPanel)comboBox.Parent;
+            FlowLayoutPanel buildingsWrapper = (FlowLayoutPanel)formWrapper.Controls[3];
+            currentRoomPurpose = comboBox.SelectedItem.ToString();
+            RecalculateAreas(currentRoomPurpose, buildingsWrapper);
+        }
+
+        public void CalculateAdjustedAreas (object sender, EventArgs e)
+        {
+            Button button = (Button)sender;
+            FlowLayoutPanel formWrapper = (FlowLayoutPanel)button.Parent;
+            FlowLayoutPanel buildingsWrapper = (FlowLayoutPanel)formWrapper.Controls[3];                                          
+
+            //Собираем и парсим новые площади
+            foreach (FlowLayoutPanel panel in buildingsWrapper.Controls.OfType<FlowLayoutPanel>())
+            {
+                Label buildingName = (Label)panel.Controls[0];
+                System.Windows.Forms.TextBox newTotal = (System.Windows.Forms.TextBox)panel.Controls[1];
+                dictionary[buildingName.Text].newTotal = double.Parse(newTotal.Text);
+            }
+            // Считаем коэффициент правки для каждого здания
+            foreach (var building in dictionary)
+            {
+                building.Value.adjuster = (building.Value.newTotal - building.Value.totalArea) / building.Value.totalArea;
+            }  
+
+            Transaction t = new Transaction(Doc, "Подогнать площади");
+            t.Start();
+
+            // Заполняем Комментарий помещения
+            foreach (SpatialElement room in rooms)
+            {
+                Parameter paramArea = room.LookupParameter("Площадь");
+                Parameter paramBuilding = room.LookupParameter("ADSK_Номер здания");
+                Parameter paramRole = room.LookupParameter("Назначение");
+                Parameter paramComment = room.LookupParameter("Комментарии");
+
+                if (paramRole != null)
+                {
+                    if (paramRole.AsString() == currentRoomPurpose)
+                    {
+
+                        // Определяем, к какому зданию относится комната
+                        string bName = "NONE-NONE";
+                        if (paramBuilding != null)
+                        {
+                            bName = paramBuilding.AsString();
+                        }
+                        if ((bName == "") | (bName == null))
+                        {
+                            bName = "NONE-NONE";
+                        }
+
+                        // Определяем новую площадь и вставляем в проект
+                        if (paramArea != null)
+                        {
+                            double newArea = paramArea.AsDouble() * (1 + dictionary[bName].adjuster);
+                            newArea = UnitUtils.ConvertFromInternalUnits(newArea, UnitTypeId.SquareMeters);
+                            newArea = Math.Round(newArea, 2);
+                                                        
+                            if (paramComment != null)
+                            {
+                                paramComment.Set(newArea.ToString());
+                            }
+                        }
+                    }
+                    else 
+                    {
+                        if (paramArea != null)
+                        {
+                            double newArea = paramArea.AsDouble();
+                            newArea = UnitUtils.ConvertFromInternalUnits(newArea, UnitTypeId.SquareMeters);
+                            newArea = Math.Round(newArea, 2);
+
+                            if (paramComment != null)
+                            {
+                                string temp = paramComment.AsString();
+                                if ((temp == "") | (temp == null))
+                                {
+                                    paramComment.Set(newArea.ToString());
+                                }
+                            }
+                            else
+                            {
+                                TaskDialog.Show("Debug", "Что-то пошло не так");
+                            }
+                            
+                        }
+                    }
+                }
+            } // Конец foreach (room in rooms)
+
+            t.Commit();
+            
+            this.DialogResult = DialogResult.OK;
+            this.Close();
+        } // Конец функции CalculateAdjustedAreas
+
+        // Функция, запрещающая вводить в поля все, кроме цифр и точки
+        private void NewTotal_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (Char.IsDigit(e.KeyChar)) return;
+            if (Char.IsControl(e.KeyChar)) return;
+            if ((e.KeyChar == ',') && ((sender as System.Windows.Forms.TextBox).Text.Contains(',') == false)) return;
+            if ((e.KeyChar == ',') && ((sender as System.Windows.Forms.TextBox).SelectionLength == (sender as System.Windows.Forms.TextBox).TextLength)) return;
+            e.Handled = true;
+        }
+
+        //-------------------------------------------------------------
+        // Функции
+
+        // Функция заполнения формы, в зависимости от назначения здания
+        private void RecalculateAreas (string purpose, FlowLayoutPanel wrapper)
+        {
+            dictionary.Clear();
+            wrapper.Controls.Clear();
+            
             foreach (SpatialElement room in rooms)
             {
                 Parameter paramArea = room.LookupParameter("Площадь");
@@ -59,7 +263,7 @@ namespace FakeArea
 
                 if (paramRole != null)
                 {
-                    if (paramRole.AsString() == "Квартиры")
+                    if (paramRole.AsString() == purpose)
                     {
                         //Если помещение не относится ни к одному зданию, задаем ему здание NONE-NONE
                         string buildingName = "NONE-NONE";
@@ -97,8 +301,8 @@ namespace FakeArea
                 FlowLayoutPanel lineWrapper = new FlowLayoutPanel();
                 lineWrapper.FlowDirection = FlowDirection.LeftToRight;
                 lineWrapper.AutoSize = true;
-                lineWrapper.Parent = formWrapper;
-                formWrapper.Controls.Add(lineWrapper);
+                lineWrapper.Parent = wrapper;
+                wrapper.Controls.Add(lineWrapper);
                 lineWrapper.Anchor = AnchorStyles.Top;
                 lineWrapper.BorderStyle = BorderStyle.FixedSingle;
 
@@ -118,139 +322,7 @@ namespace FakeArea
                 double tA = Math.Round(building.Value.totalArea, 2);
                 newTotal.Text = tA.ToString();
                 newTotal.KeyPress += NewTotal_KeyPress;
-            }           
-
-            //Добавляем кнопку
-            Button button = new Button();
-            button.Parent = formWrapper;
-            formWrapper.Controls.Add(button);
-            button.Anchor = AnchorStyles.Top;
-            button.Width = 200;
-
-            button.Text = "Пересчитать площади";
-            button.Click += CalculateAdjustedAreas;
-
-            this.Width = formWrapper.Width + 5;
-            this.Height = formWrapper.Height + 5;
-        }
-
-        public class BuildingAdjustments {
-            public double totalArea;
-            public double newTotal;
-            public double adjuster;
-            public BuildingAdjustments()
-            {
-                totalArea = 0;
-                newTotal = 0;
-                adjuster = 0;
             }
-        }
-
-        public class CheckedViewList : CheckedListBox {
-            public List<Autodesk.Revit.DB.View> viewsCollection;
-            public CheckedViewList()
-            {
-                viewsCollection = new List<Autodesk.Revit.DB.View> ();
-            }
-        }
-        
-        
-        public void CalculateAdjustedAreas (object sender, EventArgs e)
-        {
-            Button button = (Button)sender;
-            FlowLayoutPanel formWrapper = (FlowLayoutPanel)button.Parent;
-                                          
-
-            //Собираем и парсим новые площади
-            foreach (FlowLayoutPanel panel in formWrapper.Controls.OfType<FlowLayoutPanel>())
-            {
-                Label buildingName = (Label)panel.Controls[0];
-                System.Windows.Forms.TextBox newTotal = (System.Windows.Forms.TextBox)panel.Controls[1];
-                dictionary[buildingName.Text].newTotal = double.Parse(newTotal.Text);
-            }
-            // Считаем коэффициент правки для каждого здания
-            foreach (var building in dictionary)
-            {
-                building.Value.adjuster = (building.Value.newTotal - building.Value.totalArea) / building.Value.totalArea;
-            }                       
-
-            //Выбираем все комнаты В ПРОЕКТЕ
-            ICollection<Element> rooms = new FilteredElementCollector(Doc).
-                                        OfClass(typeof(SpatialElement)).
-                                        WhereElementIsNotElementType().
-                                        ToElements();
-
-            Transaction t = new Transaction(Doc, "Подогнать площади");
-            t.Start();
-
-            foreach (SpatialElement room in rooms)
-            {
-                Parameter paramArea = room.LookupParameter("Площадь");
-                Parameter paramBuilding = room.LookupParameter("ADSK_Номер здания");
-                Parameter paramRole = room.LookupParameter("Назначение");
-
-                if (paramRole != null)
-                {
-                    if (paramRole.AsString() == "Квартиры")
-                    {
-
-                        // Определяем, к какому зданию относится комната
-                        string bName = "NONE-NONE";
-                        if (paramBuilding != null)
-                        {
-                            bName = paramBuilding.AsString();
-                        }
-                        if ((bName == "") | (bName == null))
-                        {
-                            bName = "NONE-NONE";
-                        }
-
-                        // Определяем новую площадь и вставляем в проект
-                        if (paramArea != null)
-                        {
-                            double newArea = paramArea.AsDouble() * (1 + dictionary[bName].adjuster);
-                            newArea = UnitUtils.ConvertFromInternalUnits(newArea, UnitTypeId.SquareMeters);
-                            newArea = Math.Round(newArea, 2);
-
-                            Parameter paramNewArea = room.LookupParameter("Комментарии");
-                            if (paramNewArea != null)
-                            {
-                                paramNewArea.Set(newArea.ToString());
-                            }
-                        }
-                    }
-                    else 
-                    {
-                        if (paramArea != null)
-                        {
-                            double newArea = paramArea.AsDouble();
-                            newArea = UnitUtils.ConvertFromInternalUnits(newArea, UnitTypeId.SquareMeters);
-                            newArea = Math.Round(newArea, 2);
-
-                            Parameter paramNewArea = room.LookupParameter("Комментарии");
-                            if (paramNewArea != null)
-                            {
-                                paramNewArea.Set(newArea.ToString());
-                            }
-                        }
-                    }
-                }
-
-            }
-
-            t.Commit();
-            
-            this.DialogResult = DialogResult.OK;
-            this.Close();
-        }
-
-        private void NewTotal_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            if (Char.IsDigit(e.KeyChar)) return;
-            if (Char.IsControl(e.KeyChar)) return;
-            if ((e.KeyChar == ',') && ((sender as System.Windows.Forms.TextBox).Text.Contains(',') == false)) return;
-            if ((e.KeyChar == ',') && ((sender as System.Windows.Forms.TextBox).SelectionLength == (sender as System.Windows.Forms.TextBox).TextLength)) return;
-            e.Handled = true;
-        }
-    }
-}
+        } // Конец функции RecalculateAreas
+    } // Конец класса NewTotalForm
+} // Конец пространства имен FakeArea

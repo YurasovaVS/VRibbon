@@ -30,29 +30,6 @@ namespace DeleteSignatures
                     return Result.Cancelled;
                 }
             }
-
-            /*
-            ICollection<Element> signatures = new FilteredElementCollector(doc).OfClass(typeof(ImportInstance)).ToElements();
-            StringBuilder sb = new StringBuilder();
-
-
-            Transaction t = new Transaction(doc, "Удалить подписи");
-            t.Start();
-            foreach (ImportInstance signature in signatures)
-            {                
-                string name = signature.LookupParameter("Имя").AsString();
-                sb.AppendLine(name);
-                string pattern = "подпись_*";
-                if (Regex.Match(name, pattern).Success)
-                {
-                    sb.AppendLine("Удалена");
-                    doc.Delete(signature.Id);
-                } 
-            }
-            TaskDialog.Show("Результат", sb.ToString());
-            t.Commit();
-            */
-            return Result.Succeeded;  
         }
     }
 }

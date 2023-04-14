@@ -25,6 +25,7 @@ namespace ReplaceAreaTags
             Doc = doc;
             this.AutoSize = true;
             this.AutoScroll = true;
+            this.FormBorderStyle = FormBorderStyle.FixedSingle;
 
             //Создаем Wrapper для содержимого формы
             FlowLayoutPanel formWrapper = new FlowLayoutPanel();
@@ -88,7 +89,7 @@ namespace ReplaceAreaTags
             formWrapper.Controls.Add(header3);
             header3.Anchor = AnchorStyles.Top;
             header3.Size = new Size(500, 30);
-            header3.Text = "Выберите листы:";
+            header3.Text = "Выберите виды:";
 
             //Добавляем чеклист для выбора видов
             CheckedViewList viewList = new CheckedViewList();
