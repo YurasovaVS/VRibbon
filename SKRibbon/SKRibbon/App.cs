@@ -73,8 +73,8 @@ namespace SKRibbon
             pb4.LargeImage = pb4Image;
 
             // Добавляем панель копирования листов
-            RibbonPanel rpCopyLists = application.CreateRibbonPanel(tabName, "Копирование листов");
-            //Кнопка рассчета новых площадей
+            RibbonPanel rpCopyLists = application.CreateRibbonPanel(tabName, "Листы");
+            // Кнопка копирования листов
             PushButtonData b5Data = new PushButtonData(
                "cmdCopyLists",
                "Дублировать" + System.Environment.NewLine + " в проекте ",
@@ -85,6 +85,46 @@ namespace SKRibbon
             pb5.ToolTip = "По выбору пользователя дублирует существующие в проекте листы";
             BitmapImage pb5Image = new BitmapImage(new Uri("pack://application:,,,/SKRibbon;component/Resources/copyLists.png"));
             pb5.LargeImage = pb5Image;
+
+            // Кнопка печати в PDF
+            PushButtonData b7Data = new PushButtonData(
+              "cmdPrintToPdf",
+              "Вывести в PDF",
+              thisAssemblyPath,
+              "BatchPrinting.BatchPrintSheets");
+
+            PushButton pb7 = rpCopyLists.AddItem(b7Data) as PushButton;
+            pb7.ToolTip = "Вывод листов в PDF";
+            BitmapImage pb7Image = new BitmapImage(new Uri("pack://application:,,,/SKRibbon;component/Resources/pdf.png"));
+            pb7.LargeImage = pb7Image;
+
+            // Кнопка перенумерации листов
+            PushButtonData b8Data = new PushButtonData(
+              "cmdRenumSheets",
+              "Ренумерация",
+              thisAssemblyPath,
+              "SheetRenamer.RenameSheets");
+
+            PushButton pb8 = rpCopyLists.AddItem(b8Data) as PushButton;
+            pb8.ToolTip = "Меняет нумерацию листов в выбранном томе, начиная с выбранноо листа";
+            BitmapImage pb8Image = new BitmapImage(new Uri("pack://application:,,,/SKRibbon;component/Resources/renumber.png"));
+            pb8.LargeImage = pb8Image;
+
+            // Добавляем панель "Злой начальник"
+            RibbonPanel rpTeam = application.CreateRibbonPanel(tabName, "Злой начальник");
+            // Кнопка "Кто это сделал?!
+            PushButtonData b6Data = new PushButtonData(
+               "cmdWhoDidThat",
+               "Кто это" + System.Environment.NewLine + "сделал?!",
+               thisAssemblyPath,
+               "WhoDidThat.WhoDidThat");
+
+            PushButton pb6 = rpTeam.AddItem(b6Data) as PushButton;
+            pb6.ToolTip = "Показывает, кто сделал, и кто последним изменил выбранные элементы";
+            BitmapImage pb6Image = new BitmapImage(new Uri("pack://application:,,,/SKRibbon;component/Resources/whoDidThat.png"));
+            pb6.LargeImage = pb6Image;
+
+
         }
         public Result OnShutdown(UIControlledApplication application)
         {
