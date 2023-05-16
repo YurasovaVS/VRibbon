@@ -110,6 +110,18 @@ namespace SKRibbon
             BitmapImage pb8Image = new BitmapImage(new Uri("pack://application:,,,/SKRibbon;component/Resources/renumber.png"));
             pb8.LargeImage = pb8Image;
 
+            // Кнопка ИУЛов
+            PushButtonData b9Data = new PushButtonData(
+              "cmdCreateInfoLists",
+              "Вывести ИУЛы",
+              thisAssemblyPath,
+              "InfoListMaker.CreateInfoList");
+
+            PushButton pb9 = rpCopyLists.AddItem(b9Data) as PushButton;
+            pb8.ToolTip = "Создает ИУЛы для выбранных томов";
+            BitmapImage pb9Image = new BitmapImage(new Uri("pack://application:,,,/SKRibbon;component/Resources/infoLists.png"));
+            pb9.LargeImage = pb9Image;
+
             // Добавляем панель "Злой начальник"
             RibbonPanel rpTeam = application.CreateRibbonPanel(tabName, "Злой начальник");
             // Кнопка "Кто это сделал?!

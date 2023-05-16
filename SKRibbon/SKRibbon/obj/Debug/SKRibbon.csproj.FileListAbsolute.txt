@@ -11,3 +11,4 @@ C:\Users\ArchB\source\repos\SKRibbon\SKRibbon\obj\Debug\FakeArea.NewTotalForm.re
 C:\Users\ArchB\source\repos\SKRibbon\SKRibbon\obj\Debug\ReplaceAreaTags.replaceTagsForm.resources
 C:\Users\ArchB\source\repos\SKRibbon\SKRibbon\obj\Debug\SKRibbon.csproj.GenerateResource.cache
 C:\Users\ArchB\source\repos\SKRibbon\SKRibbon\obj\Debug\SKRibbon.Forms.DeleteSigForm.resources
+C:\Users\ArchB\source\repos\SKRibbon\SKRibbon\obj\Debug\SKRibbon.csproj.ResolveComReference.cache

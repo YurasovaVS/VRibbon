@@ -67,7 +67,7 @@ namespace FakeArea
                 if (param != null)
                 {
                     
-                    if (param.AsString() == "")
+                    if ((param.AsString() == "") || (param.AsString() == null))
                     {
                         currentRoomPurpose = "<НЕ ОПРЕДЕЛЕНО>";
                     }
