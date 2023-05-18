@@ -136,6 +136,18 @@ namespace SKRibbon
             BitmapImage pb6Image = new BitmapImage(new Uri("pack://application:,,,/SKRibbon;component/Resources/whoDidThat.png"));
             pb6.LargeImage = pb6Image;
 
+            // Кнопка "Что вы там натворили?!
+            PushButtonData b10Data = new PushButtonData(
+               "cmdWhatDidTheyDo",
+               "Что они там" + System.Environment.NewLine + "натворили?!",
+               thisAssemblyPath,
+               "FilterByPeople.FilterByPeople");
+
+            PushButton pb10 = rpTeam.AddItem(b10Data) as PushButton;
+            pb10.ToolTip = "Фильтрует выделенные элементы по создателю, последнему изменившему или заемщику";
+            BitmapImage pb10Image = new BitmapImage(new Uri("pack://application:,,,/SKRibbon;component/Resources/whatDidTheyDo.png"));
+            pb10.LargeImage = pb10Image;
+
 
         }
         public Result OnShutdown(UIControlledApplication application)

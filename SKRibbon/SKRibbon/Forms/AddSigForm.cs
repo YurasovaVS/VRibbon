@@ -19,6 +19,7 @@ namespace SKRibbon
     {
         Document Doc;
         string Path;
+        Dictionary<string, Dictionary<string, List<ViewSheet>>> buildingsDict = new Dictionary<string, Dictionary<string, List<ViewSheet>>>();
         public AddSigForm(Document doc, string path)
         {
             InitializeComponent();
@@ -60,28 +61,84 @@ namespace SKRibbon
             checkHeader.Size = new Size(500, 30);
             checkHeader.Text = "Выберите листы:";
 
-            //Добавляем чеклист для выбора видов
-            CheckedSheetList sheetList = new CheckedSheetList();
-            sheetList.Parent = formWrapper;
-            formWrapper.Controls.Add(sheetList);
-            sheetList.Anchor = AnchorStyles.Top;
-            sheetList.MinimumSize = new Size(500, 30);
-            sheetList.Height = 200;
-            sheetList.CheckOnClick = true;
+            // Добавляем древо листов
+            TreeView sheetTree = new TreeView();
+            sheetTree.Parent = formWrapper;
+            formWrapper.Controls.Add(sheetTree);
+            sheetTree.Anchor = AnchorStyles.Top;
+            sheetTree.MinimumSize = new Size(500, 30);
+            sheetTree.Height = 200;
+            sheetTree.CheckBoxes = true;
+            sheetTree.AfterCheck += node_AfterCheck;
+            
 
             //Добавляем виды в чеклист
             IEnumerable<Element> sheets = new FilteredElementCollector(doc).
                                             OfCategory(BuiltInCategory.OST_Sheets).
                                             WhereElementIsNotElementType().
                                             ToElements();
-            sheets = sheets.OrderBy(sheet => sheet.Name);
-            foreach (Autodesk.Revit.DB.ViewSheet sheet in sheets)
-            {
-                string sheetName = sheet.Name;
-                if ((sheetName != null) & (sheetName != ""))
+
+            Dictionary<string, Dictionary<string, List<ViewSheet>>> tempDict = new Dictionary<string, Dictionary<string, List<ViewSheet>>>();
+            foreach (ViewSheet sheet in sheets)
+            {                
+                Parameter tomeParam = sheet.LookupParameter("ADSK_Штамп Раздел проекта");
+                Parameter buildingParam = sheet.LookupParameter("ADSK_Примечание");
+                if (tomeParam != null && buildingParam != null)
                 {
-                    sheetList.Items.Add(sheet.Name);
-                    sheetList.sheetCollection.Add(sheet);
+                    string tome = "<РАЗДЕЛ НЕ ЗАДАН>";
+                    string building = "<ПРИМЕЧАНИЕ НЕ ЗАДАНО>";
+                    if (tomeParam.AsString() != null && tomeParam.AsString() != "")
+                    {
+                        tome = tomeParam.AsString();
+                    }
+                    if (buildingParam.AsString() != null && buildingParam.AsString() != "")
+                    {
+                        building = buildingParam.AsString();
+                    }
+                    // Если в первом словаре нет такого здания, создаем его
+                    if (!tempDict.ContainsKey(building))
+                    {
+                        Dictionary<string, List<ViewSheet>> tomesDict = new Dictionary<string, List<ViewSheet>>();
+                        tempDict.Add(building, tomesDict);
+                    }
+                    // Если во вложенном словаре здания нет такого тома, создаем его
+                    if (!tempDict[building].ContainsKey(tome))
+                    {
+                        List<ViewSheet> sheetsList = new List<ViewSheet>();
+                        tempDict[building].Add(tome, sheetsList);
+                    }
+                    // Добавляем лист в нужный том
+                    tempDict[building][tome].Add(sheet);
+                }
+            } // Конец создания словаря листов
+
+            // ОТСОРТИРОВАТЬ ВСЕ СПИСКИ
+            foreach (var building in tempDict)
+            {
+                Dictionary<string, List<ViewSheet>> tomesDict = new Dictionary<string, List<ViewSheet>>();
+                buildingsDict.Add(building.Key, tomesDict);
+                foreach (var tome in building.Value)
+                {
+                    List<ViewSheet> sheetsList = tome.Value.OrderBy(sheet => sheet.SheetNumber).ToList();
+                    buildingsDict[building.Key].Add(tome.Key, sheetsList);
+                }
+            }
+
+            foreach (var building in buildingsDict)
+            {
+                sheetTree.Nodes.Add(building.Key);
+                foreach (var tome in building.Value)
+                {
+                    int i = sheetTree.Nodes.Count - 1;
+                    sheetTree.Nodes[i].Nodes.Add(tome.Key);
+                    foreach (ViewSheet sheet in tome.Value)
+                    {
+                        int j = sheetTree.Nodes[i].Nodes.Count - 1;
+                        SheetNode newNode = new SheetNode();
+                        newNode.sheet = sheet;
+                        newNode.Text = sheet.SheetNumber + " - " + sheet.Name;
+                        sheetTree.Nodes[i].Nodes[j].Nodes.Add(newNode);
+                    }
                 }
             }
 
@@ -106,52 +163,62 @@ namespace SKRibbon
 
             System.Windows.Forms.TextBox pathBox = (System.Windows.Forms.TextBox)formWrapper.Controls[1];
             string path = pathBox.Text;
-            CheckedSheetList sheetList = (CheckedSheetList)formWrapper.Controls[3];
+            TreeView sheetTree = (TreeView)formWrapper.Controls[3];
             StringBuilder sb = new StringBuilder();
 
             Transaction t = new Transaction(Doc, "Вставить подписи");
             t.Start();
 
-            foreach (int j in sheetList.CheckedIndices)
+            foreach (TreeNode building in sheetTree.Nodes)
             {
-                ViewSheet sheet = sheetList.sheetCollection[j];
-                DWGImportOptions importOptions = new DWGImportOptions();
-
-                Double sheetRBpointX = sheet.Outline.Max.U;
-                Double sheetRBpointY = sheet.Outline.Min.V;
-
-                for (int i = 0; i <= 5; i++)
+                foreach (TreeNode tome in building.Nodes)
                 {
-                    string paramName = "ADSK_Штамп Строка " + (i + 1).ToString() + " фамилия";
-                    string paramValue = sheet.LookupParameter(paramName).AsString();
-
-                    // Если фамилия задана
-                    if (paramValue != null)
+                    foreach (SheetNode sheetNode in tome.Nodes)
                     {
-                        if (paramValue.Length != 0)
+                        if (sheetNode.Checked)
                         {
-                            string signaturePath = path + "подпись_" + paramValue + ".dwg";
-                            if (File.Exists(signaturePath))
+                            ViewSheet sheet = sheetNode.sheet;
+                            DWGImportOptions importOptions = new DWGImportOptions();
+
+                            Double sheetRBpointX = sheet.Outline.Max.U;
+                            Double sheetRBpointY = sheet.Outline.Min.V;
+
+                            for (int i = 0; i <= 5; i++)
                             {
-                                ElementId signatureId;
-                                bool flag = Doc.Link(signaturePath, importOptions, sheet, out signatureId);
-                                Element signature = Doc.GetElement(signatureId);
-                                signature.Pinned = false;
-                                Double x = sheetRBpointX - 0.49;
-                                Double y = 30 - i * 5;
-                                y = UnitUtils.ConvertToInternalUnits(y, UnitTypeId.Millimeters);
-                                y = sheetRBpointY + y;
-                                XYZ move = new XYZ(x, y, 0);
-                                signature.Location.Move(move);
-                            }
-                            else
-                            {
-                                sb.AppendLine("Подпись не найдена: " + signaturePath);
-                            }
-                        }
-                    }
-                }
-            }
+                                string paramName = "ADSK_Штамп Строка " + (i + 1).ToString() + " фамилия";
+                                string paramValue = sheet.LookupParameter(paramName).AsString();
+
+                                // Если фамилия задана
+                                if (paramValue != null)
+                                {
+                                    if (paramValue.Length != 0)
+                                    {
+                                        string signaturePath = path + "подпись_" + paramValue + ".dwg";
+                                        if (File.Exists(signaturePath))
+                                        {
+                                            ElementId signatureId;
+                                            bool flag = Doc.Link(signaturePath, importOptions, sheet, out signatureId);
+                                            Element signature = Doc.GetElement(signatureId);
+                                            signature.Pinned = false;
+                                            Double x = sheetRBpointX - 0.49;
+                                            Double y = 30 - i * 5;
+                                            y = UnitUtils.ConvertToInternalUnits(y, UnitTypeId.Millimeters);
+                                            y = sheetRBpointY + y;
+                                            XYZ move = new XYZ(x, y, 0);
+                                            signature.Location.Move(move);
+                                        }
+                                        else
+                                        {
+                                            sb.AppendLine("Подпись не найдена: " + signaturePath);
+                                        }
+                                    }
+                                }
+                            } // Конец перебора строк штампа
+                        } // Конец if(sheetNode.Checked)
+                    } // Конец foreach (sheet in tome)
+                } // Конец foreach (tome in building)
+            } // Конец foreach (building in tree)
+
             if (sb.Length == 0)
             {
                 sb.AppendLine("Подписи проставлены. Ошибок нет.");
@@ -163,6 +230,28 @@ namespace SKRibbon
             this.Close();
         }          
         
+        public void CheckAllChildNodes (TreeNode node, bool nodeChecker)
+        {
+            foreach (TreeNode childNode in node.Nodes)
+            {
+                childNode.Checked = nodeChecker;
+                if (childNode.Nodes.Count > 0)
+                {
+                    this.CheckAllChildNodes (childNode, nodeChecker);
+                }
+            }
+        }
+
+        private void node_AfterCheck(object sender, TreeViewEventArgs e)
+        {
+            if (e.Action != TreeViewAction.Unknown)
+            {
+                if (e.Node.Nodes.Count > 0)
+                {
+                    this.CheckAllChildNodes(e.Node, e.Node.Checked);
+                }
+            }
+        }
     }
 
     //Класс для чеклиста листов
@@ -173,5 +262,11 @@ namespace SKRibbon
         {
             sheetCollection = new List<Autodesk.Revit.DB.ViewSheet>();
         }
+    }
+
+    // Класс для нодов с листами
+    public class SheetNode : TreeNode
+    {
+        public ViewSheet sheet;
     }
 }

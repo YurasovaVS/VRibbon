@@ -288,8 +288,7 @@ namespace BatchPrinting
             foreach (TreeNode building in tree.Nodes) 
             {                
                 foreach (TreeNode tome in building.Nodes)
-                {
-                    
+                {                    
                     foreach (SheetTreeNode sheet in tome.Nodes)
                     {
                         if (sheet.Checked)
