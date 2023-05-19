@@ -66,7 +66,7 @@ namespace FilterByPeople
                     if (!LastChangedBy.ContainsKey(info.LastChangedBy))
                     {
                         HashSet<ElementId> elementIds = new HashSet<ElementId>();
-                        LastChangedBy.Add(info.Creator, elementIds);
+                        LastChangedBy.Add(info.LastChangedBy, elementIds);
                     }
                     LastChangedBy[info.LastChangedBy].Add(element.Id);
                 }
