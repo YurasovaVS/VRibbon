@@ -74,19 +74,12 @@ namespace BatchPrinting
 
             InitializeComponent();
             Doc = doc;
-            SavePath = Path.GetDirectoryName(doc.PathName);
-            if ((SavePath == null) || (SavePath == ""))
+            SavePath = Path.GetDirectoryName(doc.PathName) ?? Environment.SpecialFolder.DesktopDirectory.ToString();            
+            SavePath = Path.Combine(SavePath, "pdf");
+            if (!Directory.Exists(SavePath))
             {
-                SavePath = @"C:";
-            }
-            if (Directory.Exists(SavePath))
-            {
-                SavePath += @"\pdf";
-                if (!Directory.Exists(SavePath))
-                {
-                    Directory.CreateDirectory(SavePath);
-                }                
-            }
+                Directory.CreateDirectory(SavePath);
+            }  
             this.AutoScroll = true;
 
             formWrapper.AutoSize = true;
