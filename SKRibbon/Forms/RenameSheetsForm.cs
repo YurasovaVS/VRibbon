@@ -28,8 +28,7 @@ namespace SheetRenamer
         System.Windows.Forms.TextBox suffixField = new System.Windows.Forms.TextBox();
         System.Windows.Forms.TextBox lengthOfNumField = new System.Windows.Forms.TextBox();
 
-        HashSet<string> sheetNums = new HashSet<string>();
-        
+        HashSet<string> sheetNums = new HashSet<string>();        
 
         public RenameSheetsForm(Document doc)
         {

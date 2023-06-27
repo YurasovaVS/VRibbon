@@ -1,0 +1,35 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Autodesk.Revit.Attributes;
+using Autodesk.Revit.DB;
+using Autodesk.Revit.UI;
+using WinForms = System.Windows.Forms;
+
+
+namespace FillStamps
+{
+    [Transaction(TransactionMode.Manual)]
+    public class FillStamps : IExternalCommand
+    {
+        public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
+        {
+            UIApplication uiApp = commandData.Application;
+            Document doc = uiApp.ActiveUIDocument.Document;
+
+            using (WinForms.Form form = new FillStampsForm(doc))
+            {
+                if (form.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                {
+                    return Result.Succeeded;
+                }
+                else
+                {
+                    return Result.Cancelled;
+                }
+            }
+        }
+    }
+}

@@ -204,6 +204,8 @@ namespace BatchPrinting
             okButton.Parent = optionsWrapper;
             optionsWrapper.Controls.Add(okButton);
             okButton.Anchor = AnchorStyles.Left;
+
+
         }
 
         // --------------

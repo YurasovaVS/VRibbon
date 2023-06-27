@@ -44,14 +44,26 @@ namespace SKRibbon
             formWrapper.Controls.Add(header);
             header.Anchor = AnchorStyles.Top;
             header.Size = new Size(500, 30);
-            header.Text = "Введите путь к папке, где лежат DWG-подписи:";
+            header.Text = "Путь к папке, где лежат DWG-подписи:";
+            header.Font = new Font(Label.DefaultFont, FontStyle.Bold);
 
             //Создаем текстовое поле для пути
-            System.Windows.Forms.TextBox newPath = new System.Windows.Forms.TextBox();
+            Label newPath = new Label();
+            newPath.Name = "pathLabel";
             newPath.Parent = formWrapper;
             formWrapper.Controls.Add(newPath);
             newPath.Size = new Size(300, 30);
             newPath.Text = Path;
+
+            // Кнопка смены пути
+            Button pathButton = new Button();
+            pathButton.Parent = formWrapper;
+            formWrapper.Controls.Add(pathButton);
+            pathButton.Anchor = AnchorStyles.Top;
+            pathButton.Width = 200;
+
+            pathButton.Text = "Сменить папку с подписями";
+            pathButton.Click += ChooseFolder;
 
             //Создаем заголовок чеклиста
             Label checkHeader = new Label();
@@ -60,6 +72,7 @@ namespace SKRibbon
             checkHeader.Anchor = AnchorStyles.Top;
             checkHeader.Size = new Size(500, 30);
             checkHeader.Text = "Выберите листы:";
+            checkHeader.Font = new Font(Label.DefaultFont, FontStyle.Bold);
 
             // Добавляем древо листов
             TreeView sheetTree = new TreeView();
@@ -161,9 +174,9 @@ namespace SKRibbon
             Button button = (Button)sender;
             FlowLayoutPanel formWrapper = (FlowLayoutPanel)button.Parent;
 
-            System.Windows.Forms.TextBox pathBox = (System.Windows.Forms.TextBox)formWrapper.Controls[1];
+            Label pathBox = (Label)formWrapper.Controls[1];
             string path = pathBox.Text;
-            TreeView sheetTree = (TreeView)formWrapper.Controls[3];
+            TreeView sheetTree = (TreeView)formWrapper.Controls[4];
             StringBuilder sb = new StringBuilder();
 
             Transaction t = new Transaction(Doc, "Вставить подписи");
@@ -257,7 +270,24 @@ namespace SKRibbon
                 }
             }
         }
+
+        public void ChooseFolder(object sender, EventArgs e)
+        {
+            Button button = (Button)sender;
+            FlowLayoutPanel wrapper = (FlowLayoutPanel)button.Parent;
+            Label displayPath = (Label)wrapper.Controls[1];
+
+            FolderBrowserDialog dialog = new FolderBrowserDialog();
+            DialogResult result = dialog.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                displayPath.Text = dialog.SelectedPath;
+                Path = dialog.SelectedPath;
+            }
+        }
     }
+
+
 
     //Класс для чеклиста листов
     public class CheckedSheetList : CheckedListBox

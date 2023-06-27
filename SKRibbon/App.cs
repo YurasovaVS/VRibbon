@@ -5,10 +5,13 @@ using System.Text;
 using System.Threading.Tasks;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
+using Autodesk.Revit.DB.Events;
+using Autodesk.Revit.UI.Events;
 using Autodesk.Revit.Attributes;
 using System.Reflection;
 using System.Windows.Media.Imaging;
 using Autodesk.Revit.ApplicationServices;
+using System.Windows.Media;
 
 namespace SKRibbon
 {
@@ -20,13 +23,26 @@ namespace SKRibbon
             String tabName = "АМ СК";
             application.CreateRibbonTab(tabName);
 
-            RibbonPanel ribbonPanel = application.CreateRibbonPanel(tabName, "Подписи");
+            RibbonPanel ribbonPanel = application.CreateRibbonPanel(tabName, "Штампы");
 
             string thisAssemblyPath = Assembly.GetExecutingAssembly().Location;
 
+            
+            PushButtonData b13Data = new PushButtonData(
+                "cmdFillStamps",
+                "Заполнить" + System.Environment.NewLine + "штамп",
+                thisAssemblyPath,
+                "FillStamps.FillStamps");
+
+            PushButton pb13 = ribbonPanel.AddItem(b13Data) as PushButton;
+            pb13.ToolTip = "Заполняет штампы на выбранных листах.";
+            BitmapImage pb13Image = new BitmapImage(new Uri("pack://application:,,,/SKRibbon;component/Resources/stampFill.png"));
+            pb13.LargeImage = pb13Image;
+
+
             PushButtonData b1Data = new PushButtonData(
                 "cmdAddSignatureDWG",
-                "Проставить" + System.Environment.NewLine + "  DWG  ",
+                "Проставить" + System.Environment.NewLine + "подписи",
                 thisAssemblyPath,
                 "AddSignatures.AddSignaturesDWG");
 
@@ -37,7 +53,7 @@ namespace SKRibbon
 
             PushButtonData b2Data = new PushButtonData(
                 "cmdDeleteSignatureDWG",
-                "Удалить" + System.Environment.NewLine + "  DWG  ",
+                "Удалить" + System.Environment.NewLine + "подписи",
                 thisAssemblyPath,
                 "DeleteSignatures.DeleteSignaturesDWG");
 
@@ -148,6 +164,31 @@ namespace SKRibbon
             BitmapImage pb10Image = new BitmapImage(new Uri("pack://application:,,,/SKRibbon;component/Resources/whatDidTheyDo.png"));
             pb10.LargeImage = pb10Image;
 
+            // Добавляем панель "Всякое"
+            RibbonPanel rpSettings = application.CreateRibbonPanel(tabName, "Интерфейс");
+            // Кнопка Раскрасить
+            PushButtonData b11Data = new PushButtonData(
+               "cmdColorizeTabs",
+               "Раскрасить" + System.Environment.NewLine + "вкладки",
+               thisAssemblyPath,
+               "ColorizeTabs.ColorizeTabs");
+
+            PushButton pb11 = rpSettings.AddItem(b11Data) as PushButton;
+            pb11.ToolTip = "Раскрашивает вкладки";
+            BitmapImage pb11Image = new BitmapImage(new Uri("pack://application:,,,/SKRibbon;component/Resources/colorizeTabs.png"));
+            pb11.LargeImage = pb11Image;
+
+            // Кнопка Раскрасить
+            PushButtonData b12Data = new PushButtonData(
+               "cmdChangeColorSettings",
+               "Настройки" + System.Environment.NewLine + "цветов",
+               thisAssemblyPath,
+               "SKRibbon.ChangeTabColorSettings");
+
+            PushButton pb12 = rpSettings.AddItem(b12Data) as PushButton;
+            pb12.ToolTip = "Изменить настройки цветов";
+            BitmapImage pb12Image = new BitmapImage(new Uri("pack://application:,,,/SKRibbon;component/Resources/palette.png"));
+            pb12.LargeImage = pb12Image;
 
         }
         public Result OnShutdown(UIControlledApplication application)
@@ -157,7 +198,39 @@ namespace SKRibbon
         public Result OnStartup(UIControlledApplication application)
         {
             AddRibbonPanel(application);
+            application.ViewActivating += new EventHandler<ViewActivatingEventArgs>(this.OnViewActivating);
+
             return Result.Succeeded;
+        }
+
+        private void OnViewActivating(object sender, ViewActivatingEventArgs e) => (sender as UIApplication).Idling += new EventHandler<IdlingEventArgs>(this.OnIdling);
+
+        private void OnViewActivated(object sender, ViewActivatedEventArgs e) => (sender as UIApplication).Idling += new EventHandler<IdlingEventArgs>(this.OnIdling);
+
+        private void OnIdling(object sender, IdlingEventArgs e)
+        {
+            UIApplication uiApp = sender as UIApplication;
+            if (uiApp != null)
+            {                
+               ColorizeTabs.ColorizeTabs.RunCommand(uiApp, Properties.appSettings.Default.tabColorFlag);
+            }
+            uiApp.Idling -= new EventHandler<IdlingEventArgs>(this.OnIdling);
+        }
+        public List<SolidColorBrush> GetSavedColors(string[] colorHexes)
+        {
+            List<SolidColorBrush> brushList = new List<SolidColorBrush>();
+            foreach (string hex in colorHexes)
+            {
+                brushList.Add(HexToBrush(hex));
+            }
+            return brushList;
+        }
+        
+        public SolidColorBrush HexToBrush (string hex)
+        {
+            BrushConverter converter = new BrushConverter();
+            SolidColorBrush brush = (SolidColorBrush)converter.ConvertFromString(hex);
+            return brush;
         }
     }
 }

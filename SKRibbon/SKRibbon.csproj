@@ -36,6 +36,7 @@
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
     <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
     <Reference Include="RevitAPI">
       <HintPath>..\..\..\..\..\..\Program Files\Autodesk\Revit 2021\RevitAPI.dll</HintPath>
       <Private>False</Private>
@@ -54,8 +55,30 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
+    <Reference Include="UIFramework">
+      <HintPath>..\..\..\..\..\..\Program Files\Autodesk\Revit 2021\UIFramework.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="WindowsBase" />
+    <Reference Include="Xceed.Wpf.AvalonDock">
+      <HintPath>..\..\..\..\..\..\Program Files\Autodesk\Revit 2021\Xceed.Wpf.AvalonDock.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Functions\FillStamps.cs" />
+    <Compile Include="Forms\FillStampsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FillStampsForm.Designer.cs" />
+    <Compile Include="Forms\ChangeColorSettingsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ChangeColorSettingsForm.Designer.cs">
+      <DependentUpon>ChangeColorSettingsForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Functions\ChangeTabColorSettings.cs" />
+    <Compile Include="Functions\ColorizeTabs.cs" />
     <Compile Include="Functions\FilterByPeople.cs" />
     <Compile Include="Forms\FilterByPeopleForm.cs">
       <SubType>Form</SubType>
@@ -101,6 +124,11 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\InfoListForm.Designer.cs" />
+    <Compile Include="Properties\appSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>appSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Functions\WhoDidThat.cs" />
     <Compile Include="Functions\RenameSheets.cs" />
@@ -124,6 +152,9 @@
     <Resource Include="Resources\renumber.png" />
     <Resource Include="Resources\infoLists.png" />
     <Resource Include="Resources\whatDidTheyDo.png" />
+    <Resource Include="Resources\colorizeTabs.png" />
+    <Resource Include="Resources\palette.png" />
+    <Resource Include="Resources\stampFill.png" />
     <Content Include="SKRibbon.addin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -132,8 +163,14 @@
     <EmbeddedResource Include="Forms\AddSigForm.resx">
       <DependentUpon>AddSigForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ChangeColorSettingsForm.resx">
+      <DependentUpon>ChangeColorSettingsForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\DeleteSigForm.resx">
       <DependentUpon>DeleteSigForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FillStampsForm.resx">
+      <DependentUpon>FillStampsForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\NewTotalForm.resx">
       <DependentUpon>NewTotalForm.cs</DependentUpon>
@@ -154,7 +191,12 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
+    <None Include="Properties\appSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>appSettings.Designer.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
