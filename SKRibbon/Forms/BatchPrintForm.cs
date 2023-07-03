@@ -15,6 +15,8 @@ using Autodesk.Revit.UI;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Drawing.Printing;
+using SKRibbon;
+using MJMCustomPrintForm;
 
 namespace BatchPrinting
 {
@@ -26,7 +28,7 @@ namespace BatchPrinting
         Dictionary<string, Dictionary<string, List<ViewSheet>>> buildingsDict = new Dictionary<string, Dictionary<string, List<ViewSheet>>>();
         string SavePath;
 
-        List<SheetSizes> SHEET_SIZES = new List<SheetSizes>() { 
+        List<SheetSizes> SHEET_SIZES = new List<SheetSizes>() {
             new SheetSizes(297.00, 210.00, "A4"),
             new SheetSizes(420.00, 297.00, "A3"),
             new SheetSizes(594.00, 420.00, "A2"),
@@ -59,6 +61,15 @@ namespace BatchPrinting
             {
                 Directory.CreateDirectory(SavePath);
             }
+            if (SKRibbon.Properties.appSettings.Default.printFolder.Length == 0)
+            {
+                SKRibbon.Properties.appSettings.Default.printFolder = SavePath;
+                SKRibbon.Properties.appSettings.Default.Save();
+            }
+            else
+            {
+                SavePath = SKRibbon.Properties.appSettings.Default.printFolder;
+            }
             this.AutoScroll = true;
 
             formWrapper.AutoSize = true;
@@ -66,76 +77,10 @@ namespace BatchPrinting
             formWrapper.Parent = this;
             this.Controls.Add(formWrapper);
 
-            //Собираем все листы в основу для древа
-            /* Словарь Зданий
-             *      Здание : Словарь Томов
-             *          Том : Список объектов
-             *              Объект ViewSheet
-             *                  
-            */
-
-            ICollection<Element> sheets = new FilteredElementCollector(Doc).
-                                            OfCategory(BuiltInCategory.OST_Sheets).
-                                            WhereElementIsNotElementType().
-                                            ToElements();
-            foreach (ViewSheet sheet in sheets)
-            {
-                Parameter tomeParam = sheet.LookupParameter("ADSK_Штамп Раздел проекта");
-                Parameter buildingParam = sheet.LookupParameter("ADSK_Примечание");
-                if (tomeParam != null && buildingParam != null)
-                {
-                    string tome = "<РАЗДЕЛ НЕ ЗАДАН>";
-                    string building = "<ПРИМЕЧАНИЕ НЕ ЗАДАНО>";
-                    if (tomeParam.AsString() != null && tomeParam.AsString() != "")
-                    {
-                        tome = tomeParam.AsString();
-                    }
-                    if (buildingParam.AsString() != null && buildingParam.AsString() != "")
-                    {
-                        building = buildingParam.AsString();
-                    }
-                    // Если в первом словаре нет такого здания, создаем его
-                    if (!buildingsDict.ContainsKey(building))
-                    {
-                        Dictionary<string, List<ViewSheet>> tomesDict = new Dictionary<string, List<ViewSheet>>();
-                        buildingsDict.Add(building, tomesDict);
-                    }
-                    // Если во вложенном словаре здания нет такого тома, создаем его
-                    if (!buildingsDict[building].ContainsKey(tome))
-                    {
-                        List<ViewSheet> sheetsList = new List<ViewSheet>();
-                        buildingsDict[building].Add(tome, sheetsList);
-                    }
-                    // Добавляем лист в нужный том
-                    buildingsDict[building][tome].Add(sheet);
-                }
-            } // Конец создания словаря листов
-
             // Создаем дерево листов проекта
-            TreeView tree = new TreeView();
-            foreach (var building in buildingsDict)
-            {
-                tree.Nodes.Add(building.Key);
-                Dictionary<string, List<ViewSheet>> tomes = building.Value;
+            buildingsDict = SKRibbon.FormUtils.CollectSheetDictionary(Doc, true);
+            TreeView tree = SKRibbon.FormUtils.CreateSheetTreeView(buildingsDict);
 
-                foreach (var tome in tomes)
-                {
-                    int buildingIndex = tree.Nodes.Count - 1;
-                    tree.Nodes[buildingIndex].Nodes.Add(tome.Key);
-                    List<ViewSheet> treeSheets = tome.Value;
-                    treeSheets = treeSheets.OrderBy(sheet => sheet.SheetNumber).ToList();
-                    //orderBy
-
-                    foreach (var sheet in treeSheets)
-                    {
-                        SheetTreeNode node = new SheetTreeNode();
-                        node.Text = sheet.SheetNumber + "   |   " + sheet.Name;
-                        node.sheet = sheet;
-                        int tomeIndex = tree.Nodes[buildingIndex].Nodes.Count - 1;
-                        tree.Nodes[buildingIndex].Nodes[tomeIndex].Nodes.Add(node);
-                    }
-                }
-            } // Конец построения дерева
             // Инициализируем параметры дерева и добавляем его в форму
             tree.CheckBoxes = true;
             tree.AfterCheck += node_AfterCheck;
@@ -228,7 +173,7 @@ namespace BatchPrinting
                 Width = width;
                 Name = name;
             }
-         }
+        }
 
         // --------------
         // События и методы
@@ -300,7 +245,7 @@ namespace BatchPrinting
             {
                 foreach (TreeNode tome in building.Nodes)
                 {
-                    foreach (SheetTreeNode sheet in tome.Nodes)
+                    foreach (SKRibbon.FormUtils.SheetTreeNode sheet in tome.Nodes)
                     {
                         if (!sheet.Checked)
                         {
@@ -318,7 +263,7 @@ namespace BatchPrinting
 
                         Parameter sheetHeight = sheetInstance.LookupParameter("Высота_Реальная");
                         Parameter sheetWidth = sheetInstance.LookupParameter("Ширина_Реальная");
-                                                
+
                         if (sheetHeight == null)
                         {
                             sheetHeight = sheetInstance.LookupParameter("Высота листа");
@@ -364,11 +309,11 @@ namespace BatchPrinting
                         printParam.Zoom = 100;
 
                         //Ориентация листа
-                        printParam.PageOrientation = (sheetHeightMM > sheetWidthMM) ? PageOrientationType.Portrait : PageOrientationType.Landscape;                        
+                        printParam.PageOrientation = (sheetHeightMM > sheetWidthMM) ? PageOrientationType.Portrait : PageOrientationType.Landscape;
 
                         string errorMessage = "Нестандартный размер листа ";
                         string currentPaperSize = "";
-                        
+
                         //Ищем, подходит ли размер под стандартные
                         SHEET_SIZES.ForEach(size =>
                             SetPaperSize(printersCB, sheetHeightMM, sheetWidthMM, size.Height, size.Width, size.Name, ref errorMessage, ref currentPaperSize)
@@ -403,7 +348,7 @@ namespace BatchPrinting
                             printManager.PrintSetup.Save();
 
                             FindAndFillSaveAsWindow(saveAsDialogCaption, filePath);
-                            printManager.SubmitPrint(sheet.sheet);                                       
+                            printManager.SubmitPrint(sheet.sheet);
                         } // Конец else от проверки формата
 
                         printManager.PrintSetup.Delete();
