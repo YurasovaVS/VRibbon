@@ -44,7 +44,9 @@ namespace SKRibbon.Forms
             header.Text = "Выберите листы, с которых хотите удалить подписи:";
 
             // Добавляем древо листов
-            TreeView sheetTree = new TreeView();
+            buildingsDict = FormUtils.CollectSheetDictionary(doc, true);
+            TreeView sheetTree = FormUtils.CreateSheetTreeView(buildingsDict);
+
             sheetTree.Parent = formWrapper;
             formWrapper.Controls.Add(sheetTree);
             sheetTree.Anchor = AnchorStyles.Top;
@@ -52,77 +54,6 @@ namespace SKRibbon.Forms
             sheetTree.Height = 200;
             sheetTree.CheckBoxes = true;
             sheetTree.AfterCheck += node_AfterCheck;
-
-
-            //Добавляем виды в чеклист
-            IEnumerable<Element> sheets = new FilteredElementCollector(doc).
-                                            OfCategory(BuiltInCategory.OST_Sheets).
-                                            WhereElementIsNotElementType().
-                                            ToElements();
-
-            Dictionary<string, Dictionary<string, List<ViewSheet>>> tempDict = new Dictionary<string, Dictionary<string, List<ViewSheet>>>();
-            foreach (ViewSheet sheet in sheets)
-            {
-                Parameter tomeParam = sheet.LookupParameter("ADSK_Штамп Раздел проекта");
-                Parameter buildingParam = sheet.LookupParameter("ADSK_Примечание");
-                if (tomeParam != null && buildingParam != null)
-                {
-                    string tome = "<РАЗДЕЛ НЕ ЗАДАН>";
-                    string building = "<ПРИМЕЧАНИЕ НЕ ЗАДАНО>";
-                    if (tomeParam.AsString() != null && tomeParam.AsString() != "")
-                    {
-                        tome = tomeParam.AsString();
-                    }
-                    if (buildingParam.AsString() != null && buildingParam.AsString() != "")
-                    {
-                        building = buildingParam.AsString();
-                    }
-                    // Если в первом словаре нет такого здания, создаем его
-                    if (!tempDict.ContainsKey(building))
-                    {
-                        Dictionary<string, List<ViewSheet>> tomesDict = new Dictionary<string, List<ViewSheet>>();
-                        tempDict.Add(building, tomesDict);
-                    }
-                    // Если во вложенном словаре здания нет такого тома, создаем его
-                    if (!tempDict[building].ContainsKey(tome))
-                    {
-                        List<ViewSheet> sheetsList = new List<ViewSheet>();
-                        tempDict[building].Add(tome, sheetsList);
-                    }
-                    // Добавляем лист в нужный том
-                    tempDict[building][tome].Add(sheet);
-                }
-            } // Конец создания словаря листов
-
-            // ОТСОРТИРОВАТЬ ВСЕ СПИСКИ
-            foreach (var building in tempDict)
-            {
-                Dictionary<string, List<ViewSheet>> tomesDict = new Dictionary<string, List<ViewSheet>>();
-                buildingsDict.Add(building.Key, tomesDict);
-                foreach (var tome in building.Value)
-                {
-                    List<ViewSheet> sheetsList = tome.Value.OrderBy(sheet => sheet.SheetNumber).ToList();
-                    buildingsDict[building.Key].Add(tome.Key, sheetsList);
-                }
-            }
-
-            foreach (var building in buildingsDict)
-            {
-                sheetTree.Nodes.Add(building.Key);
-                foreach (var tome in building.Value)
-                {
-                    int i = sheetTree.Nodes.Count - 1;
-                    sheetTree.Nodes[i].Nodes.Add(tome.Key);
-                    foreach (ViewSheet sheet in tome.Value)
-                    {
-                        int j = sheetTree.Nodes[i].Nodes.Count - 1;
-                        SheetNode newNode = new SheetNode();
-                        newNode.sheet = sheet;
-                        newNode.Text = sheet.SheetNumber + " - " + sheet.Name;
-                        sheetTree.Nodes[i].Nodes[j].Nodes.Add(newNode);
-                    }
-                }
-            }
 
             //Добавляем кнопку ОК
             Button button = new Button();
@@ -151,7 +82,7 @@ namespace SKRibbon.Forms
             {
                 foreach (TreeNode tome in building.Nodes)
                 {
-                    foreach (SheetNode sheetNode in tome.Nodes)
+                    foreach (FormUtils.SheetTreeNode sheetNode in tome.Nodes)
                     {
                         if (sheetNode.Checked)
                         {

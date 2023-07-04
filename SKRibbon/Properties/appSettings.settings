@@ -1,0 +1,15 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="SKRibbon.Properties" GeneratedClassName="appSettings">
+  <Profiles />
+  <Settings>
+    <Setting Name="tabColorFlag" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="tabColors" Type="System.String" Scope="User">
+      <Value Profile="(Default)">#B0C4DE,#F4A460,#E6E6FA,#DDA0DD,#20B2AA</Value>
+    </Setting>
+    <Setting Name="printFolder" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+  </Settings>
+</SettingsFile>

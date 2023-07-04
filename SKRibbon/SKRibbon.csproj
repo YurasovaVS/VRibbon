@@ -66,6 +66,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ElemTrackTest.cs" />
+    <Compile Include="Utils\MJMCustomPrintForm.cs" />
+    <Compile Include="Utils\FormUtils.cs" />
     <Compile Include="Functions\FillStamps.cs" />
     <Compile Include="Forms\FillStampsForm.cs">
       <SubType>Form</SubType>
@@ -155,6 +158,12 @@
     <Resource Include="Resources\colorizeTabs.png" />
     <Resource Include="Resources\palette.png" />
     <Resource Include="Resources\stampFill.png" />
+    <Resource Include="Resources\add_16.png" />
+    <Resource Include="Resources\delete_16.png" />
+    <Resource Include="Resources\stampFill_16.png" />
+    <Resource Include="Resources\copyLists_16.png" />
+    <Resource Include="Resources\pdf_16.png" />
+    <Resource Include="Resources\renumber_16.png" />
     <Content Include="SKRibbon.addin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

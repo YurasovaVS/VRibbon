@@ -44,7 +44,6 @@ namespace ColorizeTabs
             return Result.Succeeded;
         }
 
-
         // Доп. методы
         public static Visual GetWindowRoot(UIApplication uiapp)
         {
@@ -107,72 +106,68 @@ namespace ColorizeTabs
                 }
                 foreach (Document document in uiApp.Application.Documents)
                 {
-                    if (!document.IsLinked)
+                    if (document.IsLinked) continue;
+                    long apiDocumentId = GetAPIDocumentId(document);
+                    Brush brush1 = (Brush)null;
+                    if (DocumentBrushes.ContainsKey(apiDocumentId))
                     {
-                        long apiDocumentId = GetAPIDocumentId(document);
-                        Brush brush1 = (Brush)null;
-                        if (DocumentBrushes.ContainsKey(apiDocumentId))
+                        brush1 = DocumentBrushes[apiDocumentId];
+                    }
+                    else
+                    {
+                        if (!flag)
                         {
-                            brush1 = DocumentBrushes[apiDocumentId];
+                            foreach (Brush brush2 in DocumentBrushThemeWhite)
+                                brush1 = brush2;
                         }
                         else
                         {
-                            // if else нас уже не устраивает??? ----------------------------------------------------!!!
-                            if (!flag)
+                            foreach (Brush brush3 in DocumentBrushThemeColor)
                             {
-                                // Здесь можно сделать одно присвоение!!!------------------------------------------!!!!
-                                foreach (Brush brush2 in DocumentBrushThemeWhite)
-                                    brush1 = brush2;
-                            }
-                            if (flag)
-                            {
-                                foreach (Brush brush3 in DocumentBrushThemeColor)
+                                if (!DocumentBrushes.ContainsValue(brush3))
                                 {
-                                    if (!DocumentBrushes.ContainsValue(brush3))
-                                    {
-                                        brush1 = brush3;
-                                        break;
-                                    }
-                                }
-                            }
-                            DocumentBrushes[apiDocumentId] = brush1;
-                        }
-                        if (brush1 != null)
-                        {
-                            dictionary[apiDocumentId] = brush1;
-                            foreach (TabItem tab in documentTabs)
-                            {
-                                if (GetTabDocumentId(tab) == apiDocumentId)
-                                {
-                                    if (!flag)
-                                    {
-                                        if (tab.IsSelected)
-                                        {
-                                            tab.BorderBrush = (Brush)Brushes.White;
-                                            tab.Background = (Brush)Brushes.White;
-                                            tab.OpacityMask = (Brush)Brushes.White;
-                                        }
-                                        else
-                                        {
-                                            tab.BorderBrush = brush1;
-                                            tab.Background = brush1;
-                                            tab.OpacityMask = brush1;
-                                        }
-                                    }
-                                    else
-                                    {
-                                        tab.BorderBrush = brush1;
-                                        tab.Background = brush1;
-                                        tab.OpacityMask = brush1;
-                                        if (document.IsFamilyDocument)
-                                            tab.BorderThickness = new Thickness(1.0);
-                                        else
-                                            tab.BorderThickness = new Thickness(0.0, 1.0, 0.0, 0.0);
-                                    }
+                                    brush1 = brush3;
+                                    break;
                                 }
                             }
                         }
+                        DocumentBrushes[apiDocumentId] = brush1;
                     }
+
+                    if (brush1 == null) continue;
+
+                    dictionary[apiDocumentId] = brush1;
+                    foreach (TabItem tab in documentTabs)
+                    {
+                        if (GetTabDocumentId(tab) != apiDocumentId) continue;
+                        if (!flag)
+                        {
+                            if (tab.IsSelected)
+                            {
+                                tab.BorderBrush = (Brush)Brushes.White;
+                                tab.Background = (Brush)Brushes.White;
+                                tab.OpacityMask = (Brush)Brushes.White;
+                            }
+                            else
+                            {
+                                tab.BorderBrush = brush1;
+                                tab.Background = brush1;
+                                tab.OpacityMask = brush1;
+                            }
+                        }
+                        else
+                        {
+                            tab.BorderBrush = brush1;
+                            tab.Background = brush1;
+                            tab.OpacityMask = brush1;
+                            if (document.IsFamilyDocument)
+                                tab.BorderThickness = new Thickness(1.0);
+                            else
+                                tab.BorderThickness = new Thickness(0.0, 1.0, 0.0, 0.0);
+                        }
+
+                    }
+
                 }
                 DocumentBrushes = dictionary;
             }

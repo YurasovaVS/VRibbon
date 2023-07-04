@@ -225,8 +225,9 @@ namespace BatchPrinting
             FlowLayoutPanel optionsWrapper = (FlowLayoutPanel)formWrapper.Controls[1];
             System.Windows.Forms.ComboBox printersCB = (System.Windows.Forms.ComboBox)optionsWrapper.Controls[1];
             string saveAsDialogCaption = "";
+            string printerName = printersCB.SelectedItem.ToString();
 
-            switch (printersCB.SelectedItem.ToString())
+            switch (printerName)
             {
                 case "Adobe PDF":
                     saveAsDialogCaption = "Сохранить PDF-файл как";
@@ -283,6 +284,27 @@ namespace BatchPrinting
                         double sheetWidthMM = UnitUtils.ConvertFromInternalUnits(sheetWidth.AsDouble(), UnitTypeId.Millimeters);
                         double sheetHeightMM = UnitUtils.ConvertFromInternalUnits(sheetHeight.AsDouble(), UnitTypeId.Millimeters);
 
+                        
+                        string errorMessage = "Нестандартный размер листа ";
+                        string currentPaperSize = "";
+                        /*
+                        //Ищем, подходит ли размер под стандартные
+                        SHEET_SIZES.ForEach(size =>
+                            SetPaperSize(printersCB, sheetHeightMM, sheetWidthMM, size.Height, size.Width, size.Name, ref errorMessage, ref currentPaperSize)
+                        );
+                        */
+                        string exception = "";
+                        currentPaperSize = "Custom" + sheetWidthMM + "x" + sheetHeightMM;
+                        try
+                        {
+                            MJMCustomPrintForm.MJMCustomPrintForm.AddCustomPaperSize(printerName, currentPaperSize, (float)sheetWidthMM, (float)sheetHeightMM);
+                        }
+                        catch (Exception ex)
+                        {
+                            exception = ex.Message;
+                            sb.AppendLine("Не получилось добавить формат " + currentPaperSize);
+                        }
+
                         var printManager = Doc.PrintManager;
                         printManager.PrintSetup.CurrentPrintSetting = printManager.PrintSetup.InSession;
                         printManager.SelectNewPrintDriver(printersCB.SelectedItem.ToString());
@@ -311,20 +333,9 @@ namespace BatchPrinting
                         //Ориентация листа
                         printParam.PageOrientation = (sheetHeightMM > sheetWidthMM) ? PageOrientationType.Portrait : PageOrientationType.Landscape;
 
-                        string errorMessage = "Нестандартный размер листа ";
-                        string currentPaperSize = "";
-
-                        //Ищем, подходит ли размер под стандартные
-                        SHEET_SIZES.ForEach(size =>
-                            SetPaperSize(printersCB, sheetHeightMM, sheetWidthMM, size.Height, size.Width, size.Name, ref errorMessage, ref currentPaperSize)
-                        );
 
                         // Если формат подобран верно, печатаем, если нет, выдаем ошибку
-                        if (currentPaperSize == "")
-                        {
-                            sb.AppendLine(errorMessage + sheet.sheet.SheetNumber + " - " + sheet.sheet.Name);
-                        }
-                        else
+                        if (exception == "")                        
                         {
                             PaperSizeSet paperSizeSet = printManager.PaperSizes;
                             foreach (Autodesk.Revit.DB.PaperSize paperSize in paperSizeSet)
@@ -349,7 +360,7 @@ namespace BatchPrinting
 
                             FindAndFillSaveAsWindow(saveAsDialogCaption, filePath);
                             printManager.SubmitPrint(sheet.sheet);
-                        } // Конец else от проверки формата
+                        } 
 
                         printManager.PrintSetup.Delete();
                     } // Конец перебора листов                    
