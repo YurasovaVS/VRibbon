@@ -10,6 +10,13 @@ namespace SKRibbon
 {
     internal class ElemTrackTest
     {
+        public ElemTrackTest() 
+        { 
+        }
+        public static void SubscribeToDocChanged()
+        {
+
+        }
 
     }
 }

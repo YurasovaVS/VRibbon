@@ -18,9 +18,12 @@ namespace SKRibbon
     [Transaction(TransactionMode.Manual)]
     public class App : IExternalApplication
     {
+        UIApplication uiApp_cached = null;
         static void AddRibbonPanel(UIControlledApplication application)
         {
-            String tabName = "АМ СК";
+            string version = "v1.2";
+
+            String tabName = "Витрувий," + System.Environment.NewLine + "помоги!";
             application.CreateRibbonTab(tabName);
             
             // Создаем панельки на вкладке
@@ -29,6 +32,7 @@ namespace SKRibbon
             RibbonPanel rpCopyLists = application.CreateRibbonPanel(tabName, "Листы");
             RibbonPanel rpTeam = application.CreateRibbonPanel(tabName, "Злой начальник");
             RibbonPanel rpSettings = application.CreateRibbonPanel(tabName, "Интерфейс");
+            RibbonPanel rpInfo = application.CreateRibbonPanel(tabName, "Информация");
 
             string thisAssemblyPath = Assembly.GetExecutingAssembly().Location;
             // ------------------------------------------------------
@@ -60,35 +64,7 @@ namespace SKRibbon
                             )
                 );           
 
-            /*
-            // Кнопка заполнения штампов
-            AddPushPutton(ribbonPanel, 
-                            "cmdFillStamps", 
-                            "Заполнить" + System.Environment.NewLine + "штамп", 
-                            thisAssemblyPath, 
-                            "FillStamps.FillStamps", 
-                            "stampFill.png",
-                            "Заполняет штампы на выбранных листах."
-                            );
-            // Кнопка проставления подписей
-            AddPushPutton(ribbonPanel,
-                            "cmdAddSignatureDWG",
-                            "Проставить" + System.Environment.NewLine + "подписи",
-                            thisAssemblyPath,
-                            "AddSignatures.AddSignaturesDWG",
-                            "add.png",
-                            "Проставляет на листах подписи, связанные с внешним DWG файлом. Подписи прикрепляются связью."
-                            );
-            // Кнопка удаления подписей
-            AddPushPutton(ribbonPanel,
-                            "cmdDeleteSignatureDWG",
-                            "Удалить" + System.Environment.NewLine + "подписи",
-                            thisAssemblyPath,
-                            "DeleteSignatures.DeleteSignaturesDWG",
-                            "delete.png",
-                            "Удаляет на выбранных листах подписи, связанные с внешним DWG файлом."
-                            );
-            */
+          
 
             // ------------------------------------------------------
             //Кнопка рассчета новых площадей
@@ -98,7 +74,8 @@ namespace SKRibbon
                             thisAssemblyPath,
                             "FakeArea.AdjustExistingAreas",
                             "fakeArea.png",
-                            "Корректирует площади помещений выбранной категории (по функции), приводя их общую площадь к искомому значению. Новая площадь прописывается в параметр \"Комментарий\""
+                            "Корректирует площади помещений выбранной категории (по функции), приводя их общую площадь к искомому значению. Новая площадь прописывается в параметр \"Комментарий\"",
+                            true
                             );
             //Кнопка замены марок на определенных видах
             AddPushPutton(rpAreas,
@@ -107,7 +84,8 @@ namespace SKRibbon
                             thisAssemblyPath,
                             "ReplaceAreaTags.ReplaceTags",
                             "replaceTags.png",
-                            "Заменяет марки определенного типа на нужных листах"
+                            "Заменяет марки определенного типа на нужных листах",
+                            true
                             );
             // ------------------------------------------------------
 
@@ -138,36 +116,6 @@ namespace SKRibbon
                             )
                 );
 
-            /*
-            // Кнопка копирования листов
-            AddPushPutton(rpCopyLists,
-                            "cmdCopyLists",
-                            "Дублировать" + System.Environment.NewLine + " в проекте ",
-                            thisAssemblyPath,
-                            "CopyListsTree.CopyLists",
-                            "copyLists.png",
-                            "По выбору пользователя дублирует существующие в проекте листы"
-                            );
-            // Кнопка печати в PDF
-            AddPushPutton(rpCopyLists,
-                            "cmdPrintToPdf",
-                            "Вывести в PDF",
-                            thisAssemblyPath,
-                            "BatchPrinting.BatchPrintSheets",
-                            "pdf.png",
-                            "Вывод листов в PDF"
-                            );
-            // Кнопка перенумерации листов
-            AddPushPutton(rpCopyLists,
-                            "cmdRenumSheets",
-                            "Ренумерация",
-                            thisAssemblyPath,
-                            "SheetRenamer.RenameSheets",
-                            "renumber.png",
-                            "Меняет нумерацию листов в выбранном томе, начиная с выбранного листа"
-                            );
-            */
-
             // Кнопка ИУЛов
             AddPushPutton(rpCopyLists,
                             "cmdCreateInfoLists",
@@ -175,7 +123,8 @@ namespace SKRibbon
                             thisAssemblyPath,
                             "InfoListMaker.CreateInfoList",
                             "infoLists.png",
-                            "Создает ИУЛы для выбранных томов"
+                            "Создает ИУЛы для выбранных томов",
+                            true
                             );
             // ------------------------------------------------------
             // Кнопка "Кто это сделал?!
@@ -185,7 +134,8 @@ namespace SKRibbon
                             thisAssemblyPath,
                             "WhoDidThat.WhoDidThat",
                             "whoDidThat.png",
-                            "Показывает, кто сделал, и кто последним изменил выбранные элементы"
+                            "Показывает, кто сделал, и кто последним изменил выбранные элементы",
+                            true
                             );
             // Кнопка "Что вы там натворили?!"
             AddPushPutton(rpTeam,
@@ -194,7 +144,8 @@ namespace SKRibbon
                             thisAssemblyPath,
                             "FilterByPeople.FilterByPeople",
                             "whatDidTheyDo.png",
-                            "Фильтрует выделенные элементы по создателю, последнему изменившему или заемщику"
+                            "Фильтрует выделенные элементы по создателю, последнему изменившему или заемщику",
+                            true
                             );
             // ------------------------------------------------------
             // Кнопка "Раскрасить вкладки"
@@ -204,7 +155,8 @@ namespace SKRibbon
                             thisAssemblyPath,
                             "ColorizeTabs.ColorizeTabs",
                             "colorizeTabs.png",
-                            "Раскрашивает вкладки"
+                            "Раскрашивает вкладки",
+                            true
                             );
             // Кнопка "Настроить цвета"
             AddPushPutton(rpSettings,
@@ -213,7 +165,20 @@ namespace SKRibbon
                             thisAssemblyPath,
                             "SKRibbon.ChangeTabColorSettings",
                             "palette.png",
-                            "Изменить настройки цветов"
+                            "Изменить настройки цветов",
+                            true
+                            );
+
+            //------------------------------------------------------
+            // Кнопка "О программе"
+            AddPushPutton(rpInfo,
+                            "cmdInfo",
+                            "О программе",
+                            thisAssemblyPath,
+                            "SKRibbon.Functions.Info",
+                            "info.png",
+                            "Важная информация",
+                            false
                             );
         }
         public Result OnShutdown(UIControlledApplication application)
@@ -224,6 +189,7 @@ namespace SKRibbon
         {
             AddRibbonPanel(application);
             application.ViewActivating += new EventHandler<ViewActivatingEventArgs>(this.OnViewActivating);
+            
             
             return Result.Succeeded;
         }
@@ -241,7 +207,22 @@ namespace SKRibbon
                ColorizeTabs.ColorizeTabs.RunCommand(uiApp, Properties.appSettings.Default.tabColorFlag);
             }
             uiApp.Idling -= new EventHandler<IdlingEventArgs>(this.OnIdling);
+            // Кручу-верчу на DocumentChanged подписаться хочу
+            /*
+            if (uiApp_cached == null)
+            {
+                uiApp_cached = uiApp;
+                uiApp.Application.DocumentChanged += new EventHandler<DocumentChangedEventArgs>(this.OnDocumentChanged);
+            }*/
         }
+        /*
+        private void OnDocumentChanged(object sender, DocumentChangedEventArgs e)
+        {
+            Document doc = e.GetDocument();
+            ICollection addedElements e.GetAddedElementIds();
+        }
+          */      
+
         public List<SolidColorBrush> GetSavedColors(string[] colorHexes)
         {
             List<SolidColorBrush> brushList = new List<SolidColorBrush>();
@@ -259,7 +240,7 @@ namespace SKRibbon
             return brush;
         }
 
-        private static void AddPushPutton(RibbonPanel ribbonPanel, string cmdName, string cmdTitle, string thisAssemblyPath, string moduleName, string imgName, string tooltip)
+        private static void AddPushPutton(RibbonPanel ribbonPanel, string cmdName, string cmdTitle, string thisAssemblyPath, string moduleName, string imgName, string tooltip, bool enabled)
         {
             PushButtonData bData = new PushButtonData(
                 cmdName,
@@ -272,6 +253,7 @@ namespace SKRibbon
             string imgPath = "pack://application:,,,/SKRibbon;component/Resources/" + imgName;
             BitmapImage pbImage = new BitmapImage(new Uri(imgPath));
             pb.LargeImage = pbImage;
+            pb.Enabled = enabled;
         }
 
         private static PushButtonData AddStackedButton (string cmdName, string cmdTitle, string thisAssemblyPath, string moduleName, string smallImg, string largeImg, string tooltip)

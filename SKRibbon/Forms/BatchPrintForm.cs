@@ -17,6 +17,7 @@ using System.Text.RegularExpressions;
 using System.Drawing.Printing;
 using SKRibbon;
 using MJMCustomPrintForm;
+using Autodesk.Revit.DB.Architecture;
 
 namespace BatchPrinting
 {
@@ -27,6 +28,10 @@ namespace BatchPrinting
         FlowLayoutPanel formWrapper = new FlowLayoutPanel();
         Dictionary<string, Dictionary<string, List<ViewSheet>>> buildingsDict = new Dictionary<string, Dictionary<string, List<ViewSheet>>>();
         string SavePath;
+
+
+        CheckBox cropRegionCheckBox = new CheckBox();
+        System.Windows.Forms.ComboBox colorModeSelection = new System.Windows.Forms.ComboBox();
 
         List<SheetSizes> SHEET_SIZES = new List<SheetSizes>() {
             new SheetSizes(297.00, 210.00, "A4"),
@@ -71,6 +76,9 @@ namespace BatchPrinting
                 SavePath = SKRibbon.Properties.appSettings.Default.printFolder;
             }
             this.AutoScroll = true;
+            this.Width = 710;
+            this.Height = 480;
+            this.FormBorderStyle = FormBorderStyle.FixedSingle;
 
             formWrapper.AutoSize = true;
             formWrapper.FlowDirection = FlowDirection.LeftToRight;
@@ -86,7 +94,7 @@ namespace BatchPrinting
             tree.AfterCheck += node_AfterCheck;
             tree.Width = 300;
             tree.Height = 400;
-            tree.Margin = new Padding(0, 10, 0, 0);
+            tree.Margin = new Padding(20, 10, 0, 0);
             tree.Parent = formWrapper;
             formWrapper.Controls.Add(tree);
             tree.Anchor = AnchorStyles.Left;
@@ -114,9 +122,7 @@ namespace BatchPrinting
             printersListCB.Size = new Size(300, 30);
             foreach (string printer in System.Drawing.Printing.PrinterSettings.InstalledPrinters)
             {
-                if ((printer == "Adobe PDF") ||
-                    (printer == "Microsoft Print to PDF")
-                    )
+                if ((printer == "Adobe PDF"))
                     printersListCB.Items.Add(printer);
             }
             printersListCB.SelectedIndex = 0;
@@ -134,22 +140,59 @@ namespace BatchPrinting
             // Добавляем кнопку пути
             Button pathButton = new Button();
             pathButton.Text = "Выбрать другую папку";
-            pathButton.Size = new Size(100, 30);
+            pathButton.Size = new Size(300, 30);
             pathButton.Margin = new Padding(0, 0, 0, 30);
             pathButton.Click += ChooseFolder;
             pathButton.Parent = optionsWrapper;
             optionsWrapper.Controls.Add(pathButton);
             pathButton.Anchor = AnchorStyles.Left;
 
+            // Добавляем галку "Скрыть области подрезки"
+            cropRegionCheckBox.Text = "Скрыть область подрезки";
+            cropRegionCheckBox.Size = new Size(300, 30);
+            cropRegionCheckBox.Margin = new Padding(0, 0, 0, 10);
+            cropRegionCheckBox.Parent = optionsWrapper;
+            optionsWrapper.Controls.Add(cropRegionCheckBox);
+            cropRegionCheckBox.Anchor = AnchorStyles.Left;
+
+            // Добавляем заголовок режима цвета
+            Label colorModeHeader = new Label();
+            colorModeHeader.Size = new Size(300, 30);
+            colorModeHeader.Margin = new Padding(0, 10, 0, 0);
+            colorModeHeader.Text = "Выберите цветовой режим:";
+            colorModeHeader.Parent = optionsWrapper;
+            optionsWrapper.Controls.Add(colorModeHeader);
+
+            // Добавляем режим цвета (Цвет/ЧБ/Монохром)
+            colorModeSelection.Items.Add("Цветная");
+            colorModeSelection.Items.Add("Черно-белая");
+            colorModeSelection.Items.Add("Оттенки серого");
+            colorModeSelection.Width = 300;
+            colorModeSelection.SelectedIndex = 0;
+            
+            colorModeSelection.Parent = optionsWrapper;
+            optionsWrapper.Controls.Add(colorModeSelection);
+            colorModeSelection.Anchor = AnchorStyles.Left;
+
+            // Добавляем разделитель
+            Label divider = new Label();
+            divider.Text = "";
+            divider.AutoSize = false;
+            divider.Height = 2;
+            divider.Width = 300;
+            divider.BorderStyle = BorderStyle.Fixed3D;
+            divider.Parent = optionsWrapper;
+            optionsWrapper.Controls.Add(divider);
+            divider.Anchor = AnchorStyles.Top;
+
             // Добавляем кнопку запуска программы
             Button okButton = new Button();
             okButton.Text = "Вывести листы";
-            okButton.Size = new Size(100, 60);
+            okButton.Size = new Size(200, 60);
             okButton.Click += PrintSheets;
             okButton.Parent = optionsWrapper;
             optionsWrapper.Controls.Add(okButton);
-            okButton.Anchor = AnchorStyles.Left;
-
+            okButton.Anchor = AnchorStyles.Bottom;
 
         }
 
@@ -215,6 +258,8 @@ namespace BatchPrinting
             {
                 displayPath.Text = dialog.SelectedPath;
                 SavePath = dialog.SelectedPath;
+                SKRibbon.Properties.appSettings.Default.printFolder = SavePath;
+                SKRibbon.Properties.appSettings.Default.Save();
             }
         }
 
@@ -307,6 +352,23 @@ namespace BatchPrinting
 
                         var printManager = Doc.PrintManager;
                         printManager.PrintSetup.CurrentPrintSetting = printManager.PrintSetup.InSession;
+                        printManager.PrintSetup.CurrentPrintSetting.PrintParameters.HideCropBoundaries = cropRegionCheckBox.Checked;
+                        
+                        switch (colorModeSelection.SelectedIndex)
+                        {
+                            case 0:
+                                printManager.PrintSetup.CurrentPrintSetting.PrintParameters.ColorDepth = ColorDepthType.Color;
+                                break;
+
+                            case 1:
+                                printManager.PrintSetup.CurrentPrintSetting.PrintParameters.ColorDepth = ColorDepthType.BlackLine;
+                                break;
+
+                            case 2:
+                                printManager.PrintSetup.CurrentPrintSetting.PrintParameters.ColorDepth = ColorDepthType.GrayScale;
+                                break;
+                        }
+
                         printManager.SelectNewPrintDriver(printersCB.SelectedItem.ToString());
                         printManager.PrintSetup.SaveAs("NewPrint");
 

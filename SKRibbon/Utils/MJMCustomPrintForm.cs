@@ -64,7 +64,7 @@ namespace MJMCustomPrintForm
         };
 
         [StructLayout(LayoutKind.Sequential, CharSet=CharSet.Ansi/* changed from CharSet=CharSet.Auto */)]
-			internal struct structDevMode
+		internal struct structDevMode
 		{
 			[MarshalAs(UnmanagedType.ByValTStr, SizeConst=32)] public String
 				dmDeviceName;
@@ -101,19 +101,18 @@ namespace MJMCustomPrintForm
 			[MarshalAs(UnmanagedType.U4)] public int dmReserved2;
 		}
 
-      [StructLayout(LayoutKind.Sequential, CharSet=CharSet.Auto)] 
-         internal struct PRINTER_INFO_9 
-      {
-         public IntPtr pDevMode;
-      }
+        [StructLayout(LayoutKind.Sequential, CharSet=CharSet.Auto)] 
+        internal struct PRINTER_INFO_9 
+        {
+            public IntPtr pDevMode;
+        }
 
 		[DllImport("winspool.Drv", EntryPoint="AddFormW", SetLastError=true,
 			 CharSet=CharSet.Unicode, ExactSpelling=true,
 			 CallingConvention=CallingConvention.StdCall), SuppressUnmanagedCodeSecurityAttribute()]
-		internal static extern bool AddForm(
-         IntPtr phPrinter,
-			[MarshalAs(UnmanagedType.I4)] int level, 
-         ref FormInfo1 form);
+		internal static extern bool AddForm(IntPtr phPrinter,
+			                                [MarshalAs(UnmanagedType.I4)] int level, 
+                                            ref FormInfo1 form);
 
 /*    This method is not used
 		[DllImport("winspool.Drv", EntryPoint="SetForm", SetLastError=true,
@@ -125,9 +124,7 @@ namespace MJMCustomPrintForm
 		[DllImport("winspool.Drv", EntryPoint="DeleteForm", SetLastError=true,
 			 CharSet=CharSet.Unicode, ExactSpelling=false,CallingConvention=CallingConvention.StdCall),
 		SuppressUnmanagedCodeSecurityAttribute()]
-		internal static extern bool DeleteForm(
-         IntPtr phPrinter,
-			[MarshalAs(UnmanagedType.LPTStr)] string pName);
+		internal static extern bool DeleteForm(IntPtr phPrinter,[MarshalAs(UnmanagedType.LPTStr)] string pName);
 
 		[DllImport("kernel32.dll", EntryPoint="GetLastError", SetLastError=false,
 			 ExactSpelling=true, CallingConvention=CallingConvention.StdCall),
@@ -148,10 +145,7 @@ namespace MJMCustomPrintForm
 			 CharSet=CharSet.Unicode, ExactSpelling=false,
 			 CallingConvention=CallingConvention.StdCall),
 		SuppressUnmanagedCodeSecurityAttribute()]
-		internal static extern IntPtr ResetDC(
-         IntPtr hDC, 
-         ref structDevMode
-			pDevMode);
+		internal static extern IntPtr ResetDC(IntPtr hDC, ref structDevMode	pDevMode);
 
 		[DllImport("GDI32.dll", EntryPoint="DeleteDC", SetLastError=true,
 			 CharSet=CharSet.Unicode, ExactSpelling=false,

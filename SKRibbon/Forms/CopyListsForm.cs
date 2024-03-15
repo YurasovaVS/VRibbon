@@ -6,12 +6,13 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Forms;
+using WinForms = System.Windows.Forms;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.Attributes;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 using System.Text.RegularExpressions;
+//using Microsoft.Office.Interop.Excel;
 
 namespace CopyListsTree
 {
@@ -57,6 +58,10 @@ namespace CopyListsTree
 
                 Parameter tomeParam = sheet.LookupParameter("ADSK_Штамп Раздел проекта");
                 Parameter buildingParam = sheet.LookupParameter("ADSK_Примечание");
+
+                if (tomeParam == null) tomeParam = sheet.LookupParameter("Раздел проекта");
+                if (buildingParam == null) buildingParam = sheet.LookupParameter("Примечание");
+
                 if (tomeParam != null && buildingParam != null)
                 {
                     string tome = "<РАЗДЕЛ НЕ ЗАДАН>";
@@ -87,9 +92,9 @@ namespace CopyListsTree
             } // Конец создания словаря листов
 
             //Создаем wrapper для всей формы
-            FlowLayoutPanel formWrapper = new FlowLayoutPanel();
-            formWrapper.BorderStyle = BorderStyle.FixedSingle;
-            formWrapper.FlowDirection = FlowDirection.LeftToRight;
+            WinForms.FlowLayoutPanel formWrapper = new WinForms.FlowLayoutPanel();
+            formWrapper.BorderStyle = WinForms.BorderStyle.FixedSingle;
+            formWrapper.FlowDirection = WinForms.FlowDirection.LeftToRight;
             formWrapper.AutoSize = true;
             this.Controls.Add(formWrapper);
             formWrapper.Parent = this;
@@ -124,54 +129,54 @@ namespace CopyListsTree
              * 
              */
 
-            FlowLayoutPanel treeWrapper = new FlowLayoutPanel();
+            WinForms.FlowLayoutPanel treeWrapper = new WinForms.FlowLayoutPanel();
             treeWrapper.Parent = formWrapper;
             formWrapper.Controls.Add(treeWrapper);
-            treeWrapper.FlowDirection = FlowDirection.TopDown;
+            treeWrapper.FlowDirection = WinForms.FlowDirection.TopDown;
             treeWrapper.AutoSize = true;
-            treeWrapper.Anchor = AnchorStyles.Left;
-            treeWrapper.BorderStyle = BorderStyle.FixedSingle;
+            treeWrapper.Anchor = WinForms.AnchorStyles.Left;
+            treeWrapper.BorderStyle = WinForms.BorderStyle.FixedSingle;
 
             foreach (var building in buildingsDict)
             {
                 // Создаем wrapper для здания
-                FlowLayoutPanel buildingWrapper = new FlowLayoutPanel();
+                WinForms.FlowLayoutPanel buildingWrapper = new WinForms.FlowLayoutPanel();
                 buildingWrapper.Parent = treeWrapper;
                 treeWrapper.Controls.Add(buildingWrapper);
-                buildingWrapper.FlowDirection = FlowDirection.TopDown;
+                buildingWrapper.FlowDirection = WinForms.FlowDirection.TopDown;
                 buildingWrapper.AutoSize = true;
-                buildingWrapper.Anchor = AnchorStyles.Left;
+                buildingWrapper.Anchor = WinForms.AnchorStyles.Left;
 
                 // Создаем заголовок
-                Label buildingHeader = new Label();
+                WinForms.Label buildingHeader = new WinForms.Label();
                 buildingHeader.Parent = buildingWrapper;
                 buildingWrapper.Controls.Add(buildingHeader);
                 buildingHeader.Text = building.Key;
                 buildingHeader.Width = 300;
 
                 // Создаем wrapper для томов этого здания
-                FlowLayoutPanel tomesWrapper = new FlowLayoutPanel();
+                WinForms.FlowLayoutPanel tomesWrapper = new WinForms.FlowLayoutPanel();
                 tomesWrapper.Parent = buildingWrapper;
                 buildingWrapper.Controls.Add(tomesWrapper);
-                tomesWrapper.FlowDirection = FlowDirection.TopDown;
+                tomesWrapper.FlowDirection = WinForms.FlowDirection.TopDown;
                 tomesWrapper.AutoSize = true;
-                tomesWrapper.Anchor = AnchorStyles.Left;
-                tomesWrapper.BorderStyle = BorderStyle.FixedSingle;
+                tomesWrapper.Anchor = WinForms.AnchorStyles.Left;
+                tomesWrapper.BorderStyle = WinForms.BorderStyle.FixedSingle;
 
                 Dictionary<string, List<ViewSheet>> tomes = building.Value;
 
                 foreach (var tome in tomes)
                 {
                     // Создаем wrapper ТОМА
-                    FlowLayoutPanel tomeWrapper = new FlowLayoutPanel();
+                    WinForms.FlowLayoutPanel tomeWrapper = new WinForms.FlowLayoutPanel();
                     tomeWrapper.Parent = tomesWrapper;
                     tomesWrapper.Controls.Add(tomeWrapper);
-                    tomeWrapper.FlowDirection = FlowDirection.TopDown;
+                    tomeWrapper.FlowDirection = WinForms.FlowDirection.TopDown;
                     tomeWrapper.AutoSize = true;
-                    tomeWrapper.Anchor = AnchorStyles.Left;
+                    tomeWrapper.Anchor = WinForms.AnchorStyles.Left;
 
                     // Создаем заголовок
-                    Label tomeHeader = new Label();
+                    WinForms.Label tomeHeader = new WinForms.Label();
                     tomeHeader.Parent = tomeWrapper;
                     tomeWrapper.Controls.Add(tomeHeader);
                     tomeHeader.Text = tome.Key;
@@ -179,12 +184,12 @@ namespace CopyListsTree
 
                     // Создаем wrapper для уже существующих листов
                     // Создаем wrapper для листов этого здания
-                    FlowLayoutPanel sheetsWrapper = new FlowLayoutPanel();
+                    WinForms.FlowLayoutPanel sheetsWrapper = new WinForms.FlowLayoutPanel();
                     sheetsWrapper.Parent = tomeWrapper;
                     tomeWrapper.Controls.Add(sheetsWrapper);
-                    sheetsWrapper.FlowDirection = FlowDirection.TopDown;
+                    sheetsWrapper.FlowDirection = WinForms.FlowDirection.TopDown;
                     sheetsWrapper.AutoSize = true;
-                    sheetsWrapper.Anchor = AnchorStyles.Left;
+                    sheetsWrapper.Anchor = WinForms.AnchorStyles.Left;
 
                     List<ViewSheet> viewSheets = tome.Value;
 
@@ -193,12 +198,12 @@ namespace CopyListsTree
                     foreach (ViewSheet viewSheet in viewSheets)
                     {
                         // Создаем обертку для листа
-                        FlowLayoutPanel sheetWrapper = new FlowLayoutPanel();
+                        WinForms.FlowLayoutPanel sheetWrapper = new WinForms.FlowLayoutPanel();
                         sheetWrapper.Parent = sheetsWrapper;
                         sheetsWrapper.Controls.Add(sheetWrapper);
-                        sheetWrapper.FlowDirection = FlowDirection.TopDown;
+                        sheetWrapper.FlowDirection = WinForms.FlowDirection.TopDown;
                         sheetWrapper.AutoSize = true;
-                        sheetWrapper.Anchor = AnchorStyles.Left;
+                        sheetWrapper.Anchor = WinForms.AnchorStyles.Left;
 
                         // Создаем кнопку с номером и названием листа
                         SheetButton button = new SheetButton();
@@ -213,51 +218,51 @@ namespace CopyListsTree
                         button.tomeName = tome.Key;
 
                         // Создаем wrapper для шаблонов копий листов
-                        FlowLayoutPanel templatesWrapper = new FlowLayoutPanel();
+                        WinForms.FlowLayoutPanel templatesWrapper = new WinForms.FlowLayoutPanel();
                         templatesWrapper.Parent = sheetWrapper;
                         sheetWrapper.Controls.Add(templatesWrapper);
-                        templatesWrapper.FlowDirection = FlowDirection.TopDown;
+                        templatesWrapper.FlowDirection = WinForms.FlowDirection.TopDown;
                         templatesWrapper.AutoSize = true;
-                        templatesWrapper.Anchor = AnchorStyles.Left;
+                        templatesWrapper.Anchor = WinForms.AnchorStyles.Left;
                     }
                 }
             }
 
             // Добавляем опции формы
-            FlowLayoutPanel optionsWrapper = new FlowLayoutPanel();
+            WinForms.FlowLayoutPanel optionsWrapper = new WinForms.FlowLayoutPanel();
             formWrapper.Controls.Add(optionsWrapper);
-            optionsWrapper.FlowDirection = FlowDirection.TopDown;
+            optionsWrapper.FlowDirection = WinForms.FlowDirection.TopDown;
             optionsWrapper.AutoSize = true;
-            optionsWrapper.Anchor = AnchorStyles.Top;
-            optionsWrapper.BorderStyle = BorderStyle.FixedSingle;
+            optionsWrapper.Anchor = WinForms.AnchorStyles.Top;
+            optionsWrapper.BorderStyle = WinForms.BorderStyle.FixedSingle;
 
             // Добавляем галочку для копирования данных штампов
-            CheckBox stampCheck = new CheckBox();
+            WinForms.CheckBox stampCheck = new WinForms.CheckBox();
             stampCheck.Text = "Копировать данные штампов";
             stampCheck.Width = 300;
 
             // Добавляем галочку для копирования видов
-            CheckBox viewsCheck = new CheckBox();
+            WinForms.CheckBox viewsCheck = new WinForms.CheckBox();
             viewsCheck.Text = "Копировать виды";
             viewsCheck.Width = 300;
 
             // Добавляем галочку для копирования легенд
-            CheckBox legendsCheck = new CheckBox();
+            WinForms.CheckBox legendsCheck = new WinForms.CheckBox();
             legendsCheck.Text = "Копировать легенды";
             legendsCheck.Width = 300;
 
             // Добавляем галочку для копирования спецификаций
-            CheckBox specCheck = new CheckBox();
+            WinForms.CheckBox specCheck = new WinForms.CheckBox();
             specCheck.Text = "Копировать спецификации";
             specCheck.Width = 300;
 
             // Добавляем галочку для копирования аннотативных объектов
-            CheckBox annoCheck = new CheckBox();
+            WinForms.CheckBox annoCheck = new WinForms.CheckBox();
             annoCheck.Text = "Копировать аннотативные объекты";
             annoCheck.Width = 300;
 
             // Добавляем кнопку ОК
-            Button OKbutton = new Button();
+            WinForms.Button OKbutton = new WinForms.Button();
             OKbutton.Text = "Начать копирование";
             OKbutton.Size = new Size(300, 50);
             OKbutton.Click += CopyLists;
@@ -286,22 +291,22 @@ namespace CopyListsTree
         public void AddTemplate(object sender, EventArgs e)
         {
             SheetButton button = (SheetButton)sender;
-            FlowLayoutPanel sheetWrapper = (FlowLayoutPanel)button.Parent;
-            FlowLayoutPanel templatesWrapper = (FlowLayoutPanel)sheetWrapper.Controls[1];
+            WinForms.FlowLayoutPanel sheetWrapper = (WinForms.FlowLayoutPanel)button.Parent;
+            WinForms.FlowLayoutPanel templatesWrapper = (WinForms.FlowLayoutPanel)sheetWrapper.Controls[1];
 
             // Задаем обертку строки шаблона ( Кнопка - Поле 1 - Поле 2 - Поле 3 - Поле 4 )
-            FlowLayoutPanel templateWrapper = new FlowLayoutPanel();            
+            WinForms.FlowLayoutPanel templateWrapper = new WinForms.FlowLayoutPanel();            
             templateWrapper.AutoSize = true;
-            templateWrapper.Anchor = AnchorStyles.Left;
-            templateWrapper.FlowDirection = FlowDirection.LeftToRight;
+            templateWrapper.Anchor = WinForms.AnchorStyles.Left;
+            templateWrapper.FlowDirection = WinForms.FlowDirection.LeftToRight;
 
             // Создаем кнопку
-            Button deleteButton = new Button();
+            WinForms.Button deleteButton = new WinForms.Button();
             deleteButton.Parent = templateWrapper;
             templateWrapper.Controls.Add(deleteButton);
             deleteButton.Text = "X";
             deleteButton.Size = new Size(20, 20);
-            deleteButton.Margin = new Padding(0, 0, 10, 0);
+            deleteButton.Margin = new WinForms.Padding(0, 0, 10, 0);
             deleteButton.Click += RemoveTemplate;
 
             // Создаем Поле 1 (ADSK_Примечание) (Номер здания)
@@ -310,7 +315,7 @@ namespace CopyListsTree
             templateWrapper.Controls.Add(buildingTB);
             buildingTB.Width = 100;
             buildingTB.Text = button.buildingName;
-            buildingTB.Margin = new Padding(0, 0, 10, 0);
+            buildingTB.Margin = new WinForms.Padding(0, 0, 10, 0);
 
             // Создаем Поле 2 (ADSK_Штамп Раздел проекта) (Название тома)
             System.Windows.Forms.TextBox tomeTB = new System.Windows.Forms.TextBox();
@@ -318,7 +323,7 @@ namespace CopyListsTree
             templateWrapper.Controls.Add(tomeTB);
             tomeTB.Width = 100;
             tomeTB.Text = button.tomeName;
-            tomeTB.Margin = new Padding(0, 0, 10, 0);
+            tomeTB.Margin = new WinForms.Padding(0, 0, 10, 0);
 
             // Создаем Поле З (Номер листа)
             System.Windows.Forms.TextBox numTB = new System.Windows.Forms.TextBox();
@@ -326,7 +331,7 @@ namespace CopyListsTree
             templateWrapper.Controls.Add(numTB);
             numTB.Width = 150;
             numTB.Text = button.sheet.SheetNumber;
-            numTB.Margin = new Padding(0, 0, 10, 0);
+            numTB.Margin = new WinForms.Padding(0, 0, 10, 0);
 
             // Создаем Поле 4 (Наименование листа)
             System.Windows.Forms.TextBox nameTB = new System.Windows.Forms.TextBox();
@@ -334,7 +339,7 @@ namespace CopyListsTree
             templateWrapper.Controls.Add(nameTB);
             nameTB.Width = 300;
             nameTB.Text = button.sheet.Name;
-            nameTB.Margin = new Padding(0, 0, 10, 0);
+            nameTB.Margin = new WinForms.Padding(0, 0, 10, 0);
 
             templateWrapper.Parent = templatesWrapper;
             templatesWrapper.Controls.Add(templateWrapper);
@@ -343,9 +348,9 @@ namespace CopyListsTree
         // 0.2. Удаление шаблона
         public void RemoveTemplate(object sender, EventArgs e)
         {
-            Button button = (Button)sender;
-            FlowLayoutPanel templateWrapper = (FlowLayoutPanel)button.Parent;
-            FlowLayoutPanel templatesWrapper = (FlowLayoutPanel)templateWrapper.Parent;
+            WinForms.Button button = (WinForms.Button)sender;
+            WinForms.FlowLayoutPanel templateWrapper = (WinForms.FlowLayoutPanel)button.Parent;
+            WinForms.FlowLayoutPanel templatesWrapper = (WinForms.FlowLayoutPanel)templateWrapper.Parent;
             int i = templatesWrapper.Controls.IndexOf(templateWrapper);
             templatesWrapper.Controls.RemoveAt(i);
         }
@@ -353,16 +358,16 @@ namespace CopyListsTree
         // 0.3. Копирование листов
 
         public void CopyLists(object sender, EventArgs e) 
-        {            
-            Button button = (Button)sender;
-            FlowLayoutPanel optionsWrapper = (FlowLayoutPanel)button.Parent;
+        {
+            WinForms.Button button = (WinForms.Button)sender;
+            WinForms.FlowLayoutPanel optionsWrapper = (WinForms.FlowLayoutPanel)button.Parent;
 
             // Считываем параметры копирования
-            CheckBox stampCheck = (CheckBox)optionsWrapper.Controls[0];
-            CheckBox viewsCheck = (CheckBox)optionsWrapper.Controls[1];
-            CheckBox legendsCheck = (CheckBox)optionsWrapper.Controls[2];
-            CheckBox specCheck = (CheckBox)optionsWrapper.Controls[3];
-            CheckBox annoCheck = (CheckBox)optionsWrapper.Controls[4];
+            WinForms.CheckBox stampCheck = (WinForms.CheckBox)optionsWrapper.Controls[0];
+            WinForms.CheckBox viewsCheck = (WinForms.CheckBox)optionsWrapper.Controls[1];
+            WinForms.CheckBox legendsCheck = (WinForms.CheckBox)optionsWrapper.Controls[2];
+            WinForms.CheckBox specCheck = (WinForms.CheckBox)optionsWrapper.Controls[3];
+            WinForms.CheckBox annoCheck = (WinForms.CheckBox)optionsWrapper.Controls[4];
 
             bool stampFlag = stampCheck.Checked;
             bool viewsFlag = viewsCheck.Checked;
@@ -371,27 +376,27 @@ namespace CopyListsTree
             bool annoFlag = annoCheck.Checked;
 
             // Находим форму
-            FlowLayoutPanel formWrapper = (FlowLayoutPanel)optionsWrapper.Parent;
-            FlowLayoutPanel treeWrapper = (FlowLayoutPanel)formWrapper.Controls[0];
+            WinForms.FlowLayoutPanel formWrapper = (WinForms.FlowLayoutPanel)optionsWrapper.Parent;
+            WinForms.FlowLayoutPanel treeWrapper = (WinForms.FlowLayoutPanel)formWrapper.Controls[0];
             // Открываем транзакцию
             Transaction t = new Transaction(Doc, "Скопировать листы");
             t.Start();
             // Пробегаем по форме
-            foreach (FlowLayoutPanel buildingWrapper in treeWrapper.Controls)
+            foreach (WinForms.FlowLayoutPanel buildingWrapper in treeWrapper.Controls)
             {
-                FlowLayoutPanel tomesWrapper = (FlowLayoutPanel)buildingWrapper.Controls[1];
+                WinForms.FlowLayoutPanel tomesWrapper = (WinForms.FlowLayoutPanel)buildingWrapper.Controls[1];
 
-                foreach (FlowLayoutPanel tomeWrapper in tomesWrapper.Controls)
+                foreach (WinForms.FlowLayoutPanel tomeWrapper in tomesWrapper.Controls)
                 {
-                    FlowLayoutPanel sheetsWrapper = (FlowLayoutPanel)tomeWrapper.Controls[1];
+                    WinForms.FlowLayoutPanel sheetsWrapper = (WinForms.FlowLayoutPanel)tomeWrapper.Controls[1];
 
-                    foreach (FlowLayoutPanel sheetWrapper in sheetsWrapper.Controls)
+                    foreach (WinForms.FlowLayoutPanel sheetWrapper in sheetsWrapper.Controls)
                     {
                         SheetButton origSheetButton = (SheetButton)sheetWrapper.Controls[0];
                         ViewSheet originalSheet = origSheetButton.sheet;
-                        FlowLayoutPanel templatesWrapper = (FlowLayoutPanel)sheetWrapper.Controls[1];
+                        WinForms.FlowLayoutPanel templatesWrapper = (WinForms.FlowLayoutPanel)sheetWrapper.Controls[1];
 
-                        foreach (FlowLayoutPanel templateWrapper in templatesWrapper.Controls)
+                        foreach (WinForms.FlowLayoutPanel templateWrapper in templatesWrapper.Controls)
                         {
                             System.Windows.Forms.TextBox buildingTB = (System.Windows.Forms.TextBox)templateWrapper.Controls[1];
                             System.Windows.Forms.TextBox tomeTB = (System.Windows.Forms.TextBox)templateWrapper.Controls[2];
@@ -426,16 +431,31 @@ namespace CopyListsTree
                             newSheet.SheetNumber = num;
 
                             //Прописываем параметр тома
-                            Parameter paramTome = newSheet.LookupParameter("ADSK_Штамп Раздел проекта");
+                            Autodesk.Revit.DB.Parameter paramTome = newSheet.LookupParameter("ADSK_Штамп Раздел проекта");
                             if (paramTome != null)
                             {
                                 paramTome.Set(tomeName);
                             }
+                            else {
+                                paramTome = newSheet.LookupParameter("Раздел проекта");
+                                if (paramTome != null)
+                                {
+                                    paramTome.Set(tomeName);
+                                }
+                            }
                             //Прописываем параметр здания
-                            Parameter paramBuilding = newSheet.LookupParameter("ADSK_Примечание");
+                            Autodesk.Revit.DB.Parameter paramBuilding = newSheet.LookupParameter("ADSK_Примечание");
                             if (paramBuilding != null)
                             {
                                 paramBuilding.Set(buildingName);
+                            }
+                            else
+                            {
+                                paramBuilding = newSheet.LookupParameter("Примечание");
+                                if (paramBuilding != null)
+                                {
+                                    paramBuilding.Set(buildingName);
+                                }
                             }
 
                             //Переносим с исходного листа выбранные элементы
@@ -592,7 +612,7 @@ namespace CopyListsTree
                 } // Конец перебора томов
             } // Конец перебора зданий
             t.Commit();
-            this.DialogResult = DialogResult.OK;
+            this.DialogResult = WinForms.DialogResult.OK;
             this.Close();
         } // Конец события CopyLists
     }
@@ -602,7 +622,7 @@ namespace CopyListsTree
     //-------------------------------------------
 
     // 1.1. Класс кнопки с существующим листом
-    public class SheetButton : Button
+    public class SheetButton : WinForms.Button
     {
         public ViewSheet sheet;
         public string buildingName;

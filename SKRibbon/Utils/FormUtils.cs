@@ -33,6 +33,9 @@ namespace SKRibbon
             {
                 Parameter tomeParam = sheet.LookupParameter("ADSK_Штамп Раздел проекта");
                 Parameter buildingParam = sheet.LookupParameter("ADSK_Примечание");
+
+                if (tomeParam == null) tomeParam = sheet.LookupParameter("Раздел проекта");
+                if (buildingParam == null) buildingParam = sheet.LookupParameter("Примечание");
                 if (tomeParam != null && buildingParam != null)
                 {
                     string tome = "<РАЗДЕЛ НЕ ЗАДАН>";

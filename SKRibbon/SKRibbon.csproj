@@ -67,6 +67,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ElemTrackTest.cs" />
+    <Compile Include="Forms\InfoForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\InfoForm.Designer.cs">
+      <DependentUpon>InfoForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Functions\Info.cs" />
     <Compile Include="Utils\MJMCustomPrintForm.cs" />
     <Compile Include="Utils\FormUtils.cs" />
     <Compile Include="Functions\FillStamps.cs" />
@@ -164,6 +171,7 @@
     <Resource Include="Resources\copyLists_16.png" />
     <Resource Include="Resources\pdf_16.png" />
     <Resource Include="Resources\renumber_16.png" />
+    <Resource Include="Resources\info.png" />
     <Content Include="SKRibbon.addin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -180,6 +188,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FillStampsForm.resx">
       <DependentUpon>FillStampsForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\InfoForm.resx">
+      <DependentUpon>InfoForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\NewTotalForm.resx">
       <DependentUpon>NewTotalForm.cs</DependentUpon>
