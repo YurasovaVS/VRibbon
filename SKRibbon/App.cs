@@ -65,7 +65,6 @@ namespace SKRibbon
                 );           
 
           
-
             // ------------------------------------------------------
             //Кнопка рассчета новых площадей
             AddPushPutton(rpAreas,
@@ -106,15 +105,26 @@ namespace SKRibbon
                             "pdf.png",
                             "Вывод листов в PDF"
                             ),
-                AddStackedButton("cmdRenumSheets",
+                AddStackedButton("cmdExportSheets",
+                            "Вывести в DWG",
+                            thisAssemblyPath,
+                            "SKRibbon.BatchDwgExport",
+                            "dwgExport_16.png",
+                            "dwgExport.png",
+                            "Экспортирует выбранные листы в DWG"
+                            )
+                );
+
+            // Кнопка Ренумерации
+            AddPushPutton(rpCopyLists,
+                            "cmdRenumSheets",
                             "Ренумерация",
                             thisAssemblyPath,
                             "SheetRenamer.RenameSheets",
-                            "renumber_16.png",
                             "renumber.png",
-                            "Меняет нумерацию листов в выбранном томе, начиная с выбранного листа"
-                            )
-                );
+                            "Меняет нумерацию листов в выбранном томе, начиная с выбранного листа",
+                            true
+                            );
 
             // Кнопка ИУЛов
             AddPushPutton(rpCopyLists,
