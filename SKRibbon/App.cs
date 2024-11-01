@@ -30,9 +30,11 @@ namespace SKRibbon
             RibbonPanel ribbonPanel = application.CreateRibbonPanel(tabName, "Штампы");
             RibbonPanel rpAreas = application.CreateRibbonPanel(tabName, "Скорректировать площади");
             RibbonPanel rpCopyLists = application.CreateRibbonPanel(tabName, "Листы");
+            RibbonPanel rpModellingTools = application.CreateRibbonPanel(tabName, "Модель");
             RibbonPanel rpTeam = application.CreateRibbonPanel(tabName, "Злой начальник");
             RibbonPanel rpSettings = application.CreateRibbonPanel(tabName, "Интерфейс");
             RibbonPanel rpInfo = application.CreateRibbonPanel(tabName, "Информация");
+
 
             string thisAssemblyPath = Assembly.GetExecutingAssembly().Location;
             // ------------------------------------------------------
@@ -136,6 +138,30 @@ namespace SKRibbon
                             "Создает ИУЛы для выбранных томов",
                             true
                             );
+            // ------------------------------------------------------
+            // Кнопка Исправить отзеркаленные двери
+            AddPushPutton(rpModellingTools,
+                            "cmdFixMirroredDoors",
+                            "Исправить двери",
+                            thisAssemblyPath,
+                            "SKRibbon.FixMirroredDoors",
+                            "fixMirroredDoors.png",
+                            "Исправляет отзеркаленные двери",
+                            true
+                            );
+
+            // Кнопка Создать спецификации помещений
+            AddPushPutton(rpModellingTools,
+                            "cmdCreateRoomSchedules",
+                            "Собрать экспликации",
+                            thisAssemblyPath,
+                            "SKRibbon.CreateRoomSchedules",
+                            "fixMirroredDoors.png",
+                            "Создать экспликации помещений по заданным этажам в соответствии с требованиями ГОСТ",
+                            true
+                            );
+
+
             // ------------------------------------------------------
             // Кнопка "Кто это сделал?!
             AddPushPutton(rpTeam,
