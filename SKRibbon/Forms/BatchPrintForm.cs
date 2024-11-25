@@ -417,7 +417,7 @@ namespace BatchPrinting
                             string filename = buildingName + tomeName + sheet.sheet.SheetNumber.ToString() + "_" + sheet.sheet.Name.ToString();
                             filename = Regex.Replace(filename, @"\p{C}+", string.Empty); ;
                             filename = Regex.Replace(filename, @"[\~#%&*{}/:<>?|"",;']", string.Empty);
-                            string filePath = SavePath + "\\" + filename + ".pdf";
+                            string filePath = SavePath + "\\" + Doc.Title + "_" + filename + ".pdf";
                             printManager.PrintSetup.Save();
 
                             FindAndFillSaveAsWindow(saveAsDialogCaption, filePath);

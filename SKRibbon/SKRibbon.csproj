@@ -66,6 +66,20 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Functions\CreateRoomSchedules.cs" />
+    <Compile Include="Forms\CreateRoomSchedulesForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\CreateRoomSchedulesForm.Designer.cs">
+      <DependentUpon>CreateRoomSchedulesForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Functions\FixMirroredDoors.cs" />
+    <Compile Include="Forms\FixMirroredDoorsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FixMirroredDoorsForm.Designer.cs">
+      <DependentUpon>FixMirroredDoorsForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\BatchDwgExportForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -181,6 +195,7 @@
     <Resource Include="Resources\info.png" />
     <Resource Include="Resources\dwgExport.png" />
     <Resource Include="Resources\dwgExport_16.png" />
+    <Resource Include="Resources\fixMirroredDoors.png" />
     <Content Include="SKRibbon.addin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
