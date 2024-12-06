@@ -41,6 +41,10 @@
       <HintPath>..\..\..\..\..\..\Program Files\Autodesk\Revit 2021\RevitAPI.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="RevitAPIIFC">
+      <HintPath>..\..\..\..\..\..\Program Files\Autodesk\Revit 2021\RevitAPIIFC.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="RevitAPIUI">
       <HintPath>..\..\..\..\..\..\Program Files\Autodesk\Revit 2021\RevitAPIUI.dll</HintPath>
       <Private>False</Private>
@@ -66,6 +70,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Forms\PlaceFloorsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\PlaceFloorsForm.Designer.cs">
+      <DependentUpon>PlaceFloorsForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Functions\CreateRoomSchedules.cs" />
     <Compile Include="Forms\CreateRoomSchedulesForm.cs">
       <SubType>Form</SubType>
@@ -95,6 +105,7 @@
       <DependentUpon>InfoForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Functions\Info.cs" />
+    <Compile Include="Functions\PlaceFloors.cs" />
     <Compile Include="Utils\MJMCustomPrintForm.cs" />
     <Compile Include="Utils\FormUtils.cs" />
     <Compile Include="Functions\FillStamps.cs" />
@@ -218,6 +229,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\NewTotalForm.resx">
       <DependentUpon>NewTotalForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\PlaceFloorsForm.resx">
+      <DependentUpon>PlaceFloorsForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\replaceTagsForm.resx">
       <DependentUpon>replaceTagsForm.cs</DependentUpon>

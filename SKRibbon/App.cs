@@ -150,14 +150,14 @@ namespace SKRibbon
                             true
                             );
 
-            // Кнопка Создать спецификации помещений
+            // Кнопка расставить полы
             AddPushPutton(rpModellingTools,
-                            "cmdCreateRoomSchedules",
-                            "Собрать экспликации",
+                            "cmdPlaceFloors",
+                            "Создать полы",
                             thisAssemblyPath,
-                            "SKRibbon.CreateRoomSchedules",
+                            "SKRibbon.PlaceFloors",
                             "fixMirroredDoors.png",
-                            "Создать экспликации помещений по заданным этажам в соответствии с требованиями ГОСТ",
+                            "Создать полы в комнатах",
                             true
                             );
 
