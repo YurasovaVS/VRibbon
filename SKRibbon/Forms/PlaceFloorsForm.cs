@@ -20,10 +20,14 @@ namespace SKRibbon
         Document Doc;
         List<Element> FloorTypes;
         WinForms.ComboBox floorTypesCB = new WinForms.ComboBox();
+        WinForms.ComboBox selectionCB = new WinForms.ComboBox();
+        WinForms.NumericUpDown offsetTB = new WinForms.NumericUpDown();
+        ICollection<ElementId> SelectionIds;
         public PlaceFloorsForm(Document doc, ICollection<ElementId> selectionIds)
         {
             InitializeComponent();
             Doc = doc;
+            SelectionIds = selectionIds;
 
             // Обертка для всей формы
             FlowLayoutPanel formWrapper = new FlowLayoutPanel();
@@ -49,15 +53,16 @@ namespace SKRibbon
             selectionLabel.Text = "Выбор помещений:";
             selectionLabel.Size = new Size(300, 20);
 
-            WinForms.ComboBox selectionCB = new WinForms.ComboBox();
+            
             selectionCB.Parent = optionsWrapper;
             optionsWrapper.Controls.Add(selectionCB);
             selectionCB.Items.Add("Во всем проекте");
             selectionCB.Items.Add("На текущем виде");
+            selectionCB.SelectedIndex = 0;
             if (selectionIds.Count > 0) {
                 selectionCB.Items.Add("Выбранные");
+                selectionCB.SelectedIndex = 2;
             }
-            selectionCB.SelectedIndex = 0;
             selectionCB.Size = new Size(300, 20);
 
 
@@ -70,7 +75,11 @@ namespace SKRibbon
             offsetLabel.Size = new Size(300, 20);
             offsetLabel.Padding = new Padding(0, 10, 0, 0);
 
-            WinForms.TextBox offsetTB = new WinForms.TextBox();
+
+            offsetTB.Increment = 1;
+            offsetTB.Maximum = 100000;
+            offsetTB.Minimum = -100000;
+            
             offsetTB.Parent = optionsWrapper;
             optionsWrapper.Controls.Add(offsetTB);
             offsetTB.Text = "0";
@@ -124,10 +133,31 @@ namespace SKRibbon
         {
 
 
-            ICollection<Element> rooms = new FilteredElementCollector(Doc).
+            ICollection<Element> rooms;
+            switch (selectionCB.SelectedIndex)
+            {
+                case (1):
+                    Autodesk.Revit.DB.View view = Doc.ActiveView;
+                    rooms = new FilteredElementCollector(Doc, view.Id).
                                                     OfCategory(BuiltInCategory.OST_Rooms).
                                                     WhereElementIsNotElementType().
                                                     ToElements();
+                    break;
+
+                case (2):                    
+                    rooms = new FilteredElementCollector(Doc, SelectionIds).
+                                                    OfCategory(BuiltInCategory.OST_Rooms).
+                                                    WhereElementIsNotElementType().
+                                                    ToElements();
+                    break;
+                default:
+                     rooms = new FilteredElementCollector(Doc).
+                                                    OfCategory(BuiltInCategory.OST_Rooms).
+                                                    WhereElementIsNotElementType().
+                                                    ToElements();
+                    break;
+            }
+
 
             Transaction t = new Transaction(Doc, "Создать полы");
             t.Start();
@@ -147,13 +177,16 @@ namespace SKRibbon
 
                 int index = floorTypesCB.SelectedIndex;
 
-
                 FloorType floorType = FloorTypes[index] as FloorType;
                 Level level = Doc.GetElement(room.LevelId) as Level;
-                Doc.Create.NewFloor(curveArray, floorType, level, false, XYZ.BasisZ);
+                Floor newFloor = Doc.Create.NewFloor(curveArray, floorType, level, false, XYZ.BasisZ);
+                Parameter floorOffsetParam = newFloor.LookupParameter("Смещение от уровня");
                 
-                //SketchPlane sp = SketchPlane.Create(Doc, level.Id);
-                //foreach (Curve c in curveArray) Doc.Create.NewModelCurve(c, sp);
+                if (floorOffsetParam != null) {
+                    Double value = Convert.ToDouble(offsetTB.Value);
+                    floorOffsetParam.SetValueString(offsetTB.Value.ToString());
+                }
+                
             }
 
             t.Commit();
