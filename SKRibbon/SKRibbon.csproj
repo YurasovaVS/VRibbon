@@ -207,6 +207,7 @@
     <Resource Include="Resources\dwgExport.png" />
     <Resource Include="Resources\dwgExport_16.png" />
     <Resource Include="Resources\fixMirroredDoors.png" />
+    <Resource Include="Resources\floor.png" />
     <Content Include="SKRibbon.addin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

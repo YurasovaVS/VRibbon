@@ -156,7 +156,7 @@ namespace SKRibbon
                             "Создать полы",
                             thisAssemblyPath,
                             "SKRibbon.PlaceFloors",
-                            "fixMirroredDoors.png",
+                            "floor.png",
                             "Создать полы в комнатах",
                             true
                             );
