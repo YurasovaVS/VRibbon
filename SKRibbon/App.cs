@@ -161,6 +161,17 @@ namespace SKRibbon
                             true
                             );
 
+            // Кнопка расставить полы
+            AddPushPutton(rpModellingTools,
+                            "cmdNumerateRooms",
+                            "Пронумеровать" + System.Environment.NewLine + "помещения",
+                            thisAssemblyPath,
+                            "SKRibbon.NumerateRooms",
+                            "numerateRooms.png",
+                            "Пронумеровать комнаты по методике метрополитена",
+                            true
+                            );
+
 
             // ------------------------------------------------------
             // Кнопка "Кто это сделал?!

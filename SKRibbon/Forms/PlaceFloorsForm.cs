@@ -199,7 +199,7 @@ namespace SKRibbon
                 CurveArray curveArray = new CurveArray();
 
                 IList<CurveLoop> curveLoops = ExpIFCUtils.GetRoomBoundaryAsCurveLoopArray(roomSE, boundaryOptions, true);
-           
+                if ((curveLoops == null) || (curveLoops.Count == 0)) continue; 
                 foreach (Curve curve in curveLoops[0]) {
                     curveArray.Append(curve);
                 }
@@ -211,13 +211,11 @@ namespace SKRibbon
                     int j = tempFloorTypesCB.SelectedIndex;
                     int index = (j >= floorTypes.Count)?floorTypesCB.SelectedIndex:j;
 
-
                     FloorType floorType = FloorTypes[index] as FloorType;
                     Level level = Doc.GetElement(room.LevelId) as Level;
                     Floor newFloor = Doc.Create.NewFloor(curveArray, floorType, level, false, XYZ.BasisZ);
                     Parameter floorOffsetParam = newFloor.LookupParameter("Смещение от уровня");
-
-                    
+                                     
 
                     if (floorOffsetParam != null)
                     {

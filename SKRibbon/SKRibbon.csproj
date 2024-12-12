@@ -106,6 +106,13 @@
     </Compile>
     <Compile Include="Functions\Info.cs" />
     <Compile Include="Functions\PlaceFloors.cs" />
+    <Compile Include="Functions\NumerateRooms.cs" />
+    <Compile Include="Forms\NumerateRoomsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\NumerateRoomsForm.Designer.cs">
+      <DependentUpon>NumerateRoomsForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Utils\MJMCustomPrintForm.cs" />
     <Compile Include="Utils\FormUtils.cs" />
     <Compile Include="Functions\FillStamps.cs" />
@@ -208,6 +215,7 @@
     <Resource Include="Resources\dwgExport_16.png" />
     <Resource Include="Resources\fixMirroredDoors.png" />
     <Resource Include="Resources\floor.png" />
+    <Resource Include="Resources\numerateRooms.png" />
     <Content Include="SKRibbon.addin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
