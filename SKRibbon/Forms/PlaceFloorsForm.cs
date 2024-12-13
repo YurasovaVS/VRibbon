@@ -111,7 +111,7 @@ namespace SKRibbon
                                                     OfCategory(BuiltInCategory.OST_Floors).
                                                     WhereElementIsElementType().
                                                     ToElements();
-            FloorTypes = floorTypes.ToList();
+            FloorTypes = floorTypes.OrderBy(p=>p.Name).ToList();
 
             foreach (Element floorType in FloorTypes) {
                 floorTypesCB.Items.Add(floorType.Name);
@@ -130,7 +130,7 @@ namespace SKRibbon
 
             // Обертка для настроек пола (Правая сторона)
             settingsWrapper.AutoSize = false;
-            settingsWrapper.Width = 700;
+            settingsWrapper.Width = 800;
             settingsWrapper.Height = 400;
             settingsWrapper.AutoScroll = true;
             settingsWrapper.FlowDirection = FlowDirection.LeftToRight;
@@ -146,6 +146,7 @@ namespace SKRibbon
                                                     ToElements();
             foreach (Element room in rooms) { 
                 Autodesk.Revit.DB.Parameter name = room.LookupParameter("Имя");
+                if (name == null) name = room.LookupParameter("Name");
                 if (name == null) continue;
                 if (roomTypes.Contains(name.AsString())) continue;
                 roomTypes.Add(name.AsString());
@@ -155,8 +156,6 @@ namespace SKRibbon
             foreach (string roomType in roomTypes) {
                 FlowLayoutPanel newRoomType = AddRoomTypeSettings(roomType);
             }
-
-            FloorTypes = floorTypes.ToList();
         }
 
         private void CreateFloors(object sender, EventArgs e)
@@ -205,6 +204,7 @@ namespace SKRibbon
                 }
 
                 Parameter roomName = room.LookupParameter("Имя");
+                if (roomName == null) roomName = room.LookupParameter("Name");
                 if (roomName != null) {
                     int i = roomTypes.IndexOf(roomName.AsString());
                     WinForms.ComboBox tempFloorTypesCB = (WinForms.ComboBox)settingsWrapper.Controls[i].Controls[1];
@@ -215,7 +215,8 @@ namespace SKRibbon
                     Level level = Doc.GetElement(room.LevelId) as Level;
                     Floor newFloor = Doc.Create.NewFloor(curveArray, floorType, level, false, XYZ.BasisZ);
                     Parameter floorOffsetParam = newFloor.LookupParameter("Смещение от уровня");
-                                     
+                    if (floorOffsetParam == null) floorOffsetParam = newFloor.LookupParameter("Height Offset From Level");
+
 
                     if (floorOffsetParam != null)
                     {
