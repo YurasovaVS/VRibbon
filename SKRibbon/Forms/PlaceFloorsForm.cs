@@ -27,11 +27,26 @@ namespace SKRibbon
         FlowLayoutPanel settingsWrapper = new FlowLayoutPanel();
         ICollection<ElementId> SelectionIds;
         List<string> roomTypes = new List<string>();
-        public PlaceFloorsForm(Document doc, ICollection<ElementId> selectionIds)
+
+        FunctionMode Mode;
+
+
+        public PlaceFloorsForm(Document doc, ICollection<ElementId> selectionIds, string mode)
         {
             InitializeComponent();
             Doc = doc;
             SelectionIds = selectionIds;
+
+
+            switch (mode) {
+                case "Полы":
+                    Mode = new FunctionMode(BuiltInCategory.OST_Floors, "полы");
+                    break;
+                case "Потолки":
+                    Mode = new FunctionMode(BuiltInCategory.OST_Ceilings, "потолки");
+                    break;
+
+            }
 
             // Обертка для всей формы
             FlowLayoutPanel formWrapper = new FlowLayoutPanel();
@@ -78,7 +93,7 @@ namespace SKRibbon
             WinForms.Label offsetLabel = new WinForms.Label();
             offsetLabel.Parent = optionsWrapper;
             optionsWrapper.Controls.Add(offsetLabel);
-            offsetLabel.Text = "Уровень пола от уровня этажа:";
+            offsetLabel.Text = "Отступ от уровня этажа:";
             offsetLabel.Size = new Size(300, 20);
             offsetLabel.Padding = new Padding(0, 10, 0, 0);
 
@@ -97,7 +112,7 @@ namespace SKRibbon
             WinForms.Label floorTypesLabel = new WinForms.Label();
             floorTypesLabel.Parent = optionsWrapper;
             optionsWrapper.Controls.Add(floorTypesLabel);
-            floorTypesLabel.Text = "Пол по умолчанию:";
+            floorTypesLabel.Text = "Тип по умолчанию:";
             floorTypesLabel.Size = new Size(300, 20);
             floorTypesLabel.Padding = new Padding(0, 10, 0, 0);
 
@@ -108,7 +123,7 @@ namespace SKRibbon
             floorTypesCB.Padding = new Padding(0, 5, 0, 0);
 
             floorTypes = new FilteredElementCollector(Doc).
-                                                    OfCategory(BuiltInCategory.OST_Floors).
+                                                    OfCategory(Mode.BuiltInCategory).
                                                     WhereElementIsElementType().
                                                     ToElements();
             FloorTypes = floorTypes.OrderBy(p=>p.Name).ToList();
@@ -187,8 +202,8 @@ namespace SKRibbon
                     break;
             }
 
-
-            Transaction t = new Transaction(Doc, "Создать полы");
+            
+            Transaction t = new Transaction(Doc, "Создать " + Mode.Name);
             t.Start();
 
             foreach (Element room in rooms)
@@ -305,6 +320,16 @@ namespace SKRibbon
             useDefault.Size = new Size(200, 20);
 
             return roomTypeSettings;
+        }
+
+        private class FunctionMode { 
+            public BuiltInCategory BuiltInCategory;
+            public string Name;
+            public FunctionMode (BuiltInCategory builtInCategory, string name)
+            {
+                BuiltInCategory = builtInCategory;
+                Name = name;                
+            }        
         }
     }
 }
