@@ -1,7 +1,60 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug 2021|AnyCPU'">
     <StartAction>Program</StartAction>
     <StartProgram>C:\Program Files\Autodesk\Revit 2021\Revit.exe</StartProgram>
   </PropertyGroup>
+  <ItemGroup>
+    <Compile Update="Forms\AddSigForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\BatchDwgExportForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\BatchPrintForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\ChangeColorSettingsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\CopyListsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\CreateRoomSchedulesForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\DeleteSigForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\FillStampsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\FilterByPeopleForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\FixMirroredDoorsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\InfoForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\InfoListForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\NewTotalForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\NumerateRoomsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\PlaceFloorsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\RenameSheetsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\replaceTagsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+  </ItemGroup>
 </Project>

@@ -1,18 +1,85 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<ResolveAssemlyWarningOnErrorOnTargetArchitectureMismatch>None</ResolveAssemlyWarningOnErrorOnTargetArchitectureMismatch>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+		<TargetFramework>net48</TargetFramework>
+		<OutputType>Library</OutputType>
+		<Configurations>Debug 2021;2021;Debug 2024;2024</Configurations>
+	</PropertyGroup>
+	
+	<!-- RevitVersion -->
+	<Choose>		
+		<When Condition="$(Configuration.Contains('2021'))">
+			<PropertyGroup>
+				<RevitVersion>2021</RevitVersion>
+				<TargetFramework>net48</TargetFramework>
+			</PropertyGroup>
+		</When>		
+		<When Condition="$(Configuration.Contains('2024'))">
+			<PropertyGroup>
+				<RevitVersion>2024</RevitVersion>
+				<TargetFramework>net48</TargetFramework>
+			</PropertyGroup>
+		</When>
+		<Otherwise>
+			<PropertyGroup>
+				<RevitVersion>2021</RevitVersion>
+				<TargetFramework>net48</TargetFramework>
+			</PropertyGroup>
+		</Otherwise>
+	</Choose>
+
+	<!-- Release -->
+	<PropertyGroup Condition="!$(Configuration.Contains('Debug'))">
+		<Optimize>true</Optimize>
+		<OutputPath>bin\Release\$(RevitVersion)\</OutputPath>
+		<DefineConstants>REVIT$(RevitVersion)</DefineConstants>
+		<NoWarn>MSB3052</NoWarn>
+		<DebugType>None</DebugType>
+	</PropertyGroup>
+
+	<!-- Debug -->
+	<PropertyGroup Condition="$(Configuration.Contains('Debug'))">
+		<DebugSymbols>true</DebugSymbols>
+		<OutputPath>bin\Debug\</OutputPath>
+		<DefineConstants>DEBUG;TRACE;REVIT$(RevitVersion)</DefineConstants>
+		<DebugType>Full</DebugType>
+	</PropertyGroup>
+
+	<!-- DebugRevitVersion -->
+	<PropertyGroup>
+		<DebugRevitVersion>$(RevitVersion)</DebugRevitVersion>
+		<StartAction>Program</StartAction>
+		<StartProgram>$(ProgramW6432)\Autodesk\Revit $(DebugRevitVersion)\Revit.exe</StartProgram>
+	</PropertyGroup>
+	
+	<!--
+	
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{74EA6100-7942-4C37-8722-8D539A0F9B1C}</ProjectGuid>
-    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SKRibbon</RootNamespace>
     <AssemblyName>SKRibbon</AssemblyName>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
   </PropertyGroup>
+
+	<PropertyGroup Condition=" '$(RevitVersion)' == '2021' ">
+		<PlatformTarget>x64</PlatformTarget>
+		<DefineConstants>$(DefineConstants);REVIT2021</DefineConstants>
+		<OutputPath>bin\$(Configuration)\2021</OutputPath>
+	</PropertyGroup>
+
+	<PropertyGroup Condition=" '$(RevitVersion)' == '2024' ">
+		<PlatformTarget>x64</PlatformTarget>
+		<DefineConstants>$(DefineConstants);REVIT2024</DefineConstants>
+		<OutputPath>bin\$(Configuration)\2024</OutputPath>
+	</PropertyGroup>
+	
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
@@ -22,6 +89,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+	
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
@@ -30,25 +98,115 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <ItemGroup>
+  
+	<ItemGroup Condition=" '$(RevitVersion)' == '2021' ">
+
+		<Reference Include="RevitAPI">
+			<HintPath>..\..\..\..\..\..\Program Files\Autodesk\Revit 2021\RevitAPI.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+		
+		<Reference Include="RevitAPIIFC">
+			<HintPath>..\..\..\..\..\..\Program Files\Autodesk\Revit 2021\RevitAPIIFC.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+
+		<Reference Include="RevitAPIUI">
+			<HintPath>..\..\..\..\..\..\Program Files\Autodesk\Revit 2021\RevitAPIUI.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+
+		<Reference Include="UIFramework">
+			<HintPath>..\..\..\..\..\..\Program Files\Autodesk\Revit 2021\UIFramework.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+
+		<Reference Include="Xceed.Wpf.AvalonDock">
+			<HintPath>..\..\..\..\..\..\Program Files\Autodesk\Revit 2021\Xceed.Wpf.AvalonDock.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+		
+	</ItemGroup>
+
+	<ItemGroup Condition=" '$(RevitVersion)' == '2024' ">
+
+		<Reference Include="RevitAPI">
+			<HintPath>..\..\..\..\..\..\Program Files\Autodesk\Revit 2024\RevitAPI.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+
+		<Reference Include="RevitAPIIFC">
+			<HintPath>..\..\..\..\..\..\Program Files\Autodesk\Revit 2024\RevitAPIIFC.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+
+		<Reference Include="RevitAPIUI">
+			<HintPath>..\..\..\..\..\..\Program Files\Autodesk\Revit 2024\RevitAPIUI.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+
+		<Reference Include="UIFramework">
+			<HintPath>..\..\..\..\..\..\Program Files\Autodesk\Revit 2024\UIFramework.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+
+		<Reference Include="Xceed.Wpf.AvalonDock">
+			<HintPath>..\..\..\..\..\..\Program Files\Autodesk\Revit 2024\Xceed.Wpf.AvalonDock.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+
+	</ItemGroup>
+-->
+	<ItemGroup>
+		<PackageReference Include="Revit_All_Main_Versions_API_x64" Version="$(RevitVersion).*" IncludeAssets="build; compile" PrivateAssets="All" />
+	
+	</ItemGroup>
+	
+	<ItemGroup Condition=" '$(RevitVersion)' == '2021' ">
+		
+		<Reference Include="RevitAPIIFC">
+			<HintPath>..\..\..\..\..\..\Program Files\Autodesk\Revit 2021\RevitAPIIFC.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+		
+		<Reference Include="UIFramework">
+			<HintPath>..\..\..\..\..\..\Program Files\Autodesk\Revit 2021\UIFramework.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+
+		<Reference Include="Xceed.Wpf.AvalonDock">
+			<HintPath>..\..\..\..\..\..\Program Files\Autodesk\Revit 2021\Xceed.Wpf.AvalonDock.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+
+	</ItemGroup>
+
+	<ItemGroup Condition=" '$(RevitVersion)' == '2024' ">
+
+		<Reference Include="RevitAPIIFC">
+			<HintPath>..\..\..\..\..\..\Program Files\Autodesk\Revit 2024\RevitAPIIFC.dll</HintPath>
+			<Private>False</Private>
+		</Reference>		
+
+		<Reference Include="UIFramework">
+			<HintPath>..\..\..\..\..\..\Program Files\Autodesk\Revit 2024\UIFramework.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+
+		<Reference Include="Xceed.Wpf.AvalonDock">
+			<HintPath>..\..\..\..\..\..\Program Files\Autodesk\Revit 2024\Xceed.Wpf.AvalonDock.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+	</ItemGroup>
+	
+
+	<ItemGroup>
     <Reference Include="Microsoft.Office.Interop.Excel, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Office.Interop.Excel.15.0.4795.1001\lib\net20\Microsoft.Office.Interop.Excel.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
     <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
-    <Reference Include="RevitAPI">
-      <HintPath>..\..\..\..\..\..\Program Files\Autodesk\Revit 2021\RevitAPI.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="RevitAPIIFC">
-      <HintPath>..\..\..\..\..\..\Program Files\Autodesk\Revit 2021\RevitAPIIFC.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="RevitAPIUI">
-      <HintPath>..\..\..\..\..\..\Program Files\Autodesk\Revit 2021\RevitAPIUI.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
+    <Reference Include="PresentationFramework" />	  
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -58,18 +216,12 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
-    <Reference Include="UIFramework">
-      <HintPath>..\..\..\..\..\..\Program Files\Autodesk\Revit 2021\UIFramework.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="WindowsBase" />
-    <Reference Include="Xceed.Wpf.AvalonDock">
-      <HintPath>..\..\..\..\..\..\Program Files\Autodesk\Revit 2021\Xceed.Wpf.AvalonDock.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
+    <Reference Include="System.Xml" />	  
+    <Reference Include="WindowsBase" /> 	  
   </ItemGroup>
+	
   <ItemGroup>
+	  <!--
     <Compile Include="Forms\PlaceFloorsForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -185,13 +337,17 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\RenameSheetsForm.Designer.cs" />
+	-->
   </ItemGroup>
+	
   <ItemGroup>
     <Resource Include="Resources\add.png" />
   </ItemGroup>
+	
   <ItemGroup>
     <Resource Include="Resources\delete.png" />
   </ItemGroup>
+	
   <ItemGroup>
     <Resource Include="Resources\fakeArea.png" />
     <Resource Include="Resources\replaceTags.png" />
@@ -220,7 +376,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+	
   <ItemGroup>
+	  <!--
     <EmbeddedResource Include="Forms\AddSigForm.resx">
       <DependentUpon>AddSigForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -245,7 +403,9 @@
     <EmbeddedResource Include="Forms\replaceTagsForm.resx">
       <DependentUpon>replaceTagsForm.cs</DependentUpon>
     </EmbeddedResource>
+	-->
   </ItemGroup>
+	
   <ItemGroup>
     <COMReference Include="Microsoft.Office.Core">
       <Guid>{2DF8D04C-5BFA-101B-BDE5-00AA0044DE52}</Guid>
@@ -257,6 +417,7 @@
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
   </ItemGroup>
+	
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
@@ -265,9 +426,24 @@
       <LastGenOutput>appSettings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+
+	<PropertyGroup>
+		<PostBuildEvent>
+			if exist "$(AppData)\Autodesk\REVIT\Addins\$(RevitVersion)" copy "$(SolutionDir)$(AssemblyName)\*.addin" "$(AppData)\Autodesk\REVIT\Addins\$(RevitVersion)"
+			if exist "$(AppData)\Autodesk\REVIT\Addins\$(RevitVersion)" copy "$(SolutionDir)$(AssemblyName)\$(OutputPath)*.dll" "$(AppData)\Autodesk\REVIT\Addins\$(RevitVersion)"
+		</PostBuildEvent>
+	</PropertyGroup>
+
+	<Target Name="CleanRevitAddin" BeforeTargets="CoreClean">
+	    <Message Text="Clean Revit Files" Importance="High" />
+		<Delete Files="$(AppData)\Autodesk\REVIT\Addins\$(RevitVersion)\$(AssemblyName).addin" />
+		<Delete Files="$(AppData)\Autodesk\REVIT\Addins\$(RevitVersion)\$(AssemblyName).dll" />
+	</Target>
+	
+	<!--
   <PropertyGroup>
     <PostBuildEvent>if exist "$(AppData)\Autodesk\REVIT\Addins\2021" copy "$(ProjectDir)*.addin" "$(AppData)\Autodesk\REVIT\Addins\2021"
 if exist "$(AppData)\Autodesk\REVIT\Addins\2021" copy "$(ProjectDir)$(OutputPath)*.dll" "$(AppData)\Autodesk\REVIT\Addins\2021"</PostBuildEvent>
   </PropertyGroup>
+  -->
 </Project>

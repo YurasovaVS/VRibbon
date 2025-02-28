@@ -228,7 +228,9 @@ namespace SKRibbon
 
                     FloorType floorType = FloorTypes[index] as FloorType;
                     Level level = Doc.GetElement(room.LevelId) as Level;
+#if DEBUG2021 || REVIT2021
                     Floor newFloor = Doc.Create.NewFloor(curveArray, floorType, level, false, XYZ.BasisZ);
+
                     Parameter floorOffsetParam = newFloor.LookupParameter("Смещение от уровня");
                     if (floorOffsetParam == null) floorOffsetParam = newFloor.LookupParameter("Height Offset From Level");
 
@@ -248,7 +250,10 @@ namespace SKRibbon
                         }
                         floorOffsetParam.SetValueString(value.ToString());
                     }
-                }                
+#elif DEBUG2024 || REVIT2024
+
+#endif
+                }
             }
 
             t.Commit();
