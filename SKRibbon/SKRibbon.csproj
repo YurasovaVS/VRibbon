@@ -6,6 +6,7 @@
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 		<TargetFramework>net48</TargetFramework>
 		<OutputType>Library</OutputType>
+		<UseWindowsForms>true</UseWindowsForms>
 		<Configurations>Debug 2021;2021;Debug 2024;2024</Configurations>
 	</PropertyGroup>
 	

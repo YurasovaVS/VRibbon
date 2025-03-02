@@ -21,7 +21,7 @@ namespace SKRibbon
         UIApplication uiApp_cached = null;
         static void AddRibbonPanel(UIControlledApplication application)
         {
-            string version = "v1.2";
+            string version = "v2.0";
 
             String tabName = "Витрувий," + System.Environment.NewLine + "помоги!";
             application.CreateRibbonTab(tabName);
@@ -161,7 +161,7 @@ namespace SKRibbon
                             true
                             );
 
-            // Кнопка расставить полы
+            // Кнопка нумерации помещений
             AddPushPutton(rpModellingTools,
                             "cmdNumerateRooms",
                             "Пронумеровать" + System.Environment.NewLine + "помещения",
@@ -169,6 +169,17 @@ namespace SKRibbon
                             "SKRibbon.NumerateRooms",
                             "numerateRooms.png",
                             "Пронумеровать комнаты по методике метрополитена",
+                            true
+                            );
+
+            // Кнопка распределения по рабочим наборам
+            AddPushPutton(rpModellingTools,
+                            "cmdFixWorkGroups",
+                            "Исправить" + System.Environment.NewLine + "наборы",
+                            thisAssemblyPath,
+                            "SKRibbon.FixWorkGroups",
+                            "numerateRooms.png",
+                            "Проверить и исправить соответствие элементов рабочим наборам",
                             true
                             );
 
