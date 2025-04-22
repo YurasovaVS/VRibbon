@@ -221,8 +221,7 @@
     <Reference Include="WindowsBase" /> 	  
   </ItemGroup>
 	
-  <ItemGroup>
-	  <!--
+  <ItemGroup><!--
     <Compile Include="Forms\PlaceFloorsForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -339,6 +338,8 @@
     </Compile>
     <Compile Include="Forms\RenameSheetsForm.Designer.cs" />
 	-->
+  
+    <None Remove="Resources\sortIntoWorkgroups_32.png" />
   </ItemGroup>
 	
   <ItemGroup>
@@ -353,6 +354,7 @@
     <Resource Include="Resources\fakeArea.png" />
     <Resource Include="Resources\replaceTags.png" />
     <Resource Include="Resources\copyLists.png" />
+    <Resource Include="Resources\sortIntoWorkgroups_32.png" />
     <Resource Include="Resources\whoDidThat.png" />
     <Resource Include="Resources\pdf.png" />
     <Resource Include="Resources\renumber.png" />

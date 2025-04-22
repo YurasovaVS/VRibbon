@@ -178,7 +178,7 @@ namespace SKRibbon
                             "Исправить" + System.Environment.NewLine + "наборы",
                             thisAssemblyPath,
                             "SKRibbon.FixWorkGroups",
-                            "numerateRooms.png",
+                            "sortIntoWorkgroups_32.png",
                             "Проверить и исправить соответствие элементов рабочим наборам",
                             true
                             );

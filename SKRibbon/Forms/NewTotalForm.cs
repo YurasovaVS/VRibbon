@@ -223,8 +223,7 @@ namespace FakeArea
                             else
                             {
                                 TaskDialog.Show("Debug", "Что-то пошло не так");
-                            }
-                            
+                            }                            
                         }
                     }
                 }
