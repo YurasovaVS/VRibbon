@@ -31,6 +31,7 @@ namespace SKRibbon
             RibbonPanel rpAreas = application.CreateRibbonPanel(tabName, "Скорректировать площади");
             RibbonPanel rpCopyLists = application.CreateRibbonPanel(tabName, "Листы");
             RibbonPanel rpModellingTools = application.CreateRibbonPanel(tabName, "Модель");
+            RibbonPanel rpEngineers = application.CreateRibbonPanel(tabName, "Смежники");
             RibbonPanel rpTeam = application.CreateRibbonPanel(tabName, "Злой начальник");
             RibbonPanel rpSettings = application.CreateRibbonPanel(tabName, "Интерфейс");
             RibbonPanel rpInfo = application.CreateRibbonPanel(tabName, "Информация");
@@ -180,6 +181,18 @@ namespace SKRibbon
                             "SKRibbon.FixWorkGroups",
                             "sortIntoWorkgroups_32.png",
                             "Проверить и исправить соответствие элементов рабочим наборам",
+                            true
+                            );
+
+            // ------------------------------------------------------
+            // Кнопка исправления файлов IFC
+            AddPushPutton(rpEngineers,
+                            "cmdFixWorkGroups",
+                            "Исправить IFC",
+                            thisAssemblyPath,
+                            "SKRibbon.FixIFCCoordinates",
+                            "fixIFCCoord_32.png",
+                            "Исправить координаты в IFC файле",
                             true
                             );
 

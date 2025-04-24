@@ -25,18 +25,23 @@ namespace SKRibbon
             { BuiltInCategory.OST_Roofs, "Кровля"},
             { BuiltInCategory.OST_Stairs, "Лестницы"},
             { BuiltInCategory.OST_PlumbingFixtures, "Оборудование сантех."},
+            { BuiltInCategory.OST_DuctTerminal, "Оборудование сантех."},
+            { BuiltInCategory.OST_MechanicalEquipment, "Оборудование мех."},
             { BuiltInCategory.OST_Railings, "Ограждения"},
+            { BuiltInCategory.OST_StairsRailing, "Ограждения"},
             { BuiltInCategory.OST_Windows, "Окна"},
             { BuiltInCategory.OST_ShaftOpening, "Отверстия"},
             { BuiltInCategory.OST_Grids, "Оси"},
             { BuiltInCategory.OST_Floors, "Полы"},
             { BuiltInCategory.OST_Rooms, "Помещения"},
+            { BuiltInCategory.OST_RoomSeparationLines, "Помещения"},
             { BuiltInCategory.OST_Ceilings, "Потолки"},
             { BuiltInCategory.OST_Levels, "Уровни"},
             { BuiltInCategory.OST_Mass, "Формы"}
         };
 
-        Dictionary<string, BuiltInCategory> NamesCategory = new Dictionary<string, BuiltInCategory>();
+        //Dictionary<string, BuiltInCategory> NamesCategory = new Dictionary<string, BuiltInCategory>();
+        HashSet<string> NamesCategory = new HashSet<string>();
 
         Dictionary<string, Workset> Name_Workset = new Dictionary<string, Workset>();
         HashSet<string> Errors = new HashSet<string>();
@@ -81,6 +86,8 @@ namespace SKRibbon
             FlowLayoutPanel DisabledPeopleFLP = WorkgroupAndFamilyFLP("ОДИ", "ОДИ");
             FlowLayoutPanel WallsInternalFLP = WorkgroupAndFamilyFLP("Внутренние стены", "АР_В");
             FlowLayoutPanel WallsExternalFLP = WorkgroupAndFamilyFLP("Наружные стены", "АР_Н");
+            FlowLayoutPanel WallsDesignFLP = WorkgroupAndFamilyFLP("Отделка", "АР_О");
+            FlowLayoutPanel CurtainWalls = WorkgroupAndFamilyFLP("Витражи", "витраж");
             FlowLayoutPanel GenPlan = WorkgroupAndFamilyFLP("Генплан", "ГП");
 
 
@@ -110,11 +117,12 @@ namespace SKRibbon
             CategoriesWrapper.AutoSize = true;
 
             foreach (KeyValuePair<BuiltInCategory, string> category in CategoryNames) {
-                NamesCategory.Add(category.Value, category.Key);
-
-                WinForms.FlowLayoutPanel catPanel = WorkgroupFLP(category.Value);
-                catPanel.Parent = CategoriesWrapper;
-                CategoriesWrapper.Controls.Add(catPanel);
+                if (NamesCategory.Add(category.Value))
+                {
+                    WinForms.FlowLayoutPanel catPanel = WorkgroupFLP(category.Value);
+                    catPanel.Parent = CategoriesWrapper;
+                    CategoriesWrapper.Controls.Add(catPanel);
+                }                
             }
 
             formWrapper.Controls.Add(CategoriesWrapper);
@@ -149,6 +157,11 @@ namespace SKRibbon
 
             foreach (Element element in elements) {
 
+                if (element.Id.ToString() == "1212844")
+                {
+                    bool flag = true;
+                }
+
                 // Проверяем, существует ли такой параметр, и не ReadOnly ли он
                 Parameter worksetParam = element.get_Parameter(BuiltInParameter.ELEM_PARTITION_PARAM);
                 if (worksetParam == null) continue;
@@ -164,9 +177,8 @@ namespace SKRibbon
 
                 // Проверяем, не относится ли он к рабочим наборам по типу (КЖ, ОДИ, внутренние и внешние стены, геплан)
                 foreach (var catByTypeWrapper in CategoriesByTypeWrapper.Controls)
-                {
-
-                    if (skipFurtherChecks) break;
+                {                    
+                    if (skipFurtherChecks) continue;
 
                     FlowLayoutPanel panel = catByTypeWrapper as FlowLayoutPanel;
                     WinForms.TextBox text = panel.Controls[1] as WinForms.TextBox;
@@ -177,32 +189,35 @@ namespace SKRibbon
                         skipFurtherChecks = true;
                     }
                 }
-
-                // Проверяем, есть ли у данного элемента категория
-                if (element.Category == null)
+                if (!skipFurtherChecks)
                 {
-                    sb_ElementHasNoCategory.AppendLine(element.Name + " " + element.Id);
-                    continue;
-                }
-                // Проверяем, есть ли такая категория в нашем словаре
-                if (!CategoryNames.ContainsKey((BuiltInCategory)element.Category.Id.IntegerValue))
-                {
-                    sb_TypeNotSupported.AppendLine(element.Name + " " + element.Id + (BuiltInCategory)element.Category.Id.IntegerValue);
-                    continue;
-                }
-                // Смотрим, к какому рабочему набору относится элемент (BuiltInCategory)
-                foreach (var categoryFLP in CategoriesWrapper.Controls)
-                {
-                    if (skipFurtherChecks) break; // Если мы уже перенесли элемент в какой-либо рабочий набор,              
-                    
+                    // Проверяем, есть ли у данного элемента категория
+                    if (element.Category == null)
+                    {
+                        sb_ElementHasNoCategory.AppendLine(element.Name + " " + element.Id);
+                        continue;
+                    }
+                    // Проверяем, есть ли такая категория в нашем словаре
+                    if (!CategoryNames.ContainsKey((BuiltInCategory)element.Category.Id.Value))
+                    {
+                        sb_TypeNotSupported.AppendLine(element.Name + " " + element.Id + (BuiltInCategory)element.Category.Id.IntegerValue);
+                        continue;
+                    }
+                    // Смотрим, к какому рабочему набору относится элемент (BuiltInCategory)
+                    foreach (var categoryFLP in CategoriesWrapper.Controls)
+                    {
+                        if (skipFurtherChecks) continue; // Если мы уже перенесли элемент в какой-либо рабочий набор,              
 
-                    FlowLayoutPanel panel = categoryFLP as FlowLayoutPanel;
-                    WinForms.Label catName = panel.Controls[0] as WinForms.Label;
-                    WinForms.ComboBox combo = panel.Controls[1] as WinForms.ComboBox;
 
-                    if (CategoryNames[(BuiltInCategory)element.Category.Id.IntegerValue] != catName.Text) continue;
-                    worksetName = combo.Text;
-                }
+                        FlowLayoutPanel panel = categoryFLP as FlowLayoutPanel;
+                        WinForms.Label catName = panel.Controls[0] as WinForms.Label;
+                        WinForms.ComboBox combo = panel.Controls[1] as WinForms.ComboBox;
+
+                        if (CategoryNames[(BuiltInCategory)element.Category.Id.Value] != catName.Text) continue;
+                        worksetName = combo.Text;
+                        skipFurtherChecks = true;
+                    }
+                }                
                 if (worksetName == "") continue; // Если по какой-то причине worksetName остается не задан, пропускаем элемент
                 worksetParam.Set(Name_Workset[worksetName].Id.IntegerValue);
             } // Конец цикла foreach (Element element in elements)
@@ -239,7 +254,8 @@ namespace SKRibbon
             workgroupsCB.Size = new Size(ComboBoxWidth, ComboBoxHeight);
             foreach (KeyValuePair<string, Workset> workset in Name_Workset) {
                 int i = workgroupsCB.Items.Add(workset.Key);
-                if (workset.Key.Contains(Name)) workgroupsCB.SelectedIndex = i;
+                var words = Name.Split(' ');
+                if (workset.Key.Contains(words[0])) workgroupsCB.SelectedIndex = i;
             }            
             return workgroupFLP;
         }
