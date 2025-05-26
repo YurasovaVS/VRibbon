@@ -249,7 +249,7 @@ namespace SKRibbon
                             "SKRibbon.Functions.Info",
                             "info.png",
                             "Важная информация",
-                            false
+                            true
                             );
         }
         public Result OnShutdown(UIControlledApplication application)

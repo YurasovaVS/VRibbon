@@ -39,6 +39,9 @@ namespace SKRibbon.Forms
         private void button1_Click(object sender, EventArgs e)
         {
             System.Windows.Forms.Form form = new LicenseForm();
+            form.ShowDialog();
+            this.Close();
+            this.DialogResult = DialogResult.OK;
         }
     }
 }

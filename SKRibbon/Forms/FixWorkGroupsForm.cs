@@ -198,11 +198,20 @@ namespace SKRibbon
                         continue;
                     }
                     // Проверяем, есть ли такая категория в нашем словаре
-                    if (!CategoryNames.ContainsKey((BuiltInCategory)element.Category.Id.Value))
+#if DEBUG2021 || REVIT2021
+                    if (!CategoryNames.ContainsKey((BuiltInCategory)element.Category.Id.IntegerValue))
                     {
                         sb_TypeNotSupported.AppendLine(element.Name + " " + element.Id + (BuiltInCategory)element.Category.Id.IntegerValue);
                         continue;
                     }
+#elif DEBUG2024 || REVIT2024
+                    if (!CategoryNames.ContainsKey((BuiltInCategory)element.Category.Id.Value))
+                    {
+                        sb_TypeNotSupported.AppendLine(element.Name + " " + element.Id + (BuiltInCategory)element.Category.Id.Value);
+                        continue;
+                    }
+#endif
+
                     // Смотрим, к какому рабочему набору относится элемент (BuiltInCategory)
                     foreach (var categoryFLP in CategoriesWrapper.Controls)
                     {
@@ -213,7 +222,11 @@ namespace SKRibbon
                         WinForms.Label catName = panel.Controls[0] as WinForms.Label;
                         WinForms.ComboBox combo = panel.Controls[1] as WinForms.ComboBox;
 
+#if DEBUG2021 || REVIT2021
+                        if (CategoryNames[(BuiltInCategory)element.Category.Id.IntegerValue] != catName.Text) continue;
+#elif DEBUG2024 || REVIT2024
                         if (CategoryNames[(BuiltInCategory)element.Category.Id.Value] != catName.Text) continue;
+#endif                        
                         worksetName = combo.Text;
                         skipFurtherChecks = true;
                     }
