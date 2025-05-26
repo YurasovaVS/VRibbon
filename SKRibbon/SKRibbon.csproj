@@ -159,6 +159,7 @@
 	</ItemGroup>
 -->
 	<ItemGroup>
+		<PackageReference Include="Microsoft.Office.Interop.Excel" Version="15.0.4795.1001" />
 		<PackageReference Include="Revit_All_Main_Versions_API_x64" Version="$(RevitVersion).*" IncludeAssets="build; compile" PrivateAssets="All" />
 	
 	</ItemGroup>

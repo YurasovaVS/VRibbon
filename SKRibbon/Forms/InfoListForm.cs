@@ -12,7 +12,6 @@ using Autodesk.Revit.DB;
 using System.IO;
 using Excel = Microsoft.Office.Interop.Excel;
 using System.Text.RegularExpressions;
-using Microsoft.Office.Interop.Excel;
 
 namespace InfoListMaker
 {
@@ -218,11 +217,11 @@ namespace InfoListMaker
 
                 // Заполняем первую строку заголовков
 
-                Excel.Range rBegin = wSheet.Cells[1, 1];
-                Excel.Range r2 = wSheet.Cells[1, 2];
-                Excel.Range r3 = wSheet.Cells[1, 3];
-                Excel.Range r4 = wSheet.Cells[1, 4];
-                Excel.Range rEnd = wSheet.Cells[1, 5];
+                Excel.Range rBegin = (Excel.Range)wSheet.Cells[1, 1];
+                Excel.Range r2 = (Excel.Range)wSheet.Cells[1, 2];
+                Excel.Range r3 = (Excel.Range)wSheet.Cells[1, 3];
+                Excel.Range r4 = (Excel.Range)wSheet.Cells[1, 4];
+                Excel.Range rEnd = (Excel.Range)wSheet.Cells[1, 5];
 
                 rBegin.EntireColumn.ColumnWidth = 12.71;
                 r2.EntireColumn.ColumnWidth = 30;
@@ -244,11 +243,11 @@ namespace InfoListMaker
                 wSheet.Cells[5, 4] = "";
                 wSheet.Cells[5, 5] = "";
 
-                rBegin = wSheet.Cells[5, 1];
-                r2 = wSheet.Cells[5, 2];
-                r3 = wSheet.Cells[5, 3];
-                r4 = wSheet.Cells[5, 4];
-                rEnd = wSheet.Cells[5, 5];
+                rBegin = (Excel.Range)wSheet.Cells[5, 1];
+                r2 = (Excel.Range)wSheet.Cells[5, 2];
+                r3 = (Excel.Range)wSheet.Cells[5, 3];
+                r4 = (Excel.Range)wSheet.Cells[5, 4];
+                rEnd = (Excel.Range)wSheet.Cells[5, 5];
 
                 Excel.Range row5Range = wSheet.get_Range(rBegin, rEnd);
                 SetRangeParams(row5Range, false);
@@ -267,8 +266,8 @@ namespace InfoListMaker
                 FillExcelRow(wSheet, 12, "Характер работы", "ФИО", "Подпись", "Дата подписания", true);
                 // Заполняем 13 строку
 
-                rBegin = wSheet.Cells[13, 1];
-                rEnd = wSheet.Cells[13, 5];
+                rBegin = (Excel.Range)wSheet.Cells[13, 1];
+                rEnd = (Excel.Range)wSheet.Cells[13, 5];
                 Excel.Range row13Range = wSheet.get_Range(rBegin, rEnd);
                 SetRangeParams(row13Range, false);
 
@@ -314,8 +313,8 @@ namespace InfoListMaker
         // Заполнение строк (перегрузки функции FillExcelRow)
         public void FillExcelRow(Excel.Worksheet wSheet, int row, string cell_1, string cell_2, string cell_3, string cell_4, string cell_5, bool isHeader)
         {
-            Excel.Range rBegin = wSheet.Cells[row, 1];
-            Excel.Range rEnd = wSheet.Cells[row, 5];
+            Excel.Range rBegin = (Excel.Range)wSheet.Cells[row, 1];
+            Excel.Range rEnd = (Excel.Range)wSheet.Cells[row, 5];
             
             Excel.Range range = wSheet.get_Range(rBegin, rEnd);
             SetRangeParams(range, isHeader);
@@ -329,9 +328,9 @@ namespace InfoListMaker
 
         public void FillExcelRow(Excel.Worksheet wSheet, int row, string cell_1, string cell_2, string cell_3, string cell_4, bool isHeader)
         {
-            Excel.Range rBegin = wSheet.Cells[row, 1];
-            Excel.Range r4 = wSheet.Cells[row, 4];
-            Excel.Range rEnd = wSheet.Cells[row, 5];
+            Excel.Range rBegin = (Excel.Range)wSheet.Cells[row, 1];
+            Excel.Range r4 = (Excel.Range)wSheet.Cells[row, 4];
+            Excel.Range rEnd = (Excel.Range)wSheet.Cells[row, 5];
 
             Excel.Range range = wSheet.get_Range(rBegin, rEnd);
             SetRangeParams(range, isHeader);
@@ -347,11 +346,11 @@ namespace InfoListMaker
 
         public void FillExcelRow(Excel.Worksheet wSheet, int row, float height, string position, string name)
         {
-            Excel.Range rBegin = wSheet.Cells[row, 1];
-            Excel.Range r2 = wSheet.Cells[row, 2];
-            Excel.Range r3 = wSheet.Cells[row, 3];
-            Excel.Range r4 = wSheet.Cells[row, 4];
-            Excel.Range rEnd = wSheet.Cells[row, 5];
+            Excel.Range rBegin = (Excel.Range)wSheet.Cells[row, 1];
+            Excel.Range r2 = (Excel.Range)wSheet.Cells[row, 2];
+            Excel.Range r3 = (Excel.Range)wSheet.Cells[row, 3];
+            Excel.Range r4 = (Excel.Range)wSheet.Cells[row, 4];
+            Excel.Range rEnd = (Excel.Range)wSheet.Cells[row, 5];
 
             Excel.Range range = wSheet.get_Range(rBegin, rEnd);
             SetRangeParams(range, false);
@@ -368,7 +367,7 @@ namespace InfoListMaker
                 wSheet.Shapes.AddPicture(filePath, 
                     Microsoft.Office.Core.MsoTriState.msoFalse, 
                     Microsoft.Office.Core.MsoTriState.msoCTrue, 
-                    r3.Left+ 5, r3.Top + 2, -1, -1);
+                    (float)r3.Left + 5, (float)r3.Top + 2, -1, -1);
             }
         }
 
