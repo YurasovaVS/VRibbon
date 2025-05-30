@@ -5,13 +5,13 @@
     <StartProgram>C:\Program Files\Autodesk\Revit 2021\Revit.exe</StartProgram>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Update="Forms\AddSigForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="Forms\FixIFCCoordinatesForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Update="Forms\FixWorkGroupsForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="Forms\AddSigForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Update="Forms\BatchDwgExportForm.cs">
