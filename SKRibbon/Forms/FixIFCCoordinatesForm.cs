@@ -41,6 +41,7 @@ using System.Text.RegularExpressions;
 using System.IO;
 using System.Text.RegularExpressions;
 using Microsoft.Office.Interop.Excel;
+using System.Windows.Media;
 
 
 namespace SKRibbon
@@ -60,10 +61,11 @@ namespace SKRibbon
 
         WinForms.ComboBox FilePathTextBox = new WinForms.ComboBox();
 
-        WinForms.TextBox CoordinateX_TextBox = new WinForms.TextBox();
-        WinForms.TextBox CoordinateY_TextBox = new WinForms.TextBox();
-        WinForms.TextBox CoordinateZ_TextBox = new WinForms.TextBox();
-        WinForms.TextBox CoordinateRotation_TextBox = new WinForms.TextBox();
+        FormDesign.VTextBox CoordinateX_TextBox = new FormDesign.VTextBox();
+        FormDesign.VTextBox CoordinateY_TextBox = new FormDesign.VTextBox();
+        FormDesign.VTextBox CoordinateZ_TextBox = new FormDesign.VTextBox();
+        FormDesign.VTextBox CoordinateRotation_TextBox = new FormDesign.VTextBox();
+                
 
         double Angle = 0.0;
         public FixIFCCoordinatesForm(Document doc)
@@ -76,6 +78,8 @@ namespace SKRibbon
             this.Height = 350;
             this.FormBorderStyle = WinForms.FormBorderStyle.FixedSingle;
             this.Text = "Исправить IFC файл";
+            this.BackColor = System.Drawing.Color.White;
+            
 
             FormWrapper.AutoSize = true;
             FormWrapper.FlowDirection = WinForms.FlowDirection.TopDown;
@@ -132,6 +136,8 @@ namespace SKRibbon
             okButton.Click += RunFixingIFC;
             okButton.Parent = FormWrapper;
             FormWrapper.Controls.Add(okButton);
+
+            
 
 
             // Находим все ссылки в проекте

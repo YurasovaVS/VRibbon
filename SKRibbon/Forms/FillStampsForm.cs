@@ -41,6 +41,9 @@ using System.Windows.Forms;
 using Autodesk.Revit.Attributes;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Button;
 using SK_FU = SKRibbon.FormUtils;
+using SK_FD = SKRibbon.FormDesign;
+using static SKRibbon.FormDesign;
+using System.Windows.Controls;
 namespace FillStamps
 {
     [Transaction(TransactionMode.Manual)]
@@ -57,6 +60,10 @@ namespace FillStamps
             InitializeComponent();
 
             this.Text = "Заполнить штампы";
+            this.BackColor = System.Drawing.Color.White;
+            this.FormBorderStyle = WinForms.FormBorderStyle.FixedSingle;
+            this.Width = 850;
+            this.Height = 420;
             Doc = doc;
 
             formWrapper = new FlowLayoutPanel();
@@ -67,7 +74,6 @@ namespace FillStamps
             linesWrapper.FlowDirection = FlowDirection.TopDown;
             linesWrapper.AutoSize = true;
 
-
             //Собираем все листы в основу для древа
             /* Словарь Зданий
              *      Здание : Словарь Томов
@@ -77,17 +83,25 @@ namespace FillStamps
             */
 
             buildingsDict = SK_FU.CollectSheetDictionary(doc, true);
-            TreeView tree = SK_FU.CreateSheetTreeView(buildingsDict);
+            WinForms.TreeView tree = SK_FU.CreateSheetTreeView(buildingsDict);
 
             // Инициализируем параметры дерева и добавляем его в форму
             tree.CheckBoxes = true;
             tree.AfterCheck += node_AfterCheck;
             tree.Width = 300;
-            tree.Height = 400;
-            tree.Margin = new Padding(0, 10, 0, 0);
+            tree.Height = 350;
+            tree.Margin = new Padding(15, 5, 0, 0);
             tree.Anchor = AnchorStyles.Left;
 
             //-----------------------------------------------------------------
+            // Заголовок
+            VHeaderLabel headerLabel = new VHeaderLabel();
+            headerLabel.Size = new Size(600, 50);
+            headerLabel.Padding = new Padding(10, 5, 0, 10);
+            headerLabel.Text = "ДАННЫЕ О РАЗРАБОТЧИКАХ";
+            headerLabel.Parent = linesWrapper;
+            linesWrapper.Controls.Add(headerLabel);
+
             // Инициализация шаблона штампа
 
             for (int i = 1; i <= 6; i++)
@@ -96,15 +110,27 @@ namespace FillStamps
                 lineWrapper.FlowDirection = FlowDirection.LeftToRight;
                 lineWrapper.AutoSize = true;
 
-                Label posLabel = new Label();
-                WinForms.TextBox posText = new WinForms.TextBox();
-                Label nameLabel = new Label();
-                WinForms.TextBox nameText = new WinForms.TextBox();
+                WinForms.Label posLabel = new WinForms.Label();
+                SK_FD.VTextBox posText = new SK_FD.VTextBox();
+                WinForms.Label nameLabel = new WinForms.Label();
+                SK_FD.VTextBox nameText = new SK_FD.VTextBox();
 
-                posLabel.Size = new System.Drawing.Size(100, 30);
-                posText.Size = new System.Drawing.Size(100, 30);
-                nameLabel.Size = new System.Drawing.Size(100, 30);
-                nameText.Size = new System.Drawing.Size(100, 30);
+                int labelWidth = 90;
+                int textBoxWidth = 150;
+                int height = 20;
+
+                //posLabel.BorderStyle = BorderStyle.FixedSingle;
+                //nameLabel.BorderStyle = BorderStyle.FixedSingle;
+
+                posLabel.Font = new Font(WinForms.Label.DefaultFont, FontStyle.Bold);
+                nameLabel.Font = new Font(WinForms.Label.DefaultFont, FontStyle.Bold);
+
+                posLabel.Padding = new Padding(10, 0, 0, 0);
+
+                posLabel.Size = new System.Drawing.Size(labelWidth, height);
+                posText.Size = new System.Drawing.Size(textBoxWidth, height);
+                nameLabel.Size = new System.Drawing.Size(labelWidth, height);
+                nameText.Size = new System.Drawing.Size(textBoxWidth, height);
 
                 posLabel.Anchor = AnchorStyles.Left;
                 posText.Anchor = AnchorStyles.Left;
@@ -113,6 +139,28 @@ namespace FillStamps
 
                 posLabel.Text = "Должность " + i.ToString();
                 nameLabel.Text = "Фамилия " + i.ToString();
+                string posStr = "";
+                switch (i)
+                {
+                    case 1:
+                        posStr = "Разработал";
+                        break;
+                    case 2:
+                        posStr = "Проверил";
+                        break;
+                    case 3: 
+                        break;
+                    case 4:
+                        posStr = "Н.контр.";
+                        break;
+                    case 5:
+                        posStr = "ГИП";
+                        break;
+                    case 6:
+                        posStr = "ГАП";
+                        break;
+                }
+                posText.Text = posStr;
 
                 lineWrapper.Controls.Add(posLabel);
                 lineWrapper.Controls.Add(posText);
@@ -129,14 +177,15 @@ namespace FillStamps
             }
 
             checkBox = new WinForms.CheckBox();
-            checkBox.Size = new System.Drawing.Size (200, 60);
+            checkBox.Size = new System.Drawing.Size (600, 60);
             checkBox.Anchor = AnchorStyles.Top;
+            checkBox.Padding = new Padding(10, 15, 0, 0);
             checkBox.Text = "Учитывать (перезаписывать) пустые поля";
 
-            Button button = new Button();
-            button.Size = new System.Drawing.Size(150, 100);
+            SK_FD.VButton button = new SK_FD.VButton();
+            button.Size = new System.Drawing.Size(200, 50);
             button.Anchor = AnchorStyles.Top;
-            button.Text = "Заполнить штампы";
+            button.Text = "ЗАПОЛНИТЬ ШТАМПЫ";
             button.Click += RunProgram;
 
             checkBox.Parent = linesWrapper;
@@ -182,7 +231,7 @@ namespace FillStamps
 
         private void RunProgram(object sender, EventArgs e)
         {
-            TreeView tree = (TreeView)formWrapper.Controls[0];
+            WinForms.TreeView tree = (WinForms.TreeView)formWrapper.Controls[0];
 
             Transaction t = new Transaction(Doc, "Заполнить штампы");
             t.Start();
@@ -220,9 +269,9 @@ namespace FillStamps
                                 continue;
                             }
 
-                            FlowLayoutPanel lineWrapper = (FlowLayoutPanel)linesWrapper.Controls[i-1];
-                            WinForms.TextBox tb1 = (WinForms.TextBox)lineWrapper.Controls[1];
-                            WinForms.TextBox tb2 = (WinForms.TextBox)lineWrapper.Controls[3];
+                            FlowLayoutPanel lineWrapper = (FlowLayoutPanel)linesWrapper.Controls[i];
+                            SK_FD.VTextBox tb1 = (SK_FD.VTextBox)lineWrapper.Controls[1];
+                            SK_FD.VTextBox tb2 = (SK_FD.VTextBox)lineWrapper.Controls[3];
 
                             // ПРОВЕРИТЬ НА ПЕРЕБИВАНИЕ
 
@@ -236,6 +285,5 @@ namespace FillStamps
             this.DialogResult = DialogResult.OK;
             this.Close();
         }
-
     }
 }

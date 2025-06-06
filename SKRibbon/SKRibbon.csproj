@@ -343,6 +343,8 @@
     <None Remove="Resources\fixIFCcoord_32.png" />
   
     <None Remove="Resources\sortIntoWorkgroups_32.png" />
+  
+    <None Remove="Resources\vitruvius_ico_16.png" />
   </ItemGroup>
 	
   <ItemGroup>
@@ -359,6 +361,7 @@
     <Resource Include="Resources\replaceTags.png" />
     <Resource Include="Resources\copyLists.png" />
     <Resource Include="Resources\sortIntoWorkgroups_32.png" />
+    <Resource Include="Resources\vitruvius_ico_16.png" />
     <Resource Include="Resources\whoDidThat.png" />
     <Resource Include="Resources\pdf.png" />
     <Resource Include="Resources\renumber.png" />

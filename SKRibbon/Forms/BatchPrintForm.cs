@@ -46,6 +46,7 @@ using System.Drawing.Printing;
 using SKRibbon;
 using MJMCustomPrintForm;
 using Autodesk.Revit.DB.Architecture;
+using System.Windows.Media;
 
 namespace BatchPrinting
 {
@@ -57,8 +58,12 @@ namespace BatchPrinting
         Dictionary<string, Dictionary<string, List<ViewSheet>>> buildingsDict = new Dictionary<string, Dictionary<string, List<ViewSheet>>>();
         string SavePath;
 
+        int RightPanelWidth = 350;
+
 
         CheckBox cropRegionCheckBox = new CheckBox();
+        FormDesign.VTextBox NameTextBox = new FormDesign.VTextBox();
+
         System.Windows.Forms.ComboBox colorModeSelection = new System.Windows.Forms.ComboBox();
 
         List<SheetSizes> SHEET_SIZES = new List<SheetSizes>() {
@@ -104,8 +109,8 @@ namespace BatchPrinting
                 SavePath = SKRibbon.Properties.appSettings.Default.printFolder;
             }
             this.AutoScroll = true;
-            this.Width = 710;
-            this.Height = 480;
+            this.Width = 760;
+            this.Height = 600;
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
 
             formWrapper.AutoSize = true;
@@ -121,7 +126,7 @@ namespace BatchPrinting
             tree.CheckBoxes = true;
             tree.AfterCheck += node_AfterCheck;
             tree.Width = 300;
-            tree.Height = 400;
+            tree.Height = 450;
             tree.Margin = new Padding(20, 10, 0, 0);
             tree.Parent = formWrapper;
             formWrapper.Controls.Add(tree);
@@ -139,15 +144,16 @@ namespace BatchPrinting
 
             // Добавляем заголовок выпадающего списка
             Label printersHeader = new Label();
-            printersHeader.Size = new Size(300, 30);
+            printersHeader.Size = new Size(RightPanelWidth, 30);
             printersHeader.Margin = new Padding(0, 30, 0, 0);
             printersHeader.Text = "Выберите принтер:";
+            printersHeader.Font = new Font(Label.DefaultFont, FontStyle.Bold);
             printersHeader.Parent = optionsWrapper;
             optionsWrapper.Controls.Add(printersHeader);
 
             // Добавляем выпадающий список со списком принтеров
             System.Windows.Forms.ComboBox printersListCB = new System.Windows.Forms.ComboBox();
-            printersListCB.Size = new Size(300, 30);
+            printersListCB.Size = new Size(RightPanelWidth, 30);
             foreach (string printer in System.Drawing.Printing.PrinterSettings.InstalledPrinters)
             {
                 if ((printer == "Adobe PDF"))
@@ -159,16 +165,17 @@ namespace BatchPrinting
 
             // Добавляем путь
             Label pathHeader = new Label();
-            pathHeader.Size = new Size(300, 50);
+            pathHeader.Size = new Size(RightPanelWidth, 50);
             pathHeader.Margin = new Padding(0, 30, 0, 0);
             pathHeader.Text = "Файлы будут сохранены в папку:\n" + SavePath;
+            pathHeader.Font = new Font(Label.DefaultFont, FontStyle.Bold);
             pathHeader.Parent = optionsWrapper;
             optionsWrapper.Controls.Add(pathHeader);
 
             // Добавляем кнопку пути
             Button pathButton = new Button();
             pathButton.Text = "Выбрать другую папку";
-            pathButton.Size = new Size(300, 30);
+            pathButton.Size = new Size(RightPanelWidth, 30);
             pathButton.Margin = new Padding(0, 0, 0, 30);
             pathButton.Click += ChooseFolder;
             pathButton.Parent = optionsWrapper;
@@ -177,7 +184,7 @@ namespace BatchPrinting
 
             // Добавляем галку "Скрыть области подрезки"
             cropRegionCheckBox.Text = "Скрыть область подрезки";
-            cropRegionCheckBox.Size = new Size(300, 30);
+            cropRegionCheckBox.Size = new Size(RightPanelWidth, 30);
             cropRegionCheckBox.Margin = new Padding(0, 0, 0, 10);
             cropRegionCheckBox.Parent = optionsWrapper;
             optionsWrapper.Controls.Add(cropRegionCheckBox);
@@ -185,9 +192,10 @@ namespace BatchPrinting
 
             // Добавляем заголовок режима цвета
             Label colorModeHeader = new Label();
-            colorModeHeader.Size = new Size(300, 30);
+            colorModeHeader.Size = new Size(RightPanelWidth, 30);
             colorModeHeader.Margin = new Padding(0, 10, 0, 0);
             colorModeHeader.Text = "Выберите цветовой режим:";
+            colorModeHeader.Font = new Font(Label.DefaultFont, FontStyle.Bold);
             colorModeHeader.Parent = optionsWrapper;
             optionsWrapper.Controls.Add(colorModeHeader);
 
@@ -195,12 +203,28 @@ namespace BatchPrinting
             colorModeSelection.Items.Add("Цветная");
             colorModeSelection.Items.Add("Черно-белая");
             colorModeSelection.Items.Add("Оттенки серого");
-            colorModeSelection.Width = 300;
+            colorModeSelection.Width = RightPanelWidth;
             colorModeSelection.SelectedIndex = 0;
             
             colorModeSelection.Parent = optionsWrapper;
             optionsWrapper.Controls.Add(colorModeSelection);
             colorModeSelection.Anchor = AnchorStyles.Left;
+
+            // Добавляем заголовок названия файла
+            Label nameHeader = new Label();
+            nameHeader.Size = new Size(RightPanelWidth, 30);
+            nameHeader.Margin = new Padding(0, 30, 0, 0);
+            nameHeader.Text = "Имя файла:";
+            nameHeader.Font = new Font(Label.DefaultFont, FontStyle.Bold);
+            nameHeader.Parent = optionsWrapper;
+            optionsWrapper.Controls.Add(nameHeader);
+
+            // Добавляем название файла
+            NameTextBox.Text = Doc.Title;
+            NameTextBox.Size = new Size(RightPanelWidth, 50);
+            NameTextBox.Margin = new Padding(0, 0, 0, 5);
+            NameTextBox.Parent = optionsWrapper;
+            optionsWrapper.Controls.Add(NameTextBox);
 
             // Добавляем разделитель
             Label divider = new Label();
@@ -445,7 +469,7 @@ namespace BatchPrinting
                             string filename = buildingName + tomeName + sheet.sheet.SheetNumber.ToString() + "_" + sheet.sheet.Name.ToString();
                             filename = Regex.Replace(filename, @"\p{C}+", string.Empty); ;
                             filename = Regex.Replace(filename, @"[\~#%&*{}/:<>?|"",;']", string.Empty);
-                            string filePath = SavePath + "\\" + Doc.Title + "_" + filename + ".pdf";
+                            string filePath = SavePath + "\\" + NameTextBox.Text + "_" + filename + ".pdf";
                             printManager.PrintSetup.Save();
 
                             FindAndFillSaveAsWindow(saveAsDialogCaption, filePath);
