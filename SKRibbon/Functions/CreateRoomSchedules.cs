@@ -35,6 +35,7 @@ using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using CopyListsTree;
+using static SKRibbon.FormDesign;
 
 namespace SKRibbon
 {
@@ -47,7 +48,7 @@ namespace SKRibbon
             UIApplication uiApp = commandData.Application;
             Document doc = uiApp.ActiveUIDocument.Document;
 
-            using (System.Windows.Forms.Form form = new CreateRoomSchedulesForm(doc))
+            using (VForm form = new CreateRoomSchedulesForm(doc))
             {
                 if (form.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {

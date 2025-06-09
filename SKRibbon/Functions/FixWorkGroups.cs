@@ -48,7 +48,7 @@ namespace SKRibbon
             UIApplication uiApp = commandData.Application;
             Document doc = uiApp.ActiveUIDocument.Document;
 
-            using (System.Windows.Forms.Form form = new FixWorkGroupsForm(doc))
+            using (FormDesign.VForm form = new FixWorkGroupsForm(doc))
             {
                 if (form.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {

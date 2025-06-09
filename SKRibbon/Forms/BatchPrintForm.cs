@@ -47,24 +47,25 @@ using SKRibbon;
 using MJMCustomPrintForm;
 using Autodesk.Revit.DB.Architecture;
 using System.Windows.Media;
+using static SKRibbon.FormDesign;
 
 namespace BatchPrinting
 {
 
-    public partial class BatchPrintForm : System.Windows.Forms.Form
+    public partial class BatchPrintForm : VForm
     {
         Document Doc;
         FlowLayoutPanel formWrapper = new FlowLayoutPanel();
         Dictionary<string, Dictionary<string, List<ViewSheet>>> buildingsDict = new Dictionary<string, Dictionary<string, List<ViewSheet>>>();
         string SavePath;
 
-        int RightPanelWidth = 350;
+        int RightPanelWidth = 450;
 
 
         CheckBox cropRegionCheckBox = new CheckBox();
         FormDesign.VTextBox NameTextBox = new FormDesign.VTextBox();
-
         System.Windows.Forms.ComboBox colorModeSelection = new System.Windows.Forms.ComboBox();
+        System.Windows.Forms.ComboBox printersListCB = new System.Windows.Forms.ComboBox();
 
         List<SheetSizes> SHEET_SIZES = new List<SheetSizes>() {
             new SheetSizes(297.00, 210.00, "A4"),
@@ -109,9 +110,12 @@ namespace BatchPrinting
                 SavePath = SKRibbon.Properties.appSettings.Default.printFolder;
             }
             this.AutoScroll = true;
-            this.Width = 760;
-            this.Height = 600;
+            this.Width = 410 + RightPanelWidth;
+            this.Height = 550;
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
+            this.BackColor = System.Drawing.Color.White;
+            this.Text = "";
+            this.ShowIcon = false;
 
             formWrapper.AutoSize = true;
             formWrapper.FlowDirection = FlowDirection.LeftToRight;
@@ -126,7 +130,7 @@ namespace BatchPrinting
             tree.CheckBoxes = true;
             tree.AfterCheck += node_AfterCheck;
             tree.Width = 300;
-            tree.Height = 450;
+            tree.Height = 440;
             tree.Margin = new Padding(20, 10, 0, 0);
             tree.Parent = formWrapper;
             formWrapper.Controls.Add(tree);
@@ -142,90 +146,143 @@ namespace BatchPrinting
             optionsWrapper.Parent = formWrapper;
             formWrapper.Controls.Add(optionsWrapper);
 
-            // Добавляем заголовок выпадающего списка
+            // Заголовок
+            VHeaderLabel optionsHeader = new VHeaderLabel();
+            optionsHeader.Text = "НАСТРОЙКИ PDF";
+            optionsHeader.Padding = new Padding(0, 5, 0, 10);
+            optionsHeader.Size = new Size(RightPanelWidth, 50);
+            optionsHeader.Parent = optionsWrapper;
+            optionsWrapper.Controls.Add(optionsHeader);
+
+            // Опция 1. Список принтеров
+            // Обертка
+            FlowLayoutPanel lineWrapper_1 = new FlowLayoutPanel();
+            lineWrapper_1.AutoSize = true;
+            lineWrapper_1.FlowDirection = FlowDirection.LeftToRight;
+
+            int FieldWidth = 250;
+
+            // Заголовок
             Label printersHeader = new Label();
-            printersHeader.Size = new Size(RightPanelWidth, 30);
-            printersHeader.Margin = new Padding(0, 30, 0, 0);
+            printersHeader.Size = new Size(RightPanelWidth - FieldWidth, 30);
+            printersHeader.Margin = new Padding(0, 0, 0, 0);
             printersHeader.Text = "Выберите принтер:";
             printersHeader.Font = new Font(Label.DefaultFont, FontStyle.Bold);
-            printersHeader.Parent = optionsWrapper;
-            optionsWrapper.Controls.Add(printersHeader);
 
-            // Добавляем выпадающий список со списком принтеров
-            System.Windows.Forms.ComboBox printersListCB = new System.Windows.Forms.ComboBox();
-            printersListCB.Size = new Size(RightPanelWidth, 30);
+            // Выпадающий список
+            printersListCB.Size = new Size(FieldWidth, 30);
             foreach (string printer in System.Drawing.Printing.PrinterSettings.InstalledPrinters)
             {
                 if ((printer == "Adobe PDF"))
                     printersListCB.Items.Add(printer);
             }
             printersListCB.SelectedIndex = 0;
-            printersListCB.Parent = optionsWrapper;
-            optionsWrapper.Controls.Add(printersListCB);
+            printersListCB.Margin = new Padding(0, 0, 0, 0);
 
-            // Добавляем путь
+            printersHeader.Parent = lineWrapper_1;
+            printersListCB.Parent = lineWrapper_1;
+            lineWrapper_1.Controls.Add(printersHeader);
+            lineWrapper_1.Controls.Add(printersListCB);
+
+            lineWrapper_1.Parent = optionsWrapper;
+            optionsWrapper.Controls.Add(lineWrapper_1);
+
+            // Опция 2. Путь к папке для сохранения
+            // Заголовок
             Label pathHeader = new Label();
-            pathHeader.Size = new Size(RightPanelWidth, 50);
-            pathHeader.Margin = new Padding(0, 30, 0, 0);
-            pathHeader.Text = "Файлы будут сохранены в папку:\n" + SavePath;
+            pathHeader.Size = new Size(RightPanelWidth, 20);
+            pathHeader.Margin = new Padding(0, 20, 0, 0);
+            pathHeader.Text = "Файлы будут сохранены в папку:\n";
             pathHeader.Font = new Font(Label.DefaultFont, FontStyle.Bold);
             pathHeader.Parent = optionsWrapper;
             optionsWrapper.Controls.Add(pathHeader);
 
-            // Добавляем кнопку пути
-            Button pathButton = new Button();
+            // Путь
+            Label pathLabel = new Label();
+            pathLabel.Size = new Size(RightPanelWidth, 20);
+            pathLabel.Margin = new Padding(0, 0, 0, 10);
+            pathLabel.Text = SavePath;
+            pathLabel.Parent = optionsWrapper;
+            optionsWrapper.Controls.Add(pathLabel);
+
+            // Кнопка выбора пути
+            SKRibbon.FormDesign.VButton pathButton = new SKRibbon.FormDesign.VButton();
             pathButton.Text = "Выбрать другую папку";
-            pathButton.Size = new Size(RightPanelWidth, 30);
+            pathButton.Size = new Size(RightPanelWidth, 35);
             pathButton.Margin = new Padding(0, 0, 0, 30);
             pathButton.Click += ChooseFolder;
             pathButton.Parent = optionsWrapper;
             optionsWrapper.Controls.Add(pathButton);
             pathButton.Anchor = AnchorStyles.Left;
 
+            // Опция 3. Скрыть область подрезки
             // Добавляем галку "Скрыть области подрезки"
             cropRegionCheckBox.Text = "Скрыть область подрезки";
             cropRegionCheckBox.Size = new Size(RightPanelWidth, 30);
-            cropRegionCheckBox.Margin = new Padding(0, 0, 0, 10);
+            cropRegionCheckBox.Margin = new Padding(5, 0, 0, 10);
             cropRegionCheckBox.Parent = optionsWrapper;
             optionsWrapper.Controls.Add(cropRegionCheckBox);
             cropRegionCheckBox.Anchor = AnchorStyles.Left;
 
-            // Добавляем заголовок режима цвета
+            // Опция 4. Режим цвета
+            // Обертка
+            FlowLayoutPanel lineWrapper_4 = new FlowLayoutPanel();
+            lineWrapper_4.AutoSize = true;
+            lineWrapper_4.FlowDirection = FlowDirection.LeftToRight;
+
+            // Заголовок
             Label colorModeHeader = new Label();
-            colorModeHeader.Size = new Size(RightPanelWidth, 30);
+            colorModeHeader.Size = new Size(RightPanelWidth - FieldWidth, 30);
             colorModeHeader.Margin = new Padding(0, 10, 0, 0);
             colorModeHeader.Text = "Выберите цветовой режим:";
             colorModeHeader.Font = new Font(Label.DefaultFont, FontStyle.Bold);
-            colorModeHeader.Parent = optionsWrapper;
-            optionsWrapper.Controls.Add(colorModeHeader);
 
             // Добавляем режим цвета (Цвет/ЧБ/Монохром)
             colorModeSelection.Items.Add("Цветная");
             colorModeSelection.Items.Add("Черно-белая");
             colorModeSelection.Items.Add("Оттенки серого");
-            colorModeSelection.Width = RightPanelWidth;
+            colorModeSelection.Width = FieldWidth;
             colorModeSelection.SelectedIndex = 0;
-            
-            colorModeSelection.Parent = optionsWrapper;
-            optionsWrapper.Controls.Add(colorModeSelection);
+            colorModeSelection.Margin = new Padding(0, 10, 0, 0);
+
             colorModeSelection.Anchor = AnchorStyles.Left;
 
-            // Добавляем заголовок названия файла
+            colorModeHeader.Parent = lineWrapper_4;
+            colorModeSelection.Parent = lineWrapper_4;
+            lineWrapper_4.Controls.Add(colorModeHeader);
+            lineWrapper_4.Controls.Add(colorModeSelection);
+
+            lineWrapper_4.Parent = optionsWrapper;
+            optionsWrapper.Controls.Add(lineWrapper_4);
+
+            // Опция 5. Название файла
+            // Обертка
+            FlowLayoutPanel lineWrapper_5 = new FlowLayoutPanel();
+            lineWrapper_5.AutoSize = true;
+            lineWrapper_5.FlowDirection = FlowDirection.LeftToRight;
+
+            // Заголовок
             Label nameHeader = new Label();
-            nameHeader.Size = new Size(RightPanelWidth, 30);
+            nameHeader.Size = new Size(RightPanelWidth - FieldWidth - 100, 30);
             nameHeader.Margin = new Padding(0, 30, 0, 0);
             nameHeader.Text = "Имя файла:";
             nameHeader.Font = new Font(Label.DefaultFont, FontStyle.Bold);
-            nameHeader.Parent = optionsWrapper;
-            optionsWrapper.Controls.Add(nameHeader);
 
-            // Добавляем название файла
+            // Поле
             NameTextBox.Text = Doc.Title;
-            NameTextBox.Size = new Size(RightPanelWidth, 50);
-            NameTextBox.Margin = new Padding(0, 0, 0, 5);
-            NameTextBox.Parent = optionsWrapper;
-            optionsWrapper.Controls.Add(NameTextBox);
+            NameTextBox.Size = new Size(FieldWidth + 100, 50);
+            NameTextBox.Margin = new Padding(0, 30, 0, 5);
 
+            nameHeader.Parent = lineWrapper_5;
+            lineWrapper_5.Controls.Add(nameHeader);
+
+            NameTextBox.Parent = lineWrapper_5;
+            lineWrapper_5.Controls.Add(NameTextBox);
+
+            lineWrapper_5.Parent = optionsWrapper;
+            optionsWrapper.Controls.Add(lineWrapper_5);
+
+            // Конец опций
             // Добавляем разделитель
             Label divider = new Label();
             divider.Text = "";
@@ -233,14 +290,16 @@ namespace BatchPrinting
             divider.Height = 2;
             divider.Width = 300;
             divider.BorderStyle = BorderStyle.Fixed3D;
+            divider.Anchor = AnchorStyles.Top;
+            divider.Padding = new Padding(0, 10, 0, 10);
+
             divider.Parent = optionsWrapper;
             optionsWrapper.Controls.Add(divider);
-            divider.Anchor = AnchorStyles.Top;
 
             // Добавляем кнопку запуска программы
-            Button okButton = new Button();
-            okButton.Text = "Вывести листы";
-            okButton.Size = new Size(200, 60);
+            SKRibbon.FormDesign.VButton okButton = new SKRibbon.FormDesign.VButton();
+            okButton.Text = "ВЫВЕСТИ ЛИСТЫ";
+            okButton.Size = new Size(RightPanelWidth, 60);
             okButton.Click += PrintSheets;
             okButton.Parent = optionsWrapper;
             optionsWrapper.Controls.Add(okButton);
@@ -320,7 +379,7 @@ namespace BatchPrinting
         {
             TreeView tree = (TreeView)formWrapper.Controls[0];
             FlowLayoutPanel optionsWrapper = (FlowLayoutPanel)formWrapper.Controls[1];
-            System.Windows.Forms.ComboBox printersCB = (System.Windows.Forms.ComboBox)optionsWrapper.Controls[1];
+            System.Windows.Forms.ComboBox printersCB = printersListCB;
             string saveAsDialogCaption = "";
             string printerName = printersCB.SelectedItem.ToString();
 

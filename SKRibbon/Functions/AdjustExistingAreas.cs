@@ -36,6 +36,7 @@ using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.DB.Architecture;
 using Autodesk.Revit.UI;
+using static SKRibbon.FormDesign;
 
 namespace FakeArea
 {
@@ -47,7 +48,7 @@ namespace FakeArea
             UIApplication uiApp = commandData.Application;
             Document doc = uiApp.ActiveUIDocument.Document;
 
-            using (System.Windows.Forms.Form form = new NewTotalForm(doc))
+            using (VForm form = new NewTotalForm(doc))
             {
                 if (form.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {

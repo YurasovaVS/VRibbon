@@ -46,7 +46,7 @@ namespace SKRibbon.Functions
             UIApplication uiApp = commandData.Application;
             Document doc = uiApp.ActiveUIDocument.Document;
 
-            using (System.Windows.Forms.Form form = new SKRibbon.Forms.InfoForm(doc))
+            using (FormDesign.VForm form = new SKRibbon.Forms.InfoForm())
             {
                 if (form.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {

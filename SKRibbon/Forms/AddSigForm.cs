@@ -40,30 +40,31 @@ using Autodesk.Revit.UI;
 using Autodesk.Revit.Attributes;
 using System.Security.AccessControl;
 using System.IO;
+using static SKRibbon.FormDesign;
 
 namespace SKRibbon
 {
-    public partial class AddSigForm : System.Windows.Forms.Form
+    public partial class AddSigForm : VForm
     {
         Document Doc;
         string Path;
         Dictionary<string, Dictionary<string, List<ViewSheet>>> buildingsDict = new Dictionary<string, Dictionary<string, List<ViewSheet>>>();
+
+        FlowLayoutPanel formWrapper = new FlowLayoutPanel();
+        TreeView sheetTree;
+        Label newPath = new Label();
         public AddSigForm(Document doc, string path)
         {
             InitializeComponent();
             Doc = doc;
             Path = path;
-            this.AutoSize = true;
-            this.AutoScroll = true;
-
-            //Создаем Wrapper для содержимого формы
-            FlowLayoutPanel formWrapper = new FlowLayoutPanel();
+                 
+            //Создаем Wrapper для содержимого формы            
             formWrapper.Parent = this;
             this.Controls.Add(formWrapper);
 
             formWrapper.FlowDirection = FlowDirection.TopDown;
             formWrapper.AutoSize = true;
-            formWrapper.BorderStyle = BorderStyle.FixedSingle;
             formWrapper.Padding = new Padding(5, 5, 5, 5);
 
             //Создаем заголовок
@@ -76,22 +77,21 @@ namespace SKRibbon
             header.Font = new Font(Label.DefaultFont, FontStyle.Bold);
 
             //Создаем текстовое поле для пути
-            Label newPath = new Label();
             newPath.Name = "pathLabel";
             newPath.Parent = formWrapper;
             formWrapper.Controls.Add(newPath);
-            newPath.Size = new Size(300, 30);
+            newPath.Size = new Size(500, 30);
             newPath.Text = Path;
 
             // Кнопка смены пути
-            Button pathButton = new Button();
-            pathButton.Parent = formWrapper;
-            formWrapper.Controls.Add(pathButton);
+            VButton pathButton = new VButton();
             pathButton.Anchor = AnchorStyles.Top;
-            pathButton.Width = 200;
-
+            pathButton.Size = new Size(300, 30);
             pathButton.Text = "Сменить папку с подписями";
             pathButton.Click += ChooseFolder;
+
+            pathButton.Parent = formWrapper;
+            formWrapper.Controls.Add(pathButton);
 
             //Создаем заголовок чеклиста
             Label checkHeader = new Label();
@@ -104,7 +104,7 @@ namespace SKRibbon
 
             // Создаем словарь листов
             buildingsDict = FormUtils.CollectSheetDictionary(doc, true);
-            TreeView sheetTree = FormUtils.CreateSheetTreeView(buildingsDict);
+            sheetTree = FormUtils.CreateSheetTreeView(buildingsDict);
 
             sheetTree.Parent = formWrapper;
             formWrapper.Controls.Add(sheetTree);
@@ -115,13 +115,13 @@ namespace SKRibbon
             sheetTree.AfterCheck += node_AfterCheck;
 
             //Добавляем кнопку
-            Button button = new Button();
+            VButton button = new VButton();
             button.Parent = formWrapper;
             formWrapper.Controls.Add(button);
             button.Anchor = AnchorStyles.Top;
-            button.Width = 200;
+            button.Size = new Size (300, 60);
 
-            button.Text = "Проставить подписи";
+            button.Text = "ПРОСТАВИТЬ ПОДПИСИ";
             button.Click += PlaceSignatures;
 
             this.Width = formWrapper.Width + 5;
@@ -130,12 +130,9 @@ namespace SKRibbon
 
         public void PlaceSignatures(object sender, EventArgs e)
         {
-            Button button = (Button)sender;
-            FlowLayoutPanel formWrapper = (FlowLayoutPanel)button.Parent;
-
-            Label pathBox = (Label)formWrapper.Controls[1];
-            string path = pathBox.Text;
-            TreeView sheetTree = (TreeView)formWrapper.Controls[4];
+            VButton button = (VButton)sender;
+            
+            string path = newPath.Text;
             StringBuilder sb = new StringBuilder();
 
             Transaction t = new Transaction(Doc, "Вставить подписи");

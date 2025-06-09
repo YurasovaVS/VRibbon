@@ -54,7 +54,7 @@ namespace SKRibbon
 
 
 
-            using (System.Windows.Forms.Form form = new PlaceFloorsForm(doc, selectionIds, "Полы"))
+            using (FormDesign.VForm form = new PlaceFloorsForm(doc, selectionIds, "Полы"))
             {
                 if (form.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {

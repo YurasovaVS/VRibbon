@@ -38,10 +38,11 @@ using Autodesk.Revit.Creation;
 using System.Windows.Forms;
 using ColorizeTabs;
 using Autodesk.Revit.UI;
+using static SKRibbon.FormDesign;
 
 namespace SKRibbon
 {
-    public partial class ChangeColorSettingsForm : Form
+    public partial class ChangeColorSettingsForm : VForm
     {
         FlowLayoutPanel formWrapper = new FlowLayoutPanel();
         FlowLayoutPanel colorsWrapper = new FlowLayoutPanel();

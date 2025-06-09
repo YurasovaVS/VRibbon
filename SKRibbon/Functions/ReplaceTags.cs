@@ -34,6 +34,7 @@ using System.Threading.Tasks;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.Attributes;
+using static SKRibbon.FormDesign;
 
 namespace ReplaceAreaTags
 {
@@ -47,7 +48,7 @@ namespace ReplaceAreaTags
             UIApplication uiApp = commandData.Application;
             Document doc = uiApp.ActiveUIDocument.Document;
 
-            using (System.Windows.Forms.Form form = new replaceTagsForm(doc))
+            using (VForm form = new replaceTagsForm(doc))
             {
                 if (form.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {

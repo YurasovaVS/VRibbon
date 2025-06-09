@@ -39,11 +39,12 @@ using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.DB.Architecture;
 using Autodesk.Revit.UI;
+using static SKRibbon.FormDesign;
 
 namespace ReplaceAreaTags
 {
     [Transaction(TransactionMode.Manual)]
-    public partial class replaceTagsForm : System.Windows.Forms.Form
+    public partial class replaceTagsForm : VForm
     {
         Document Doc;
         List<FamilySymbol> roomTagTypes = new List<FamilySymbol>();
@@ -51,9 +52,6 @@ namespace ReplaceAreaTags
         {
             InitializeComponent();
             Doc = doc;
-            this.AutoSize = true;
-            this.AutoScroll = true;
-            this.FormBorderStyle = FormBorderStyle.FixedSingle;
 
             //Создаем Wrapper для содержимого формы
             FlowLayoutPanel formWrapper = new FlowLayoutPanel();
@@ -62,7 +60,6 @@ namespace ReplaceAreaTags
 
             formWrapper.FlowDirection = FlowDirection.TopDown;
             formWrapper.AutoSize = true;
-            formWrapper.BorderStyle = BorderStyle.FixedSingle;
             formWrapper.Padding = new Padding(5, 5, 5, 5);
 
             //Создаем первый заголовок

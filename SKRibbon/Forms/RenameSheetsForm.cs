@@ -39,11 +39,12 @@ using Autodesk.Revit.UI;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.Attributes;
 using System.Text.RegularExpressions;
+using static SKRibbon.FormDesign;
 
 namespace SheetRenamer
 {
     [Transaction(TransactionMode.Manual)]
-    public partial class RenameSheetsForm : System.Windows.Forms.Form
+    public partial class RenameSheetsForm : VForm
     {
         Document Doc;
         Dictionary<string, Dictionary<string, List<ViewSheet>>> buildingsDict = new Dictionary<string, Dictionary<string, List<ViewSheet>>>();

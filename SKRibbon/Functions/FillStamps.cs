@@ -34,6 +34,7 @@ using System.Threading.Tasks;
 using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
+using static SKRibbon.FormDesign;
 using WinForms = System.Windows.Forms;
 
 
@@ -47,7 +48,7 @@ namespace FillStamps
             UIApplication uiApp = commandData.Application;
             Document doc = uiApp.ActiveUIDocument.Document;
 
-            using (WinForms.Form form = new FillStampsForm(doc))
+            using (VForm form = new FillStampsForm(doc))
             {
                 if (form.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {

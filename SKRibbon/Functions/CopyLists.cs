@@ -34,6 +34,7 @@ using System.Threading.Tasks;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.Attributes;
+using static SKRibbon.FormDesign;
 
 namespace CopyListsTree
 {
@@ -45,7 +46,7 @@ namespace CopyListsTree
             UIApplication uiApp = commandData.Application;
             Document doc = uiApp.ActiveUIDocument.Document;
 
-            using (System.Windows.Forms.Form form = new CopyListsForm(doc))
+            using (VForm form = new CopyListsForm(doc))
             {
                 if (form.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {

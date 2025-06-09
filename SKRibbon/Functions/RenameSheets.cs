@@ -45,7 +45,7 @@ namespace SheetRenamer
             UIApplication uiApp = commandData.Application;
             Document doc = uiApp.ActiveUIDocument.Document;
 
-            using (System.Windows.Forms.Form form = new RenameSheetsForm(doc))
+            using (SKRibbon.FormDesign.VForm form = new RenameSheetsForm(doc))
             {
                 if(form.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {

@@ -40,10 +40,11 @@ using Autodesk.Revit.DB;
 using System.IO;
 using Excel = Microsoft.Office.Interop.Excel;
 using System.Text.RegularExpressions;
+using static SKRibbon.FormDesign;
 
 namespace InfoListMaker
 {
-    public partial class InfoListForm : System.Windows.Forms.Form
+    public partial class InfoListForm : VForm
     {
         Document Doc;
         string SignaturesPath = @"\\absknas\переезд\13_Пользователи\_ПодписиСК";

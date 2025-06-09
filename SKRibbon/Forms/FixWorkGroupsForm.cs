@@ -40,11 +40,12 @@ using Autodesk.Revit.UI;
 using System.Windows.Forms;
 using System.Collections;
 using System.Net.NetworkInformation;
+using static SKRibbon.FormDesign;
 
 namespace SKRibbon
 {
     
-    public partial class FixWorkGroupsForm : WinForms.Form
+    public partial class FixWorkGroupsForm : VForm
     {
         Dictionary<BuiltInCategory, string> CategoryNames = new Dictionary<BuiltInCategory, string>()
         {

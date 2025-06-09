@@ -39,10 +39,11 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using System.Windows.Forms;
 using Autodesk.Revit.DB.Architecture;
+using static SKRibbon.FormDesign;
 
 namespace SKRibbon
 {
-    public partial class NumerateRoomsForm : WinForms.Form
+    public partial class NumerateRoomsForm : VForm
     {
         Document Doc;
         FlowLayoutPanel LevelsWrapper = new FlowLayoutPanel();

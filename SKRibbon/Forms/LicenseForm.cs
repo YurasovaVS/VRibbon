@@ -35,10 +35,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static SKRibbon.FormDesign;
 
 namespace SKRibbon.Forms
 {
-    public partial class LicenseForm: Form
+    public partial class LicenseForm: VForm
     {
         public LicenseForm()
         {

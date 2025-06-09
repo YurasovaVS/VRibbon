@@ -39,10 +39,11 @@ using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.DB.Structure;
+using static SKRibbon.FormDesign;
 
 namespace SKRibbon
 {
-    public partial class FixMirroredDoorsForm : System.Windows.Forms.Form
+    public partial class FixMirroredDoorsForm : VForm
     {
         Document Doc;
         FlowLayoutPanel formWrapper = new FlowLayoutPanel();

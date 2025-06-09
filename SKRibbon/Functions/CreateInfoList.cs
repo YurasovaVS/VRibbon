@@ -34,6 +34,7 @@ using System.Threading.Tasks;
 using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
+using static SKRibbon.FormDesign;
 
 namespace InfoListMaker
 {
@@ -46,7 +47,7 @@ namespace InfoListMaker
             UIApplication uiApp = commandData.Application;
             Document doc = uiApp.ActiveUIDocument.Document;
 
-            using (System.Windows.Forms.Form form = new InfoListForm(doc))
+            using (VForm form = new InfoListForm(doc))
             {
                 if (form.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {

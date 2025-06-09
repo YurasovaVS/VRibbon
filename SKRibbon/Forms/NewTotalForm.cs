@@ -39,11 +39,12 @@ using Autodesk.Revit.UI;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.Attributes;
 using System.Xml.Linq;
+using static SKRibbon.FormDesign;
 
 namespace FakeArea
 {
     [Transaction(TransactionMode.Manual)]
-    public partial class NewTotalForm : System.Windows.Forms.Form
+    public partial class NewTotalForm : VForm
     {
         Document Doc;
         Dictionary<string, BuildingAdjustments> dictionary = new Dictionary<string, BuildingAdjustments>();
@@ -110,7 +111,8 @@ namespace FakeArea
                     }
                 }
             }
-            comboBox.SelectedIndex = 0;
+            if (comboBox.Items.Count > 0) comboBox.SelectedIndex = 0;
+            else comboBox.Enabled = false;
             currentRoomPurpose = comboBox.Items[0].ToString();
             comboBox.SelectedValueChanged += OnSelectionChanged;
 

@@ -38,10 +38,11 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
+using static SKRibbon.FormDesign;
 
 namespace SKRibbon.Forms
 {
-    public partial class DeleteSigForm : System.Windows.Forms.Form
+    public partial class DeleteSigForm : VForm
     {
         Document Doc;
         Dictionary<string, Dictionary<string, List<ViewSheet>>> buildingsDict = new Dictionary<string, Dictionary<string, List<ViewSheet>>>();
@@ -50,10 +51,7 @@ namespace SKRibbon.Forms
             InitializeComponent();
             Doc = doc;
 
-            this.AutoSize = true;
-            this.AutoScroll = true;
-
-            //Создаем Wrapper для содержимого формы
+            // Создаем Wrapper для содержимого формы
             FlowLayoutPanel formWrapper = new FlowLayoutPanel();
             formWrapper.Parent = this;
             this.Controls.Add(formWrapper);
@@ -63,13 +61,14 @@ namespace SKRibbon.Forms
             formWrapper.BorderStyle = BorderStyle.FixedSingle;
             formWrapper.Padding = new Padding(5, 5, 5, 5);
 
-            //Создаем заголовок
+            // Создаем заголовок
             Label header = new Label();
             header.Parent = formWrapper;
             formWrapper.Controls.Add(header);
             header.Anchor = AnchorStyles.Top;
             header.Size = new Size(500, 30);
             header.Text = "Выберите листы, с которых хотите удалить подписи:";
+            header.Font = new Font(Label.DefaultFont, FontStyle.Bold);
 
             // Добавляем древо листов
             buildingsDict = FormUtils.CollectSheetDictionary(doc, true);
@@ -83,8 +82,8 @@ namespace SKRibbon.Forms
             sheetTree.CheckBoxes = true;
             sheetTree.AfterCheck += node_AfterCheck;
 
-            //Добавляем кнопку ОК
-            Button button = new Button();
+            // Добавляем кнопку ОК
+            VButton button = new VButton();
             button.Parent = formWrapper;
             formWrapper.Controls.Add(button);
             button.Anchor = AnchorStyles.Top;
@@ -99,7 +98,7 @@ namespace SKRibbon.Forms
 
         public void RemoveSignatures (object sender, EventArgs e)
         {
-            Button button = (Button)sender;
+            VButton button = (VButton)sender;
             FlowLayoutPanel formWrapper = (FlowLayoutPanel)button.Parent;
             TreeView sheetTree = (TreeView)formWrapper.Controls[1];
 

@@ -35,6 +35,7 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using System.Windows.Forms;
 using Autodesk.Revit.Attributes;
+using static SKRibbon.FormDesign;
 
 namespace FilterByPeople
 {
@@ -50,7 +51,7 @@ namespace FilterByPeople
             ICollection<ElementId> elId = uiDoc.Selection.GetElementIds();
             if (uiDoc.Selection.GetElementIds().Count != 0)
             {
-                using (System.Windows.Forms.Form form = new FilterByPeopleForm(uiDoc))
+                using (VForm form = new FilterByPeopleForm(uiDoc))
                 {
                     if (form.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                     {

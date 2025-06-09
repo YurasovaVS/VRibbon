@@ -47,7 +47,7 @@ using System.Windows.Controls;
 namespace FillStamps
 {
     [Transaction(TransactionMode.Manual)]
-    public partial class FillStampsForm : WinForms.Form
+    public partial class FillStampsForm : VForm
     {
         Document Doc;
         FlowLayoutPanel formWrapper;
@@ -59,16 +59,19 @@ namespace FillStamps
         {
             InitializeComponent();
 
-            this.Text = "Заполнить штампы";
+            this.Text = "";
             this.BackColor = System.Drawing.Color.White;
             this.FormBorderStyle = WinForms.FormBorderStyle.FixedSingle;
-            this.Width = 850;
-            this.Height = 420;
+            this.Width = 880;
+            this.Height = 460;
+
+
             Doc = doc;
 
             formWrapper = new FlowLayoutPanel();
             formWrapper.FlowDirection = FlowDirection.LeftToRight;
             formWrapper.AutoSize = true;
+
 
             linesWrapper = new FlowLayoutPanel();
             linesWrapper.FlowDirection = FlowDirection.TopDown;
@@ -89,7 +92,7 @@ namespace FillStamps
             tree.CheckBoxes = true;
             tree.AfterCheck += node_AfterCheck;
             tree.Width = 300;
-            tree.Height = 350;
+            tree.Height = 365;
             tree.Margin = new Padding(15, 5, 0, 0);
             tree.Anchor = AnchorStyles.Left;
 
@@ -97,7 +100,6 @@ namespace FillStamps
             // Заголовок
             VHeaderLabel headerLabel = new VHeaderLabel();
             headerLabel.Size = new Size(600, 50);
-            headerLabel.Padding = new Padding(10, 5, 0, 10);
             headerLabel.Text = "ДАННЫЕ О РАЗРАБОТЧИКАХ";
             headerLabel.Parent = linesWrapper;
             linesWrapper.Controls.Add(headerLabel);
@@ -115,7 +117,7 @@ namespace FillStamps
                 WinForms.Label nameLabel = new WinForms.Label();
                 SK_FD.VTextBox nameText = new SK_FD.VTextBox();
 
-                int labelWidth = 90;
+                int labelWidth = 100;
                 int textBoxWidth = 150;
                 int height = 20;
 

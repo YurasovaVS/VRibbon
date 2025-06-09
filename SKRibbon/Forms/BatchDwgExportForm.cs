@@ -39,10 +39,11 @@ using SKRibbon;
 using Autodesk.Revit.DB.Architecture;
 using Autodesk.Revit.DB;
 using System.IO;
+using static SKRibbon.FormDesign;
 
 namespace SKRibbon
 {
-    public partial class BatchDwgExportForm : System.Windows.Forms.Form
+    public partial class BatchDwgExportForm : VForm
     {
         Document Doc;
         FlowLayoutPanel formWrapper = new FlowLayoutPanel();
@@ -81,6 +82,9 @@ namespace SKRibbon
             this.Width = 710;
             this.Height = 480;
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
+            this.BackColor = System.Drawing.Color.White;
+            this.Text = "";
+            this.ShowIcon = false;
 
             formWrapper.AutoSize = true;
             formWrapper.FlowDirection = FlowDirection.LeftToRight;
@@ -102,7 +106,7 @@ namespace SKRibbon
             tree.Anchor = AnchorStyles.Left;
 
             // Добавляем wrapper для опций
-            // 
+            
             FlowLayoutPanel optionsWrapper = new FlowLayoutPanel();
             optionsWrapper.AutoSize = true;
             optionsWrapper.Anchor = AnchorStyles.Top;
@@ -111,16 +115,35 @@ namespace SKRibbon
             optionsWrapper.Parent = formWrapper;
             formWrapper.Controls.Add(optionsWrapper);
 
-            // Добавляем путь
+            // Заголовок опций
+            VHeaderLabel optionsHeader = new VHeaderLabel();
+            optionsHeader.Text = "НАСТРОЙКИ DWG";
+            optionsHeader.Size = new Size(300, 50);
+            optionsHeader.Padding = new Padding(0, 0, 0, 0);
+
+            optionsHeader.Parent = optionsWrapper;
+            optionsWrapper.Controls.Add(optionsHeader);
+
+            // Опция 1. Путь сохранения файла
+            // Заголовок
             Label pathHeader = new Label();
-            pathHeader.Size = new Size(300, 50);
-            pathHeader.Margin = new Padding(0, 30, 0, 0);
-            pathHeader.Text = "Файлы будут сохранены в папку:\n" + SavePath;
+            pathHeader.Size = new Size(300, 20);
+            pathHeader.Margin = new Padding(0, 5, 0, 0);
+            pathHeader.Text = "Файлы будут сохранены в папку:";
             pathHeader.Parent = optionsWrapper;
+            pathHeader.Font = new Font(Label.DefaultFont, FontStyle.Bold);
             optionsWrapper.Controls.Add(pathHeader);
 
+            // Добавляем путь
+            Label pathLabel = new Label();
+            pathLabel.Size = new Size(300, 20);
+            pathLabel.Margin = new Padding(0, 0, 0, 0);
+            pathLabel.Text = SavePath;
+            pathLabel.Parent = optionsWrapper;
+            optionsWrapper.Controls.Add(pathLabel);
+
             // Добавляем кнопку пути
-            Button pathButton = new Button();
+            VButton pathButton = new VButton();
             pathButton.Text = "Выбрать другую папку";
             pathButton.Size = new Size(300, 30);
             pathButton.Margin = new Padding(0, 0, 0, 30);
@@ -142,9 +165,9 @@ namespace SKRibbon
             divider.Anchor = AnchorStyles.Top;
 
             // Добавляем кнопку запуска программы
-            Button okButton = new Button();
-            okButton.Text = "Вывести листы";
-            okButton.Size = new Size(200, 60);
+            VButton okButton = new VButton();
+            okButton.Text = "ВЫВЕСТИ ЛИСТЫ";
+            okButton.Size = new Size(300, 60);
             okButton.Click += ExportSheets;
             okButton.Parent = optionsWrapper;
             optionsWrapper.Controls.Add(okButton);

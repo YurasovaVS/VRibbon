@@ -36,6 +36,7 @@ using System.Threading.Tasks;
 using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
+using static SKRibbon.FormDesign;
 
 namespace DeleteSignatures
 {
@@ -47,7 +48,7 @@ namespace DeleteSignatures
             UIApplication uiApp = commandData.Application;
             Document doc = uiApp.ActiveUIDocument.Document;
 
-            using (System.Windows.Forms.Form form = new SKRibbon.Forms.DeleteSigForm(doc))
+            using (VForm form = new SKRibbon.Forms.DeleteSigForm(doc))
             {
                 if (form.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {

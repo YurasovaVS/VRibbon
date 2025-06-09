@@ -41,10 +41,11 @@ using ExpIFCUtils = Autodesk.Revit.DB.IFC.ExporterIFCUtils;
 using System.Windows.Forms;
 using System.Windows.Controls;
 using Autodesk.Revit.DB.Architecture;
+using static SKRibbon.FormDesign;
 
 namespace SKRibbon
 {
-    public partial class PlaceFloorsForm : WinForms.Form
+    public partial class PlaceFloorsForm : VForm
     {
         Document Doc;
         List<Element> FloorTypes;
@@ -84,26 +85,33 @@ namespace SKRibbon
             formWrapper.Parent = this;
             this.Controls.Add(formWrapper);
 
-            this.Width = 1100;
-
-
-            // Обертка для главных настроек (Левая сторона)
-
+            // Опции (панель слева)
+            // Обертка для опций
             FlowLayoutPanel optionsWrapper = new FlowLayoutPanel();
             optionsWrapper.AutoSize = true;
             optionsWrapper.FlowDirection = FlowDirection.TopDown;
             optionsWrapper.Parent = formWrapper;
             formWrapper.Controls.Add(optionsWrapper);
             optionsWrapper.Anchor = AnchorStyles.Top;
+            optionsWrapper.Margin = new Padding(5, 0, 0, 0);
+            optionsWrapper.BorderStyle = BorderStyle.FixedSingle;
+            optionsWrapper.ForeColor = System.Drawing.Color.FromArgb(255, 174, 112, 199);
 
-            // Выбор комнат (Selection, Active View, Entire project)
+            int leftPanelWidth = 300;
+            // Заголовок
+            VHeader optionasHeader = new VHeader("НАСТРОЙКИ", leftPanelWidth);
+
+
+            // Опция 1. Выбор помещения (Selection, Active View, Entire project)
+            // Заголовок
             WinForms.Label selectionLabel = new WinForms.Label();
             selectionLabel.Parent = optionsWrapper;
             optionsWrapper.Controls.Add(selectionLabel);
             selectionLabel.Text = "Выбор помещений:";
-            selectionLabel.Size = new Size(300, 20);
+            selectionLabel.Size = new Size(leftPanelWidth, 30);
+            selectionLabel.Font = new Font(WinForms.Label.DefaultFont, FontStyle.Bold);
 
-            
+            // Выпадающий список
             selectionCB.Parent = optionsWrapper;
             optionsWrapper.Controls.Add(selectionCB);
             selectionCB.Items.Add("Во всем проекте");
@@ -113,19 +121,19 @@ namespace SKRibbon
                 selectionCB.Items.Add("Выбранные");
                 selectionCB.SelectedIndex = 2;
             }
-            selectionCB.Size = new Size(300, 20);
+            selectionCB.Size = new Size(leftPanelWidth, 30);
 
-
-            // Оффсет от уровня (Только цифры)
-
+            // Опция 2. Оффсет от уровня этажа
+            // Заголовок
             WinForms.Label offsetLabel = new WinForms.Label();
             offsetLabel.Parent = optionsWrapper;
             optionsWrapper.Controls.Add(offsetLabel);
             offsetLabel.Text = "Отступ от уровня этажа:";
-            offsetLabel.Size = new Size(300, 20);
+            offsetLabel.Size = new Size(leftPanelWidth, 30);
             offsetLabel.Padding = new Padding(0, 10, 0, 0);
+            offsetLabel.Font = new Font(WinForms.Label.DefaultFont, FontStyle.Bold);
 
-
+            // Цифры
             offsetTB.Increment = 1;
             offsetTB.Maximum = 100000;
             offsetTB.Minimum = -100000;
@@ -133,21 +141,23 @@ namespace SKRibbon
             offsetTB.Parent = optionsWrapper;
             optionsWrapper.Controls.Add(offsetTB);
             offsetTB.Text = "0";
-            offsetTB.Size = new Size(300, 20);
+            offsetTB.Size = new Size(leftPanelWidth, 30);
             offsetTB.Padding = new Padding(0, 5, 0, 0);
 
-            // Пол по умолчанию
+            // Опция 3. Пол по умолчанию
+            // Заголовок
             WinForms.Label floorTypesLabel = new WinForms.Label();
             floorTypesLabel.Parent = optionsWrapper;
             optionsWrapper.Controls.Add(floorTypesLabel);
             floorTypesLabel.Text = "Тип по умолчанию:";
-            floorTypesLabel.Size = new Size(300, 20);
+            floorTypesLabel.Size = new Size(leftPanelWidth, 30);
             floorTypesLabel.Padding = new Padding(0, 10, 0, 0);
+            floorTypesLabel.Font = new Font(WinForms.Label.DefaultFont, FontStyle.Bold);
 
-            
+            // Выпадающий список
             floorTypesCB.Parent = optionsWrapper;
             optionsWrapper.Controls.Add(floorTypesCB);
-            floorTypesCB.Size = new Size(300, 30);
+            floorTypesCB.Size = new Size(leftPanelWidth, 30);
             floorTypesCB.Padding = new Padding(0, 5, 0, 0);
 
             floorTypes = new FilteredElementCollector(Doc).
@@ -164,8 +174,9 @@ namespace SKRibbon
 
             //Кнопка
 
-            WinForms.Button button = new WinForms.Button();
-            button.Text = "OK";
+            VButton button = new VButton();
+            button.Text = "ЗАМЕНИТЬ ПОЛЫ";
+            button.Size = new Size(leftPanelWidth, 50);
 
             button.Parent = optionsWrapper;
             optionsWrapper.Controls.Add(button);
@@ -196,8 +207,11 @@ namespace SKRibbon
                 
             }
             roomTypes = roomTypes.OrderBy(x => x).ToList();
+            int i = 0;
             foreach (string roomType in roomTypes) {
+                i++;
                 FlowLayoutPanel newRoomType = AddRoomTypeSettings(roomType);
+                if (i % 2 == 0) newRoomType.BackColor = System.Drawing.Color.FromArgb(255, 251, 245, 255);
             }
         }
 
@@ -299,6 +313,7 @@ namespace SKRibbon
             settingsWrapper.Controls.Add(roomTypeSettings);
             settingsWrapper.SetFlowBreak(roomTypeSettings, true);
             roomTypeSettings.Anchor = AnchorStyles.Top;
+            roomTypeSettings.Padding = new Padding(5, 1, 0, 1);
 
             // [0] Наименование типа комнат
             // [1] Тип пола
@@ -350,7 +365,7 @@ namespace SKRibbon
             useDefault.Parent = roomTypeSettings;
             roomTypeSettings.Controls.Add(useDefault);
             useDefault.Anchor = AnchorStyles.Left;
-            useDefault.Size = new Size(200, 20);
+            useDefault.Size = new Size(180, 20);
 
             return roomTypeSettings;
         }

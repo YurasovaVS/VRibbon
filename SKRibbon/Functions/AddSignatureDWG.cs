@@ -38,6 +38,7 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.DB.Structure;
 using FakeArea;
+using static SKRibbon.FormDesign;
 
 namespace AddSignatures
 {
@@ -63,7 +64,7 @@ namespace AddSignatures
             //Прописываем путь к подписям
             string path = "\\\\ABSKNAS\\переезд\\13_Пользователи\\_ПодписиСК\\";
 
-            using (System.Windows.Forms.Form form = new SKRibbon.AddSigForm(doc, path))
+            using (VForm form = new SKRibbon.AddSigForm(doc, path))
             {
                 if (form.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {

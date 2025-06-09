@@ -36,6 +36,7 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.DB.Structure;
 using BatchPrinting;
+using static SKRibbon.FormDesign;
 
 namespace SKRibbon
 {
@@ -47,7 +48,7 @@ namespace SKRibbon
             UIApplication uiApp = commandData.Application;
             Document doc = uiApp.ActiveUIDocument.Document;
 
-            using (System.Windows.Forms.Form form = new FixMirroredDoorsForm(doc))
+            using (VForm form = new FixMirroredDoorsForm(doc))
             {
                 if (form.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {

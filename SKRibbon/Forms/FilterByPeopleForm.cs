@@ -42,11 +42,12 @@ using System.Windows.Forms;
 using Autodesk.Revit.DB.Architecture;
 using System.Xml.Linq;
 using Autodesk.Revit.Attributes;
+using static SKRibbon.FormDesign;
 
 namespace FilterByPeople
 {
     [Transaction(TransactionMode.Manual)]
-    public partial class FilterByPeopleForm : WinForms.Form
+    public partial class FilterByPeopleForm : VForm
     {
         Document Doc;
         UIDocument UiDoc;

@@ -40,11 +40,12 @@ using Autodesk.Revit.UI;
 using Autodesk.Revit.Attributes;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 using System.Text.RegularExpressions;
+using static SKRibbon.FormDesign;
 //using Microsoft.Office.Interop.Excel;
 
 namespace CopyListsTree
 {
-    public partial class CopyListsForm : System.Windows.Forms.Form
+    public partial class CopyListsForm : VForm
     {
         Document Doc;
         HashSet<string> sheetNumbers = new HashSet<string>();

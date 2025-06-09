@@ -37,14 +37,14 @@ using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Forms;
 using Autodesk.Revit.DB;
+using static SKRibbon.FormDesign;
 
 
 namespace SKRibbon.Forms
 {
-    public partial class InfoForm : System.Windows.Forms.Form
+    public partial class InfoForm : VForm
     {
-        Document Doc;
-        public InfoForm(Document doc)
+        public InfoForm()
         {
             InitializeComponent();
             this.FormBorderStyle = FormBorderStyle.FixedSingle;

@@ -39,11 +39,12 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using System.Windows.Forms;
 using Autodesk.Revit.Attributes;
+using static SKRibbon.FormDesign;
 
 namespace SKRibbon
 {
     [Transaction(TransactionMode.Manual)]
-    public partial class CreateRoomSchedulesForm : WinForm.Form 
+    public partial class CreateRoomSchedulesForm : VForm
     {
         Document Doc;
         public CreateRoomSchedulesForm(Document doc)

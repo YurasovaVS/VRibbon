@@ -53,7 +53,7 @@ namespace SKRibbon
 
 
 
-            using (System.Windows.Forms.Form form = new NumerateRoomsForm(doc))
+            using (FormDesign.VForm form = new NumerateRoomsForm(doc))
             {
                 if (form.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {

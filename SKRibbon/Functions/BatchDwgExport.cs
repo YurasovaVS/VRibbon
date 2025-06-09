@@ -35,6 +35,7 @@ using System.Threading.Tasks;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using BatchPrinting;
+using static SKRibbon.FormDesign;
 
 namespace SKRibbon
 {
@@ -46,7 +47,7 @@ namespace SKRibbon
             UIApplication uiApp = commandData.Application;
             Document doc = uiApp.ActiveUIDocument.Document;
 
-            using (System.Windows.Forms.Form form = new BatchDwgExportForm(doc))
+            using (VForm form = new BatchDwgExportForm(doc))
             {
                 if (form.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {

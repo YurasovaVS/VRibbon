@@ -42,11 +42,12 @@ using System.IO;
 using System.Text.RegularExpressions;
 using Microsoft.Office.Interop.Excel;
 using System.Windows.Media;
+using static SKRibbon.FormDesign;
 
 
 namespace SKRibbon
 {
-    public partial class FixIFCCoordinatesForm: WinForms.Form
+    public partial class FixIFCCoordinatesForm: VForm
     {
         Document Doc;
         String IFCFilePath = "C:\\Users\\yuras\\Documents\\!Временное\\_2025-04-22_Revit_Icons\\test.ifc";
