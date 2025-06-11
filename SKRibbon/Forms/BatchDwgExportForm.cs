@@ -47,12 +47,14 @@ namespace SKRibbon
     {
         Document Doc;
         FlowLayoutPanel formWrapper = new FlowLayoutPanel();
-        Dictionary<string, Dictionary<string, List<ViewSheet>>> buildingsDict = new Dictionary<string, Dictionary<string, List<ViewSheet>>>();
+        SortedDictionary<string, SortedDictionary<string, List<ViewSheet>>> buildingsDict = new SortedDictionary<string, SortedDictionary<string, List<ViewSheet>>>();
         string SavePath;
 
 
         CheckBox cropRegionCheckBox = new CheckBox();
         System.Windows.Forms.ComboBox colorModeSelection = new System.Windows.Forms.ComboBox();
+        Label pathLabel = new Label();
+        FlowLayoutPanel optionsWrapper = new FlowLayoutPanel();
 
 
         public BatchDwgExportForm(Document doc)
@@ -107,7 +109,6 @@ namespace SKRibbon
 
             // Добавляем wrapper для опций
             
-            FlowLayoutPanel optionsWrapper = new FlowLayoutPanel();
             optionsWrapper.AutoSize = true;
             optionsWrapper.Anchor = AnchorStyles.Top;
             optionsWrapper.FlowDirection = FlowDirection.TopDown;
@@ -135,7 +136,6 @@ namespace SKRibbon
             optionsWrapper.Controls.Add(pathHeader);
 
             // Добавляем путь
-            Label pathLabel = new Label();
             pathLabel.Size = new Size(300, 20);
             pathLabel.Margin = new Padding(0, 0, 0, 0);
             pathLabel.Text = SavePath;
@@ -202,15 +202,13 @@ namespace SKRibbon
 
         //Выбор папки
         public void ChooseFolder(object sender, EventArgs e)
-        {
-            FlowLayoutPanel wrapper = (FlowLayoutPanel)formWrapper.Controls[1];
-            Label displayPath = (Label)wrapper.Controls[0];
+        {       
 
             FolderBrowserDialog dialog = new FolderBrowserDialog();
             DialogResult result = dialog.ShowDialog();
             if (result == DialogResult.OK)
             {
-                displayPath.Text = dialog.SelectedPath;
+                pathLabel.Text = dialog.SelectedPath;
                 SavePath = dialog.SelectedPath;
                 SKRibbon.Properties.appSettings.Default.printFolder = SavePath;
                 SKRibbon.Properties.appSettings.Default.Save();

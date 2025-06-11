@@ -95,13 +95,15 @@ namespace SKRibbon
             optionsWrapper.Anchor = AnchorStyles.Top;
             optionsWrapper.Margin = new Padding(5, 0, 0, 0);
             optionsWrapper.BorderStyle = BorderStyle.FixedSingle;
-            optionsWrapper.ForeColor = System.Drawing.Color.FromArgb(255, 174, 112, 199);
 
             int leftPanelWidth = 300;
             // Заголовок
-            VHeader optionasHeader = new VHeader("НАСТРОЙКИ", leftPanelWidth);
-
-
+            /*
+            VHeaderLabel optionsHeader = new VHeaderLabel();
+            optionsHeader.Text = "НАСТРОЙКИ";
+            optionsHeader.Parent = optionsWrapper;
+            optionsWrapper.Controls.Add(optionsHeader);
+            */
             // Опция 1. Выбор помещения (Selection, Active View, Entire project)
             // Заголовок
             WinForms.Label selectionLabel = new WinForms.Label();
@@ -177,6 +179,7 @@ namespace SKRibbon
             VButton button = new VButton();
             button.Text = "ЗАМЕНИТЬ ПОЛЫ";
             button.Size = new Size(leftPanelWidth, 50);
+            //button.Padding = new Padding(0, 100, 0, 0);
 
             button.Parent = optionsWrapper;
             optionsWrapper.Controls.Add(button);
@@ -193,7 +196,6 @@ namespace SKRibbon
             settingsWrapper.Anchor = AnchorStyles.Left;
 
 
-            // Будет добавлено позже
             ICollection<Element>  rooms = new FilteredElementCollector(Doc).
                                                     OfCategory(BuiltInCategory.OST_Rooms).
                                                     WhereElementIsNotElementType().
@@ -211,7 +213,7 @@ namespace SKRibbon
             foreach (string roomType in roomTypes) {
                 i++;
                 FlowLayoutPanel newRoomType = AddRoomTypeSettings(roomType);
-                if (i % 2 == 0) newRoomType.BackColor = System.Drawing.Color.FromArgb(255, 251, 245, 255);
+                if (i % 2 == 0) newRoomType.BackColor = System.Drawing.Color.FromArgb(255, 243, 221, 255);
             }
         }
 

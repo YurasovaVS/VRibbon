@@ -56,8 +56,9 @@ namespace BatchPrinting
     {
         Document Doc;
         FlowLayoutPanel formWrapper = new FlowLayoutPanel();
-        Dictionary<string, Dictionary<string, List<ViewSheet>>> buildingsDict = new Dictionary<string, Dictionary<string, List<ViewSheet>>>();
+        SortedDictionary<string, SortedDictionary<string, List<ViewSheet>>> buildingsDict = new SortedDictionary<string, SortedDictionary<string, List<ViewSheet>>>();
         string SavePath;
+
 
         int RightPanelWidth = 450;
 
@@ -66,6 +67,7 @@ namespace BatchPrinting
         FormDesign.VTextBox NameTextBox = new FormDesign.VTextBox();
         System.Windows.Forms.ComboBox colorModeSelection = new System.Windows.Forms.ComboBox();
         System.Windows.Forms.ComboBox printersListCB = new System.Windows.Forms.ComboBox();
+        Label pathLabel = new Label();
 
         List<SheetSizes> SHEET_SIZES = new List<SheetSizes>() {
             new SheetSizes(297.00, 210.00, "A4"),
@@ -135,7 +137,7 @@ namespace BatchPrinting
             tree.Parent = formWrapper;
             formWrapper.Controls.Add(tree);
             tree.Anchor = AnchorStyles.Left;
-
+                        
             // Добавляем wrapper для опций
             // 
             FlowLayoutPanel optionsWrapper = new FlowLayoutPanel();
@@ -198,7 +200,6 @@ namespace BatchPrinting
             optionsWrapper.Controls.Add(pathHeader);
 
             // Путь
-            Label pathLabel = new Label();
             pathLabel.Size = new Size(RightPanelWidth, 20);
             pathLabel.Margin = new Padding(0, 0, 0, 10);
             pathLabel.Text = SavePath;
@@ -359,15 +360,12 @@ namespace BatchPrinting
         }
 
         public void ChooseFolder(object sender, EventArgs e)
-        {
-            FlowLayoutPanel wrapper = (FlowLayoutPanel)formWrapper.Controls[1];
-            Label displayPath = (Label)wrapper.Controls[2];
-
+        {            
             FolderBrowserDialog dialog = new FolderBrowserDialog();
             DialogResult result = dialog.ShowDialog();
             if (result == DialogResult.OK)
             {
-                displayPath.Text = dialog.SelectedPath;
+                pathLabel.Text = dialog.SelectedPath;
                 SavePath = dialog.SelectedPath;
                 SKRibbon.Properties.appSettings.Default.printFolder = SavePath;
                 SKRibbon.Properties.appSettings.Default.Save();

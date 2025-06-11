@@ -45,7 +45,7 @@ namespace SKRibbon.Forms
     public partial class DeleteSigForm : VForm
     {
         Document Doc;
-        Dictionary<string, Dictionary<string, List<ViewSheet>>> buildingsDict = new Dictionary<string, Dictionary<string, List<ViewSheet>>>();
+        SortedDictionary<string, SortedDictionary<string, List<ViewSheet>>> buildingsDict = new SortedDictionary<string, SortedDictionary<string, List<ViewSheet>>>();
         public DeleteSigForm(Document doc)
         {
             InitializeComponent();
@@ -58,15 +58,15 @@ namespace SKRibbon.Forms
 
             formWrapper.FlowDirection = FlowDirection.TopDown;
             formWrapper.AutoSize = true;
-            formWrapper.BorderStyle = BorderStyle.FixedSingle;
             formWrapper.Padding = new Padding(5, 5, 5, 5);
 
+            int panelWidth = 350;
             // Создаем заголовок
             Label header = new Label();
             header.Parent = formWrapper;
             formWrapper.Controls.Add(header);
             header.Anchor = AnchorStyles.Top;
-            header.Size = new Size(500, 30);
+            header.Size = new Size(panelWidth, 30);
             header.Text = "Выберите листы, с которых хотите удалить подписи:";
             header.Font = new Font(Label.DefaultFont, FontStyle.Bold);
 
@@ -77,7 +77,7 @@ namespace SKRibbon.Forms
             sheetTree.Parent = formWrapper;
             formWrapper.Controls.Add(sheetTree);
             sheetTree.Anchor = AnchorStyles.Top;
-            sheetTree.MinimumSize = new Size(500, 30);
+            sheetTree.MinimumSize = new Size(panelWidth, 30);
             sheetTree.Height = 200;
             sheetTree.CheckBoxes = true;
             sheetTree.AfterCheck += node_AfterCheck;
@@ -87,7 +87,7 @@ namespace SKRibbon.Forms
             button.Parent = formWrapper;
             formWrapper.Controls.Add(button);
             button.Anchor = AnchorStyles.Top;
-            button.Width = 200;
+            button.Size = new Size (panelWidth, 50);
 
             button.Text = "Убрать подписи";
             button.Click += RemoveSignatures;

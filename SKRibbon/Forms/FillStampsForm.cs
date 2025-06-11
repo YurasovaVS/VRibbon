@@ -53,7 +53,7 @@ namespace FillStamps
         FlowLayoutPanel formWrapper;
         FlowLayoutPanel linesWrapper;
         WinForms.CheckBox checkBox;
-        Dictionary<string, Dictionary<string, List<ViewSheet>>> buildingsDict = new Dictionary<string, Dictionary<string, List<ViewSheet>>>();
+        SortedDictionary<string, SortedDictionary<string, List<ViewSheet>>> buildingsDict = new SortedDictionary<string, SortedDictionary<string, List<ViewSheet>>>();
 
         public FillStampsForm(Document doc)
         {

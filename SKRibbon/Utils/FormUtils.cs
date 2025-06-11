@@ -11,7 +11,7 @@
  * Обеспечения, версии 3.
  * http://www.gnu.org/licenses/.
  * 
- * -------------------------------------------------------------------------------------- * 
+ * -------------------------------------------------------------------------------------- 
  * "Vitruvius" is a free plugin for Autodesk(c) Revit(c), aimed to automate
  * routine tasks and make life easier for architects.
  * 
@@ -50,9 +50,9 @@ namespace SKRibbon
          *              Объект ViewSheet
          *                  
         */
-        public static Dictionary<string, Dictionary<string, List<ViewSheet>>> CollectSheetDictionary (Document doc, bool orderByNumber)
+        public static SortedDictionary<string, SortedDictionary<string, List<ViewSheet>>> CollectSheetDictionary (Document doc, bool orderByNumber)
         {
-            Dictionary<string, Dictionary<string, List<ViewSheet>>> buildingsDict = new Dictionary<string, Dictionary<string, List<ViewSheet>>>();
+            SortedDictionary<string, SortedDictionary<string, List<ViewSheet>>> buildingsDict = new SortedDictionary<string, SortedDictionary<string, List<ViewSheet>>>();
 
             ICollection<Element> sheets = new FilteredElementCollector(doc).
                                             OfCategory(BuiltInCategory.OST_Sheets).
@@ -80,7 +80,7 @@ namespace SKRibbon
                     // Если в первом словаре нет такого здания, создаем его
                     if (!buildingsDict.ContainsKey(building))
                     {
-                        Dictionary<string, List<ViewSheet>> tomesDict = new Dictionary<string, List<ViewSheet>>();
+                        SortedDictionary<string, List<ViewSheet>> tomesDict = new SortedDictionary<string, List<ViewSheet>>();
                         buildingsDict.Add(building, tomesDict);
                     }
                     // Если во вложенном словаре здания нет такого тома, создаем его
@@ -96,11 +96,11 @@ namespace SKRibbon
 
             if (orderByNumber)
             {
-                Dictionary<string, Dictionary<string, List<ViewSheet>>> tempDict = new Dictionary<string, Dictionary<string, List<ViewSheet>>>();
+                SortedDictionary<string, SortedDictionary<string, List<ViewSheet>>> tempDict = new SortedDictionary<string, SortedDictionary<string, List<ViewSheet>>>();
 
                 foreach (var building in buildingsDict)
                 {
-                    Dictionary<string, List<ViewSheet>> tomesDict = new Dictionary<string, List<ViewSheet>>();
+                    SortedDictionary<string, List<ViewSheet>> tomesDict = new SortedDictionary<string, List<ViewSheet>>();
                     tempDict.Add(building.Key, tomesDict);
                     foreach (var tome in building.Value)
                     {
@@ -111,17 +111,16 @@ namespace SKRibbon
 
                 buildingsDict = tempDict;
             }
-
             return buildingsDict;
         }
 
-        public static WinForms.TreeView CreateSheetTreeView (Dictionary<string, Dictionary<string, List<ViewSheet>>> buildingsDict)
+        public static WinForms.TreeView CreateSheetTreeView (SortedDictionary<string, SortedDictionary<string, List<ViewSheet>>> buildingsDict)
         {
             WinForms.TreeView tree = new WinForms.TreeView ();
             foreach (var building in buildingsDict)
             {
                 tree.Nodes.Add(building.Key);
-                Dictionary<string, List<ViewSheet>> tomes = building.Value;
+                SortedDictionary<string, List<ViewSheet>> tomes = building.Value;
 
                 foreach (var tome in tomes)
                 {
@@ -141,7 +140,7 @@ namespace SKRibbon
                     }
                 }
             } // Конец построения дерева
-                        
+            tree.Sort();         
             return tree;
         }
 
@@ -149,8 +148,6 @@ namespace SKRibbon
         public class SheetTreeNode : WinForms.TreeNode
         {
             public ViewSheet sheet;
-        }
-
-
+        }        
     }
 }

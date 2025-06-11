@@ -48,7 +48,7 @@ namespace SKRibbon
     {
         Document Doc;
         string Path;
-        Dictionary<string, Dictionary<string, List<ViewSheet>>> buildingsDict = new Dictionary<string, Dictionary<string, List<ViewSheet>>>();
+        SortedDictionary<string, SortedDictionary<string, List<ViewSheet>>> buildingsDict = new SortedDictionary<string, SortedDictionary<string, List<ViewSheet>>>();
 
         FlowLayoutPanel formWrapper = new FlowLayoutPanel();
         TreeView sheetTree;
@@ -242,8 +242,6 @@ namespace SKRibbon
             }
         }
     }
-
-
 
     //Класс для чеклиста листов
     public class CheckedSheetList : CheckedListBox
