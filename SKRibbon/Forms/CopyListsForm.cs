@@ -55,9 +55,10 @@ namespace CopyListsTree
         {
             InitializeComponent();
             Doc = doc;
+            this.AutoSize = false;
             this.AutoScroll = true;
             this.Width = 1150;
-            this.Height = 900;
+            this.Height = 600;
 
             //Собираем все вьюпорты в проекте и запихиваем их имена во viewNames
             ICollection<Element> views = new FilteredElementCollector(Doc).

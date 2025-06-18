@@ -180,6 +180,9 @@ namespace BatchPrinting
             }
             printersListCB.SelectedIndex = 0;
             printersListCB.Margin = new Padding(0, 0, 0, 0);
+            //printersListCB.DropDownStyle = ComboBoxStyle.DropDownList;
+            //printersListCB.FlatStyle = FlatStyle.Popup;            
+            //printersListCB.BackColor = System.Drawing.Color.White;
 
             printersHeader.Parent = lineWrapper_1;
             printersListCB.Parent = lineWrapper_1;
@@ -239,12 +242,15 @@ namespace BatchPrinting
             colorModeHeader.Font = new Font(Label.DefaultFont, FontStyle.Bold);
 
             // Добавляем режим цвета (Цвет/ЧБ/Монохром)
-            colorModeSelection.Items.Add("Цветная");
-            colorModeSelection.Items.Add("Черно-белая");
+            colorModeSelection.Items.Add("Цветной");
+            colorModeSelection.Items.Add("Черно-белый");
             colorModeSelection.Items.Add("Оттенки серого");
             colorModeSelection.Width = FieldWidth;
             colorModeSelection.SelectedIndex = 0;
             colorModeSelection.Margin = new Padding(0, 10, 0, 0);
+            //colorModeSelection.DropDownStyle = ComboBoxStyle.DropDownList;
+            //colorModeSelection.FlatStyle = FlatStyle.Popup;
+            //colorModeSelection.BackColor = System.Drawing.Color.White;
 
             colorModeSelection.Anchor = AnchorStyles.Left;
 

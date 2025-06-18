@@ -136,9 +136,9 @@ namespace SKRibbon
             optionsWrapper.Controls.Add(pathHeader);
 
             // Добавляем путь
-            pathLabel.Size = new Size(300, 20);
+            pathLabel.Size = new Size(300, (SavePath.Length / 44 + 1) * 15);
             pathLabel.Margin = new Padding(0, 0, 0, 0);
-            pathLabel.Text = SavePath;
+            pathLabel.Text = SavePath;            
             pathLabel.Parent = optionsWrapper;
             optionsWrapper.Controls.Add(pathLabel);
 
@@ -146,7 +146,7 @@ namespace SKRibbon
             VButton pathButton = new VButton();
             pathButton.Text = "Выбрать другую папку";
             pathButton.Size = new Size(300, 30);
-            pathButton.Margin = new Padding(0, 0, 0, 30);
+            pathButton.Margin = new Padding(0, 10, 0, 30);
             pathButton.Click += ChooseFolder;
             pathButton.Parent = optionsWrapper;
             optionsWrapper.Controls.Add(pathButton);
@@ -213,6 +213,7 @@ namespace SKRibbon
                 SKRibbon.Properties.appSettings.Default.printFolder = SavePath;
                 SKRibbon.Properties.appSettings.Default.Save();
             }
+            pathLabel.Size = new Size(300, (SavePath.Length / 44 + 1) * 15);
         }
 
         private void ExportSheets(object sender, EventArgs e)

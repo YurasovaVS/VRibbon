@@ -53,6 +53,7 @@ namespace SKRibbon
         WinForms.ComboBox floorTypesCB = new WinForms.ComboBox();
         WinForms.ComboBox selectionCB = new WinForms.ComboBox();
         WinForms.NumericUpDown offsetTB = new WinForms.NumericUpDown();
+        FlowLayoutPanel optionsWrapper = new FlowLayoutPanel();
         FlowLayoutPanel settingsWrapper = new FlowLayoutPanel();
         ICollection<ElementId> SelectionIds;
         List<string> roomTypes = new List<string>();
@@ -87,7 +88,6 @@ namespace SKRibbon
 
             // Опции (панель слева)
             // Обертка для опций
-            FlowLayoutPanel optionsWrapper = new FlowLayoutPanel();
             optionsWrapper.AutoSize = true;
             optionsWrapper.FlowDirection = FlowDirection.TopDown;
             optionsWrapper.Parent = formWrapper;
@@ -98,12 +98,13 @@ namespace SKRibbon
 
             int leftPanelWidth = 300;
             // Заголовок
-            /*
+            
             VHeaderLabel optionsHeader = new VHeaderLabel();
             optionsHeader.Text = "НАСТРОЙКИ";
+            optionsHeader.Size = new Size(leftPanelWidth, 35);
             optionsHeader.Parent = optionsWrapper;
             optionsWrapper.Controls.Add(optionsHeader);
-            */
+            
             // Опция 1. Выбор помещения (Selection, Active View, Entire project)
             // Заголовок
             WinForms.Label selectionLabel = new WinForms.Label();
@@ -278,7 +279,6 @@ namespace SKRibbon
                     Parameter floorOffsetParam = newFloor.LookupParameter("Смещение от уровня");
                     if (floorOffsetParam == null) floorOffsetParam = newFloor.LookupParameter("Height Offset From Level");
 
-
                     if (floorOffsetParam != null)
                     {
                         WinForms.CheckBox offsetCB = (WinForms.CheckBox)settingsWrapper.Controls[i].Controls[3];
@@ -295,7 +295,26 @@ namespace SKRibbon
                         floorOffsetParam.SetValueString(value.ToString());
                     }
 #elif DEBUG2024 || REVIT2024
+                    Floor newFloor = Floor.Create(Doc, curveLoops, floorType.Id, level.Id);
 
+                    Parameter floorOffsetParam = newFloor.LookupParameter("Смещение от уровня");
+                    if (floorOffsetParam == null) floorOffsetParam = newFloor.LookupParameter("Height Offset From Level");
+
+                    if (floorOffsetParam != null)
+                    {
+                        WinForms.CheckBox offsetCB = (WinForms.CheckBox)settingsWrapper.Controls[i].Controls[3];
+                        WinForms.NumericUpDown offsetNU = (WinForms.NumericUpDown)settingsWrapper.Controls[i].Controls[2];
+                        Double value = 0;
+                        if (offsetCB.Checked)
+                        {
+                            value = Convert.ToDouble(offsetTB.Value);
+                        }
+                        else
+                        {
+                            value = Convert.ToDouble(offsetNU.Value);
+                        }
+                        floorOffsetParam.SetValueString(value.ToString());
+                    }
 #endif
                 }
             }
