@@ -170,7 +170,7 @@ namespace SKRibbon
                                 continue;
                             }
 
-                            string signaturePath = path + "подпись_" + paramValue + ".dwg";
+                            string signaturePath = path + "\\подпись_" + paramValue + ".dwg";
                             if (File.Exists(signaturePath))
                             {
                                 ElementId signatureId;

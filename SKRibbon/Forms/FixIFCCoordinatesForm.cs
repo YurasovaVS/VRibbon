@@ -60,7 +60,7 @@ namespace SKRibbon
 
         WinForms.FlowLayoutPanel FormWrapper = new WinForms.FlowLayoutPanel();
 
-        WinForms.ComboBox FilePathTextBox = new WinForms.ComboBox();
+        VComboBox FilePathTextBox = new VComboBox();
 
         FormDesign.VTextBox CoordinateX_TextBox = new FormDesign.VTextBox();
         FormDesign.VTextBox CoordinateY_TextBox = new FormDesign.VTextBox();
@@ -78,7 +78,6 @@ namespace SKRibbon
             this.Width = 550;
             this.Height = 350;
             this.FormBorderStyle = WinForms.FormBorderStyle.FixedSingle;
-            this.Text = "Исправить IFC файл";
             this.BackColor = System.Drawing.Color.White;
             
 
@@ -131,9 +130,9 @@ namespace SKRibbon
             Angle = tempDouble = UnitUtils.ConvertFromInternalUnits(paramAngle.AsDouble(), UnitTypeId.Degrees); 
             WinForms.FlowLayoutPanel Panel_CoordinateRotation = AddLabelTextBoxPanel("Угол поворота:", CoordinateRotation_TextBox, tempDouble.ToString());
 
-            WinForms.Button okButton = new WinForms.Button();
+            VButton okButton = new VButton();
             okButton.Text = "Исправить файл";
-            okButton.Size = new Size(LabelWidth + TextBoxWidth, RowHeight);
+            okButton.Size = new Size(LabelWidth + TextBoxWidth, RowHeight + 10);
             okButton.Click += RunFixingIFC;
             okButton.Parent = FormWrapper;
             FormWrapper.Controls.Add(okButton);
@@ -308,14 +307,23 @@ namespace SKRibbon
             label.Text = Name;
             label.Size = new Size(LabelWidth, RowHeight);
 
+            WinForms.FlowLayoutPanel wrap = new WinForms.FlowLayoutPanel();
+            wrap.AutoSize = true;
+            wrap.BorderStyle = WinForms.BorderStyle.FixedSingle;
+            wrap.Padding = new WinForms.Padding(0);
+
             comboBox.Size = new Size(TextBoxWidth, RowHeight);
             comboBox.Text = text;
+            comboBox.Padding = comboBox.Margin = new WinForms.Padding(0);
 
             label.Parent = panel;
             panel.Controls.Add(label);
 
-            comboBox.Parent = panel;
-            panel.Controls.Add(comboBox);
+            comboBox.Parent = wrap;
+            wrap.Controls.Add(comboBox);
+
+            wrap.Parent = panel;
+            panel.Controls.Add(wrap);
 
             panel.Parent = FormWrapper;
             FormWrapper.Controls.Add(panel);

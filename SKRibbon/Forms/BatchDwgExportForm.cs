@@ -49,6 +49,7 @@ namespace SKRibbon
         FlowLayoutPanel formWrapper = new FlowLayoutPanel();
         SortedDictionary<string, SortedDictionary<string, List<ViewSheet>>> buildingsDict = new SortedDictionary<string, SortedDictionary<string, List<ViewSheet>>>();
         string SavePath;
+        VTextBox NameTextBox = new VTextBox();
 
 
         CheckBox cropRegionCheckBox = new CheckBox();
@@ -125,10 +126,13 @@ namespace SKRibbon
             optionsHeader.Parent = optionsWrapper;
             optionsWrapper.Controls.Add(optionsHeader);
 
+            int optionsWidth = 300;
+            int fieldWidth = 210;
+
             // Опция 1. Путь сохранения файла
             // Заголовок
             Label pathHeader = new Label();
-            pathHeader.Size = new Size(300, 20);
+            pathHeader.Size = new Size(optionsWidth, 20);
             pathHeader.Margin = new Padding(0, 5, 0, 0);
             pathHeader.Text = "Файлы будут сохранены в папку:";
             pathHeader.Parent = optionsWrapper;
@@ -136,7 +140,7 @@ namespace SKRibbon
             optionsWrapper.Controls.Add(pathHeader);
 
             // Добавляем путь
-            pathLabel.Size = new Size(300, (SavePath.Length / 44 + 1) * 15);
+            pathLabel.Size = new Size(optionsWidth, (SavePath.Length / 44 + 1) * 15);
             pathLabel.Margin = new Padding(0, 0, 0, 0);
             pathLabel.Text = SavePath;            
             pathLabel.Parent = optionsWrapper;
@@ -145,14 +149,40 @@ namespace SKRibbon
             // Добавляем кнопку пути
             VButton pathButton = new VButton();
             pathButton.Text = "Выбрать другую папку";
-            pathButton.Size = new Size(300, 30);
+            pathButton.Size = new Size(optionsWidth, 30);
             pathButton.Margin = new Padding(0, 10, 0, 30);
             pathButton.Click += ChooseFolder;
             pathButton.Parent = optionsWrapper;
             optionsWrapper.Controls.Add(pathButton);
             pathButton.Anchor = AnchorStyles.Left;
 
-            
+            // Опция 2. Имя файла
+            // Обертка
+            FlowLayoutPanel lineWrapper_1 = new FlowLayoutPanel();
+            lineWrapper_1.AutoSize = true;
+            lineWrapper_1.FlowDirection = FlowDirection.LeftToRight;
+
+            // Заголовок
+            Label nameHeader = new Label();
+            nameHeader.Size = new Size(optionsWidth - fieldWidth, 30);
+            nameHeader.Margin = new Padding(0, 30, 0, 0);
+            nameHeader.Text = "Имя файла:";
+            nameHeader.Font = new Font(Label.DefaultFont, FontStyle.Bold);
+
+            // Поле
+            NameTextBox.Text = Doc.Title;
+            NameTextBox.Size = new Size(fieldWidth, 50);
+            NameTextBox.Margin = new Padding(0, 30, 0, 5);
+
+            nameHeader.Parent = lineWrapper_1;
+            lineWrapper_1.Controls.Add(nameHeader);
+
+            NameTextBox.Parent = lineWrapper_1;
+            lineWrapper_1.Controls.Add(NameTextBox);
+
+            lineWrapper_1.Parent = optionsWrapper;
+            optionsWrapper.Controls.Add(lineWrapper_1);
+
             // Добавляем разделитель
             Label divider = new Label();
             divider.Text = "";
@@ -239,7 +269,7 @@ namespace SKRibbon
             exportOptions.MergedViews = true;
             exportOptions.Colors = ExportColorMode.TrueColorPerView;
 
-            Doc.Export(SavePath, Doc.Title, elemIds, exportOptions);
+            Doc.Export(SavePath, NameTextBox.Text, elemIds, exportOptions);
 
             this.DialogResult = DialogResult.OK;
             this.Close();

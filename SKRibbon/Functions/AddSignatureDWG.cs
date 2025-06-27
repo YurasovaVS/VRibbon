@@ -62,7 +62,7 @@ namespace AddSignatures
             UIApplication uiApp = commandData.Application;
             Document doc = uiApp.ActiveUIDocument.Document;
             //Прописываем путь к подписям
-            string path = "\\\\ABSKNAS\\переезд\\13_Пользователи\\_ПодписиСК\\";
+            string path = "\\\\ABSKNAS\\переезд\\13_Пользователи\\_ПодписиСК";
 
             using (VForm form = new SKRibbon.AddSigForm(doc, path))
             {

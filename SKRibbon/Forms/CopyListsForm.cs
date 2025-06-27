@@ -51,6 +51,13 @@ namespace CopyListsTree
         HashSet<string> sheetNumbers = new HashSet<string>();
         HashSet<string> viewNames = new HashSet<string>();
         Dictionary<string, Dictionary<string, List<ViewSheet>>> buildingsDict = new Dictionary<string, Dictionary<string, List<ViewSheet>>>();
+
+        // Галочки опций
+        WinForms.CheckBox stampCheck = new WinForms.CheckBox();
+        WinForms.CheckBox viewsCheck = new WinForms.CheckBox();
+        WinForms.CheckBox legendsCheck = new WinForms.CheckBox();
+        WinForms.CheckBox specCheck = new WinForms.CheckBox();
+        WinForms.CheckBox annoCheck = new WinForms.CheckBox();
         public CopyListsForm(Document doc)
         {
             InitializeComponent();
@@ -123,7 +130,6 @@ namespace CopyListsTree
 
             //Создаем wrapper для всей формы
             WinForms.FlowLayoutPanel formWrapper = new WinForms.FlowLayoutPanel();
-            formWrapper.BorderStyle = WinForms.BorderStyle.FixedSingle;
             formWrapper.FlowDirection = WinForms.FlowDirection.LeftToRight;
             formWrapper.AutoSize = true;
             this.Controls.Add(formWrapper);
@@ -160,12 +166,25 @@ namespace CopyListsTree
              */
 
             WinForms.FlowLayoutPanel treeWrapper = new WinForms.FlowLayoutPanel();
+
+            int treeWidth = 750;
+            int treeLeftOffset = 30;
+
             treeWrapper.Parent = formWrapper;
             formWrapper.Controls.Add(treeWrapper);
             treeWrapper.FlowDirection = WinForms.FlowDirection.TopDown;
             treeWrapper.AutoSize = true;
             treeWrapper.Anchor = WinForms.AnchorStyles.Left;
-            treeWrapper.BorderStyle = WinForms.BorderStyle.FixedSingle;
+
+            // Общий заголовок
+            /*
+            VHeaderLabel treeHeader = new VHeaderLabel();
+            treeHeader.Text = "Листы";
+            treeHeader.Size = new Size(treeWidth, 35);
+
+            treeHeader.Parent = treeWrapper;
+            treeWrapper.Controls.Add(treeHeader);
+            */
 
             foreach (var building in buildingsDict)
             {
@@ -177,12 +196,18 @@ namespace CopyListsTree
                 buildingWrapper.AutoSize = true;
                 buildingWrapper.Anchor = WinForms.AnchorStyles.Left;
 
+
                 // Создаем заголовок
                 WinForms.Label buildingHeader = new WinForms.Label();
                 buildingHeader.Parent = buildingWrapper;
                 buildingWrapper.Controls.Add(buildingHeader);
                 buildingHeader.Text = building.Key;
-                buildingHeader.Width = 300;
+                buildingHeader.Width = treeWidth;
+                buildingHeader.Height = 20;
+                buildingHeader.ForeColor = System.Drawing.Color.FromArgb(255, 174, 112, 199);
+                buildingHeader.Padding = new WinForms.Padding(5, 3, 0, 3);
+                buildingHeader.Font = new Font(WinForms.Label.DefaultFont, FontStyle.Bold);
+
 
                 // Создаем wrapper для томов этого здания
                 WinForms.FlowLayoutPanel tomesWrapper = new WinForms.FlowLayoutPanel();
@@ -192,7 +217,7 @@ namespace CopyListsTree
                 tomesWrapper.AutoSize = true;
                 tomesWrapper.Anchor = WinForms.AnchorStyles.Left;
                 tomesWrapper.BorderStyle = WinForms.BorderStyle.FixedSingle;
-
+                
                 Dictionary<string, List<ViewSheet>> tomes = building.Value;
 
                 foreach (var tome in tomes)
@@ -207,10 +232,12 @@ namespace CopyListsTree
 
                     // Создаем заголовок
                     WinForms.Label tomeHeader = new WinForms.Label();
+                    tomeHeader.Font = new Font(WinForms.Label.DefaultFont, FontStyle.Bold);
                     tomeHeader.Parent = tomeWrapper;
                     tomeWrapper.Controls.Add(tomeHeader);
                     tomeHeader.Text = tome.Key;
-                    tomeHeader.Width = 300;
+                    tomeHeader.Width = treeWidth - treeLeftOffset;
+                    tomeHeader.Padding = new WinForms.Padding(treeLeftOffset, 0, 0, 0);
 
                     // Создаем wrapper для уже существующих листов
                     // Создаем wrapper для листов этого здания
@@ -239,7 +266,8 @@ namespace CopyListsTree
                         SheetButton button = new SheetButton();
                         button.Parent = sheetWrapper;
                         sheetWrapper.Controls.Add(button);
-                        button.Width = 750;
+                        button.Width = treeWidth - 2 * treeLeftOffset;
+                        button.Margin = new WinForms.Padding(2 * treeLeftOffset, 0, 0, 0);
                         button.Text = viewSheet.SheetNumber + " : " + viewSheet.Name;
                         button.Click += AddTemplate;
 
@@ -258,46 +286,48 @@ namespace CopyListsTree
                 }
             }
 
-            // Добавляем опции формы
+            // Опции формы
+            int optionsWidth = 300;
+            // Обертка
             WinForms.FlowLayoutPanel optionsWrapper = new WinForms.FlowLayoutPanel();
             formWrapper.Controls.Add(optionsWrapper);
             optionsWrapper.FlowDirection = WinForms.FlowDirection.TopDown;
             optionsWrapper.AutoSize = true;
             optionsWrapper.Anchor = WinForms.AnchorStyles.Top;
-            optionsWrapper.BorderStyle = WinForms.BorderStyle.FixedSingle;
 
-            // Добавляем галочку для копирования данных штампов
-            WinForms.CheckBox stampCheck = new WinForms.CheckBox();
+            // Заголовок
+            VHeaderLabel optionsHeader = new VHeaderLabel();
+            optionsHeader.Size = new Size(optionsWidth, 35);
+            optionsHeader.Text = "Настройки";
+
+            // Опция 1. Копирование данных штампов
             stampCheck.Text = "Копировать данные штампов";
-            stampCheck.Width = 300;
+            stampCheck.Width = optionsWidth;
 
-            // Добавляем галочку для копирования видов
-            WinForms.CheckBox viewsCheck = new WinForms.CheckBox();
+            // Опция 2. Копирование видов
             viewsCheck.Text = "Копировать виды";
-            viewsCheck.Width = 300;
+            viewsCheck.Width = optionsWidth;
 
-            // Добавляем галочку для копирования легенд
-            WinForms.CheckBox legendsCheck = new WinForms.CheckBox();
+            // Опция 3. Копирование легенд
             legendsCheck.Text = "Копировать легенды";
-            legendsCheck.Width = 300;
+            legendsCheck.Width = optionsWidth;
 
-            // Добавляем галочку для копирования спецификаций
-            WinForms.CheckBox specCheck = new WinForms.CheckBox();
+            // Опция 4. Копирование спецификаций
             specCheck.Text = "Копировать спецификации";
-            specCheck.Width = 300;
+            specCheck.Width = optionsWidth;
 
-            // Добавляем галочку для копирования аннотативных объектов
-            WinForms.CheckBox annoCheck = new WinForms.CheckBox();
+            // Опция 5. Копирование аннотативных объектов
             annoCheck.Text = "Копировать аннотативные объекты";
-            annoCheck.Width = 300;
+            annoCheck.Width = optionsWidth;
 
             // Добавляем кнопку ОК
-            WinForms.Button OKbutton = new WinForms.Button();
+            VButton OKbutton = new VButton();
             OKbutton.Text = "Начать копирование";
-            OKbutton.Size = new Size(300, 50);
+            OKbutton.Size = new Size(optionsWidth, 50);
             OKbutton.Click += CopyLists;
 
             // Добавляем все контролы во wrapper
+            optionsHeader.Parent = optionsWrapper;
             stampCheck.Parent = optionsWrapper;
             viewsCheck.Parent = optionsWrapper;
             legendsCheck.Parent = optionsWrapper;
@@ -305,6 +335,7 @@ namespace CopyListsTree
             annoCheck.Parent = optionsWrapper;
             OKbutton.Parent = optionsWrapper;
 
+            optionsWrapper.Controls.Add(optionsHeader);
             optionsWrapper.Controls.Add(stampCheck);
             optionsWrapper.Controls.Add(viewsCheck);
             optionsWrapper.Controls.Add(legendsCheck);
@@ -393,11 +424,6 @@ namespace CopyListsTree
             WinForms.FlowLayoutPanel optionsWrapper = (WinForms.FlowLayoutPanel)button.Parent;
 
             // Считываем параметры копирования
-            WinForms.CheckBox stampCheck = (WinForms.CheckBox)optionsWrapper.Controls[0];
-            WinForms.CheckBox viewsCheck = (WinForms.CheckBox)optionsWrapper.Controls[1];
-            WinForms.CheckBox legendsCheck = (WinForms.CheckBox)optionsWrapper.Controls[2];
-            WinForms.CheckBox specCheck = (WinForms.CheckBox)optionsWrapper.Controls[3];
-            WinForms.CheckBox annoCheck = (WinForms.CheckBox)optionsWrapper.Controls[4];
 
             bool stampFlag = stampCheck.Checked;
             bool viewsFlag = viewsCheck.Checked;
@@ -657,5 +683,15 @@ namespace CopyListsTree
         public ViewSheet sheet;
         public string buildingName;
         public string tomeName;
+
+        public SheetButton()
+        {
+            FlatStyle = WinForms.FlatStyle.Flat;
+            FlatAppearance.BorderSize = 2;
+            FlatAppearance.BorderColor = System.Drawing.Color.LightGray;
+            FlatAppearance.MouseOverBackColor = System.Drawing.Color.LightGray;
+            //FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(255, 174, 112, 199);
+            ForeColor = System.Drawing.Color.Black;
+        }
     }
 }

@@ -42,6 +42,7 @@ using System.Windows.Forms;
 using System.Windows.Controls;
 using Autodesk.Revit.DB.Architecture;
 using static SKRibbon.FormDesign;
+using Autodesk.Revit.UI.Selection;
 
 namespace SKRibbon
 {
@@ -50,8 +51,8 @@ namespace SKRibbon
         Document Doc;
         List<Element> FloorTypes;
         ICollection<Element> floorTypes;
-        WinForms.ComboBox floorTypesCB = new WinForms.ComboBox();
-        WinForms.ComboBox selectionCB = new WinForms.ComboBox();
+        VComboBox floorTypesCB = new VComboBox();
+        VComboBox selectionCB = new VComboBox();
         WinForms.NumericUpDown offsetTB = new WinForms.NumericUpDown();
         FlowLayoutPanel optionsWrapper = new FlowLayoutPanel();
         FlowLayoutPanel settingsWrapper = new FlowLayoutPanel();
@@ -96,7 +97,7 @@ namespace SKRibbon
             optionsWrapper.Margin = new Padding(5, 0, 0, 0);
             optionsWrapper.BorderStyle = BorderStyle.FixedSingle;
 
-            int leftPanelWidth = 300;
+            int leftPanelWidth = 400;
             // Заголовок
             
             VHeaderLabel optionsHeader = new VHeaderLabel();
@@ -114,9 +115,12 @@ namespace SKRibbon
             selectionLabel.Size = new Size(leftPanelWidth, 30);
             selectionLabel.Font = new Font(WinForms.Label.DefaultFont, FontStyle.Bold);
 
+            // Обертка выпадающего списка (для рамочки)
+            FlowLayoutPanel borderFLP_1 = new FlowLayoutPanel();
+            borderFLP_1.AutoSize = true;
+            borderFLP_1.BorderStyle = BorderStyle.FixedSingle;
+
             // Выпадающий список
-            selectionCB.Parent = optionsWrapper;
-            optionsWrapper.Controls.Add(selectionCB);
             selectionCB.Items.Add("Во всем проекте");
             selectionCB.Items.Add("На текущем виде");
             selectionCB.SelectedIndex = 0;
@@ -125,6 +129,12 @@ namespace SKRibbon
                 selectionCB.SelectedIndex = 2;
             }
             selectionCB.Size = new Size(leftPanelWidth, 30);
+
+            selectionCB.Parent = borderFLP_1;
+            borderFLP_1.Controls.Add(selectionCB);
+
+            borderFLP_1.Parent = optionsWrapper;
+            optionsWrapper.Controls.Add(borderFLP_1);
 
             // Опция 2. Оффсет от уровня этажа
             // Заголовок
@@ -157,9 +167,13 @@ namespace SKRibbon
             floorTypesLabel.Padding = new Padding(0, 10, 0, 0);
             floorTypesLabel.Font = new Font(WinForms.Label.DefaultFont, FontStyle.Bold);
 
-            // Выпадающий список
-            floorTypesCB.Parent = optionsWrapper;
-            optionsWrapper.Controls.Add(floorTypesCB);
+            // Обертка выпадающего списка (для рамочки)
+            FlowLayoutPanel borderFLP_2 = new FlowLayoutPanel();
+            borderFLP_2.AutoSize = true;
+            borderFLP_2.BorderStyle = BorderStyle.FixedSingle;
+
+            // Выпадающий список         
+
             floorTypesCB.Size = new Size(leftPanelWidth, 30);
             floorTypesCB.Padding = new Padding(0, 5, 0, 0);
 
@@ -175,12 +189,30 @@ namespace SKRibbon
 
             floorTypesCB.SelectedIndex = 0;
 
+            floorTypesCB.Parent = borderFLP_2;
+            borderFLP_2.Controls.Add(floorTypesCB);
+
+            borderFLP_2.Parent = optionsWrapper;
+            optionsWrapper.Controls.Add(borderFLP_2);
+
+            // Добавляем разделитель
+            WinForms.Label divider = new WinForms.Label();
+            divider.Text = "";
+            divider.AutoSize = false;
+            divider.Height = 2;
+            divider.Width = 300;
+            divider.BorderStyle = BorderStyle.Fixed3D;
+            divider.Parent = optionsWrapper;
+            optionsWrapper.Controls.Add(divider);
+            divider.Anchor = AnchorStyles.Top;
+            divider.Margin = new Padding(0, 10, 0, 10);
+
             //Кнопка
 
             VButton button = new VButton();
             button.Text = "ЗАМЕНИТЬ ПОЛЫ";
             button.Size = new Size(leftPanelWidth, 50);
-            //button.Padding = new Padding(0, 100, 0, 0);
+            //button.Margin = new Padding(0, 100, 0, 0);
 
             button.Parent = optionsWrapper;
             optionsWrapper.Controls.Add(button);
@@ -220,8 +252,6 @@ namespace SKRibbon
 
         private void CreateFloors(object sender, EventArgs e)
         {
-
-
             ICollection<Element> rooms;
             switch (selectionCB.SelectedIndex)
             {
@@ -267,7 +297,8 @@ namespace SKRibbon
                 if (roomName == null) roomName = room.LookupParameter("Name");
                 if (roomName != null) {
                     int i = roomTypes.IndexOf(roomName.AsString());
-                    WinForms.ComboBox tempFloorTypesCB = (WinForms.ComboBox)settingsWrapper.Controls[i].Controls[1];
+                    FlowLayoutPanel comboBoxFLP = (FlowLayoutPanel)settingsWrapper.Controls[i].Controls[1];
+                    VComboBox tempFloorTypesCB = (VComboBox)comboBoxFLP.Controls[0];
                     int j = tempFloorTypesCB.SelectedIndex;
                     int index = (j >= floorTypes.Count)?floorTypesCB.SelectedIndex:j;
 
@@ -318,12 +349,10 @@ namespace SKRibbon
 #endif
                 }
             }
-
             t.Commit();
 
             this.DialogResult = DialogResult.OK;
-            this.Close();
-                
+            this.Close();                
         }
 
         private FlowLayoutPanel AddRoomTypeSettings(string roomType) { 
@@ -352,7 +381,13 @@ namespace SKRibbon
             roomTypeLabel.Anchor = AnchorStyles.Left;
 
             // [1] Тип пола
-            WinForms.ComboBox roomTypeComboBox = new WinForms.ComboBox();
+            // Обертка
+            FlowLayoutPanel cbWrapper = new FlowLayoutPanel();
+            cbWrapper.AutoSize = true;
+            cbWrapper.BorderStyle = BorderStyle.FixedSingle;
+
+            // Выпадающий список в обертке
+            VComboBox roomTypeComboBox = new VComboBox();
             foreach (Element floorType in FloorTypes)
             {
                 roomTypeComboBox.Items.Add(floorType.Name);
@@ -360,13 +395,14 @@ namespace SKRibbon
             roomTypeComboBox.Items.Add("По умолчанию");
             roomTypeComboBox.SelectedIndex = floorTypesCB.Items.Count;
 
-
-
-            roomTypeComboBox.Parent = roomTypeSettings;
-            roomTypeSettings.Controls.Add(roomTypeComboBox);
             roomTypeComboBox.Anchor = AnchorStyles.Left;
-
             roomTypeComboBox.Size = new Size(200, 20);
+
+            roomTypeComboBox.Parent = cbWrapper;
+            cbWrapper.Controls.Add(roomTypeComboBox);
+
+            cbWrapper.Parent = roomTypeSettings;
+            roomTypeSettings.Controls.Add(cbWrapper);
 
             // [2] Оффсет
             WinForms.NumericUpDown offsetRT = new WinForms.NumericUpDown();

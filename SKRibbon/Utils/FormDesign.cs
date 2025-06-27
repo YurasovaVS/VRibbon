@@ -65,8 +65,20 @@ namespace SKRibbon
             }
         }
 
+        public class VComboBox : ComboBox
+        {
+            public VComboBox()
+            {
+                BackColor = Color.White;
+                Margin = new Padding(0, 0, 0, 0);
+                FlatStyle = FlatStyle.Flat;
+                DropDownStyle = ComboBoxStyle.DropDownList;
+            }
+        }
+
 
         // Неиспользуемые классы
+        /*
         public class VHeader : FlowLayoutPanel
         {
             public VHeader(string text, int width)
@@ -102,5 +114,6 @@ namespace SKRibbon
                 this.Controls.Add(closeButton);
             }
         }
+        */
     }
 }
