@@ -168,25 +168,46 @@ namespace SKRibbon
                             true
                             );
             // ------------------------------------------------------
-            // Кнопка Исправить отзеркаленные двери
-            AddPushPutton(rpModellingTools,
-                            "cmdFixMirroredDoors",
+            // Стек из 3 кнопок:
+            //   - Кнопка исправления дверей
+            //   - Кнопка создания полов
+            //   - Кнопка связывания полов с помещением
+
+            IList<RibbonItem> stackedGroup = rpModellingTools.AddStackedItems(
+                AddStackedButton("cmdFixMirroredDoors",
                             "Исправить двери",
                             thisAssemblyPath,
                             "SKRibbon.FixMirroredDoors",
+                            "fixMirroredDoors_16.png",
                             "fixMirroredDoors.png",
-                            "Исправляет отзеркаленные двери",
-                            true
-                            );
-
-            // Кнопка расставить полы
-            AddPushPutton(rpModellingTools,
-                            "cmdPlaceFloors",
+                            "Исправляет отзеркаленные двери"
+                            ),
+                AddStackedButton("cmdPlaceFloors",
                             "Создать полы",
                             thisAssemblyPath,
                             "SKRibbon.PlaceFloors",
+                            "floor_16.png",
                             "floor.png",
-                            "Создать полы в комнатах",
+                            "Создать полы в комнатах"
+                            ),
+                AddStackedButton("cmdLinkFloorsToRooms",
+                            "Связать пол",
+                            thisAssemblyPath,
+                            "SKRibbon.LinkFloorToRoom",
+                            "floorLink_16.png",
+                            "floor.png",
+                            "Связывает полы с комнатами."
+                            )
+                );
+
+            // Кнопка связать потолки с помещениями
+            AddPushPutton(rpModellingTools,
+                            "cmdLinkCeilingsToRooms",
+                            "Связать потолки" + System.Environment.NewLine + "с помещениями",
+                            thisAssemblyPath,
+                            "SKRibbon.LinkCeilingToRoom",
+                            "floor.png",
+                            "Связывает потолки с комнатами",
                             true
                             );
 
@@ -299,28 +320,15 @@ namespace SKRibbon
 
         private void OnIdling(object sender, IdlingEventArgs e)
         {
-            
-            UIApplication uiApp = sender as UIApplication;            
+
+            UIApplication uiApp = sender as UIApplication;
             if (uiApp != null)
-            {                
-               ColorizeTabs.ColorizeTabs.RunCommand(uiApp, Properties.appSettings.Default.tabColorFlag);
+            {
+                ColorizeTabs.ColorizeTabs.RunCommand(uiApp, Properties.appSettings.Default.tabColorFlag);
             }
             uiApp.Idling -= new EventHandler<IdlingEventArgs>(this.OnIdling);
-            // Кручу-верчу на DocumentChanged подписаться хочу
-            /*
-            if (uiApp_cached == null)
-            {
-                uiApp_cached = uiApp;
-                uiApp.Application.DocumentChanged += new EventHandler<DocumentChangedEventArgs>(this.OnDocumentChanged);
-            }*/
         }
-        /*
-        private void OnDocumentChanged(object sender, DocumentChangedEventArgs e)
-        {
-            Document doc = e.GetDocument();
-            ICollection addedElements e.GetAddedElementIds();
-        }
-          */      
+         
 
         public List<SolidColorBrush> GetSavedColors(string[] colorHexes)
         {

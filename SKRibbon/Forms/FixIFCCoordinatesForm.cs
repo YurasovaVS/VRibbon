@@ -54,7 +54,7 @@ namespace SKRibbon
 
         Dictionary<string, Element> IFC_Links = new Dictionary<string, Element>();
 
-        int LabelWidth = 150;
+        int LabelWidth = 100;
         int TextBoxWidth = 300;
         int RowHeight = 20;
 
@@ -99,12 +99,11 @@ namespace SKRibbon
 
             string tempString = "";
 
-            WinForms.Label label1 = new WinForms.Label();
-            WinForms.Label label2 = new WinForms.Label();
+            VHeaderLabel label1 = new VHeaderLabel();
+            VHeaderLabel label2 = new VHeaderLabel();
 
-            label1.Size = label2.Size = new Size(LabelWidth + TextBoxWidth, RowHeight);
+            label1.Size = label2.Size = new Size(LabelWidth + TextBoxWidth, RowHeight + 10);
             label1.Font = label2.Font = new System.Drawing.Font(WinForms.Label.DefaultFont, FontStyle.Bold);
-            label1.TextAlign = label2.TextAlign = ContentAlignment.MiddleCenter;
 
             label1.Text = "IFC-файл";
             label2.Text = "Координаты";
@@ -136,10 +135,7 @@ namespace SKRibbon
             okButton.Click += RunFixingIFC;
             okButton.Parent = FormWrapper;
             FormWrapper.Controls.Add(okButton);
-
             
-
-
             // Находим все ссылки в проекте
             //ICollection<ElementId> linkRefs= ExternalFileUtils.GetAllExternalFileReferences(doc);
 

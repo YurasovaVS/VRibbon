@@ -342,6 +342,12 @@
   
     <None Remove="Resources\fixIFCcoord_32.png" />
   
+    <None Remove="Resources\fixMirroredDoors_16.png" />
+  
+    <None Remove="Resources\floorLink_16.png" />
+  
+    <None Remove="Resources\floor_16.png" />
+  
     <None Remove="Resources\sortIntoWorkgroups_32.png" />
   
     <None Remove="Resources\vitruvius_ico_16.png" />
@@ -358,6 +364,9 @@
   <ItemGroup>
     <Resource Include="Resources\fakeArea.png" />
     <Resource Include="Resources\fixIFCcoord_32.png" />
+    <Resource Include="Resources\fixMirroredDoors_16.png" />
+    <Resource Include="Resources\floorLink_16.png" />
+    <Resource Include="Resources\floor_16.png" />
     <Resource Include="Resources\replaceTags.png" />
     <Resource Include="Resources\copyLists.png" />
     <Resource Include="Resources\sortIntoWorkgroups_32.png" />
