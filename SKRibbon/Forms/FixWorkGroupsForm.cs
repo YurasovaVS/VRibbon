@@ -142,7 +142,8 @@ namespace SKRibbon
                 foreach (var panel in CategoriesByTypeWrapper.Controls)
                 {
                     FlowLayoutPanel p = panel as FlowLayoutPanel;
-                    WinForms.ComboBox box = p.Controls[2] as WinForms.ComboBox;
+                    WinForms.FlowLayoutPanel comboPanel = p.Controls[2] as WinForms.FlowLayoutPanel;
+                    VComboBox box = comboPanel.Controls[0] as VComboBox;
                     WinForms.Label label = p.Controls[0] as WinForms.Label;
                     box.Items.Add(workset.Name);
                     var words = label.Text.Split(' ');
@@ -152,10 +153,11 @@ namespace SKRibbon
             }
 
             // Добавляем блок с категориями
-
+            // Обертка
             CategoriesWrapper.FlowDirection = WinForms.FlowDirection.TopDown;
             CategoriesWrapper.AutoSize = true;
 
+            // Заголовок
             VHeaderLabel byTypeLabel = new VHeaderLabel();
             byTypeLabel.Size = new Size(LabelWidth + TextBoxWidth + ComboBoxWidth + MarginLeft, 35);
             byTypeLabel.Text = "Распределение по типу элемента";
@@ -163,6 +165,7 @@ namespace SKRibbon
             byTypeLabel.Parent = formWrapper;
             formWrapper.Controls.Add(byTypeLabel);
 
+            // Заполнение из словаря
             int counter = 0;
             foreach (KeyValuePair<BuiltInCategory, string> category in CategoryNames) {
                 if (NamesCategory.Add(category.Value))
@@ -179,8 +182,7 @@ namespace SKRibbon
             formWrapper.Controls.Add(CategoriesWrapper);
             CategoriesWrapper.Parent = formWrapper;
 
-            // Добавить кнопку
-
+            // Кнопка
             VButton OkButton = new VButton();
             OkButton.Size = new Size(ComboBoxWidth, 50);
             OkButton.Text = "ОК";
@@ -190,9 +192,6 @@ namespace SKRibbon
 
             formWrapper.Controls.Add(OkButton);
             OkButton.Parent = formWrapper;
-
-            //ICollection<Element> elements = new FilteredElementCollector(Doc).WhereElementIsNotElementType().ToElements();
-
         }
 
         private void RunFixing(object sender, EventArgs e)
@@ -235,7 +234,8 @@ namespace SKRibbon
 
                     FlowLayoutPanel panel = catByTypeWrapper as FlowLayoutPanel;
                     WinForms.TextBox text = panel.Controls[1] as WinForms.TextBox;
-                    WinForms.ComboBox combo = panel.Controls[2] as WinForms.ComboBox;                                     
+                    WinForms.FlowLayoutPanel comboPanel = panel.Controls[2] as WinForms.FlowLayoutPanel;
+                   VComboBox combo = comboPanel.Controls[0] as VComboBox;                                     
 
                     if (element.Name.Contains(text.Text)) {
                         worksetName = combo.Text;
@@ -273,7 +273,8 @@ namespace SKRibbon
 
                         FlowLayoutPanel panel = categoryFLP as FlowLayoutPanel;
                         WinForms.Label catName = panel.Controls[0] as WinForms.Label;
-                        WinForms.ComboBox combo = panel.Controls[1] as WinForms.ComboBox;
+                        WinForms.FlowLayoutPanel comboPanel = panel.Controls[1] as WinForms.FlowLayoutPanel;
+                        VComboBox combo = comboPanel.Controls[0] as VComboBox;
 
 #if DEBUG2021 || REVIT2021
                         if (CategoryNames[(BuiltInCategory)element.Category.Id.IntegerValue] != catName.Text) continue;
@@ -302,31 +303,48 @@ namespace SKRibbon
         // Создание группы для проверки по категории
         public WinForms.FlowLayoutPanel WorkgroupFLP(string Name)
         {
-            WinForms.FlowLayoutPanel workgroupFLP = new WinForms.FlowLayoutPanel();
+            // [0] Наименование элемента
+            // [1] Выпадающий список с рабочими наборами
+
+
+            // [0] Наименование элемента
             WinForms.Label workgroupName = new WinForms.Label();
-            WinForms.ComboBox workgroupsCB = new WinForms.ComboBox();
-
-            workgroupFLP.AutoSize = true;
-            workgroupFLP.FlowDirection = WinForms.FlowDirection.LeftToRight;
-            workgroupFLP.Margin = new Padding(10, 0, 0, 0);
-
-            workgroupFLP.Controls.Add(workgroupName);
-            workgroupFLP.Controls.Add(workgroupsCB);
-            workgroupName.Parent = workgroupFLP;
-            workgroupsCB.Parent = workgroupFLP;
-
             workgroupName.Text = Name;
             workgroupName.Size = new Size(LabelWidth, LabelHeight);
             workgroupName.Font = new Font(Label.DefaultFont, FontStyle.Bold);
             workgroupName.TextAlign = ContentAlignment.MiddleLeft;
             workgroupName.Margin = new Padding(MarginLeft, 0, 0, 0);
 
+            // [1] Выпадающий список с рабочими наборами
+            // Обертка
+            WinForms.FlowLayoutPanel comboBoxWrapper = new WinForms.FlowLayoutPanel();
+            comboBoxWrapper.AutoSize = true;
+            comboBoxWrapper.BorderStyle = BorderStyle.FixedSingle;
+
+            // Список
+            VComboBox workgroupsCB = new VComboBox();
             workgroupsCB.Size = new Size(ComboBoxWidth + TextBoxWidth, ComboBoxHeight);
-            foreach (KeyValuePair<string, Workset> workset in Name_Workset) {
+            foreach (KeyValuePair<string, Workset> workset in Name_Workset)
+            {
                 int i = workgroupsCB.Items.Add(workset.Key);
                 var words = Name.Split(' ');
                 if (workset.Key.Contains(words[0])) workgroupsCB.SelectedIndex = i;
-            }            
+            }
+
+            workgroupsCB.Parent = comboBoxWrapper;
+            comboBoxWrapper.Controls.Add(workgroupsCB);
+
+            // Общая обертка
+            WinForms.FlowLayoutPanel workgroupFLP = new WinForms.FlowLayoutPanel();
+            workgroupFLP.AutoSize = true;
+            workgroupFLP.FlowDirection = WinForms.FlowDirection.LeftToRight;
+            workgroupFLP.Margin = new Padding(10, 0, 0, 0);
+
+            workgroupFLP.Controls.Add(workgroupName);
+            workgroupFLP.Controls.Add(comboBoxWrapper);
+            workgroupName.Parent = workgroupFLP;
+            comboBoxWrapper.Parent = workgroupFLP;
+                        
             return workgroupFLP;
         }
 
@@ -357,8 +375,11 @@ namespace SKRibbon
             comboBoxWrapper.BorderStyle = BorderStyle.FixedSingle;
 
             // Выпадающий список
-            WinForms.ComboBox FLPComboBox = new WinForms.ComboBox();
+            VComboBox FLPComboBox = new VComboBox();
             FLPComboBox.Size = new Size(ComboBoxWidth, ComboBoxHeight);
+
+            FLPComboBox.Parent = comboBoxWrapper;
+            comboBoxWrapper.Controls.Add(FLPComboBox);
 
             //------------
             // Общая обертка
@@ -370,11 +391,11 @@ namespace SKRibbon
             
             FLPanel.Controls.Add(ConstrLabel);
             FLPanel.Controls.Add(FLPTextBox);
-            FLPanel.Controls.Add(FLPComboBox);
+            FLPanel.Controls.Add(comboBoxWrapper);
 
             ConstrLabel.Parent = FLPanel;
             FLPTextBox.Parent = FLPanel;
-            FLPComboBox.Parent = FLPanel;
+            comboBoxWrapper.Parent = FLPanel;
 
             CategoriesByTypeWrapper.Controls.Add(FLPanel);
             FLPanel.Parent = CategoriesByTypeWrapper;
