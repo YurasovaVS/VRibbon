@@ -90,12 +90,14 @@ namespace SKRibbon
         int ComboBoxWidth = 200;
         int ComboBoxHeight = 20;
 
+        int MarginLeft = 35;
+
         public FixWorkGroupsForm(Document doc)
         {
             InitializeComponent();
             Doc = doc;
             this.AutoScroll = true;
-            this.Width = 710;
+            this.Width = LabelWidth + TextBoxWidth + ComboBoxWidth + MarginLeft;
             this.Height = 480;
             this.FormBorderStyle = WinForms.FormBorderStyle.FixedSingle;
 
@@ -104,19 +106,28 @@ namespace SKRibbon
             formWrapper.Parent = this;
             this.Controls.Add(formWrapper);
 
+            VHeaderLabel byTypeNameLabel = new VHeaderLabel();
+            byTypeNameLabel.Size = new Size(LabelWidth + TextBoxWidth + ComboBoxWidth + MarginLeft, 35);
+            byTypeNameLabel.Text = "Распределение по имени типоразмера";
+
+            byTypeNameLabel.Parent = formWrapper;
+            formWrapper.Controls.Add(byTypeNameLabel);
+
+            
             CategoriesByTypeWrapper.AutoSize = true;
             CategoriesByTypeWrapper.FlowDirection = WinForms.FlowDirection.TopDown;
             CategoriesByTypeWrapper.Parent = formWrapper;
             formWrapper.Controls.Add(CategoriesByTypeWrapper);
-
-            // Добавляем строку для КЖ (Label, TextBox, ComboBox);
-
+            
             FlowLayoutPanel ConstrFLP = WorkgroupAndFamilyFLP("КЖ", "КЖ");
             FlowLayoutPanel DisabledPeopleFLP = WorkgroupAndFamilyFLP("ОДИ", "ОДИ");
+            DisabledPeopleFLP.BackColor = System.Drawing.Color.FromArgb(255, 243, 221, 255);
             FlowLayoutPanel WallsInternalFLP = WorkgroupAndFamilyFLP("Внутренние стены", "АР_В");
             FlowLayoutPanel WallsExternalFLP = WorkgroupAndFamilyFLP("Наружные стены", "АР_Н");
+            WallsExternalFLP.BackColor = System.Drawing.Color.FromArgb(255, 243, 221, 255);
             FlowLayoutPanel WallsDesignFLP = WorkgroupAndFamilyFLP("Отделка", "АР_О");
             FlowLayoutPanel CurtainWalls = WorkgroupAndFamilyFLP("Витражи", "витраж");
+            CurtainWalls.BackColor = System.Drawing.Color.FromArgb(255, 243, 221, 255);
             FlowLayoutPanel GenPlan = WorkgroupAndFamilyFLP("Генплан", "ГП");
 
 
@@ -145,10 +156,21 @@ namespace SKRibbon
             CategoriesWrapper.FlowDirection = WinForms.FlowDirection.TopDown;
             CategoriesWrapper.AutoSize = true;
 
+            VHeaderLabel byTypeLabel = new VHeaderLabel();
+            byTypeLabel.Size = new Size(LabelWidth + TextBoxWidth + ComboBoxWidth + MarginLeft, 35);
+            byTypeLabel.Text = "Распределение по типу элемента";
+
+            byTypeLabel.Parent = formWrapper;
+            formWrapper.Controls.Add(byTypeLabel);
+
+            int counter = 0;
             foreach (KeyValuePair<BuiltInCategory, string> category in CategoryNames) {
                 if (NamesCategory.Add(category.Value))
                 {
                     WinForms.FlowLayoutPanel catPanel = WorkgroupFLP(category.Value);
+                    if (counter % 2 != 0) catPanel.BackColor = System.Drawing.Color.FromArgb(255, 243, 221, 255);
+                    counter++;
+
                     catPanel.Parent = CategoriesWrapper;
                     CategoriesWrapper.Controls.Add(catPanel);
                 }                
@@ -159,9 +181,11 @@ namespace SKRibbon
 
             // Добавить кнопку
 
-            WinForms.Button OkButton = new WinForms.Button();
-            OkButton.Size = new Size(200, 50);
+            VButton OkButton = new VButton();
+            OkButton.Size = new Size(ComboBoxWidth, 50);
             OkButton.Text = "ОК";
+            OkButton.Anchor = AnchorStyles.Top;
+            OkButton.Margin = new Padding(0, 10, 0, 0);
             OkButton.Click += RunFixing;
 
             formWrapper.Controls.Add(OkButton);
@@ -284,6 +308,7 @@ namespace SKRibbon
 
             workgroupFLP.AutoSize = true;
             workgroupFLP.FlowDirection = WinForms.FlowDirection.LeftToRight;
+            workgroupFLP.Margin = new Padding(10, 0, 0, 0);
 
             workgroupFLP.Controls.Add(workgroupName);
             workgroupFLP.Controls.Add(workgroupsCB);
@@ -292,8 +317,11 @@ namespace SKRibbon
 
             workgroupName.Text = Name;
             workgroupName.Size = new Size(LabelWidth, LabelHeight);
+            workgroupName.Font = new Font(Label.DefaultFont, FontStyle.Bold);
+            workgroupName.TextAlign = ContentAlignment.MiddleLeft;
+            workgroupName.Margin = new Padding(MarginLeft, 0, 0, 0);
 
-            workgroupsCB.Size = new Size(ComboBoxWidth, ComboBoxHeight);
+            workgroupsCB.Size = new Size(ComboBoxWidth + TextBoxWidth, ComboBoxHeight);
             foreach (KeyValuePair<string, Workset> workset in Name_Workset) {
                 int i = workgroupsCB.Items.Add(workset.Key);
                 var words = Name.Split(' ');
@@ -305,23 +333,41 @@ namespace SKRibbon
         // Создание группы для проверки по семейству
         public WinForms.FlowLayoutPanel WorkgroupAndFamilyFLP(string Name, string TextBoxText)
         {
+            // [0] Наименование элемента
+            // [1] Поле для сравнения с типом семейства
+            // [2] Выпадающий список с рабочими наборами
+
+            // [0] Наименование элемента
+            WinForms.Label ConstrLabel = new WinForms.Label();
+            ConstrLabel.Size = new Size(LabelWidth, LabelHeight);
+            ConstrLabel.Text = Name;
+            ConstrLabel.Font = new Font(Label.DefaultFont, FontStyle.Bold);
+            ConstrLabel.TextAlign = ContentAlignment.MiddleLeft;
+            ConstrLabel.Margin = new Padding(MarginLeft, 0, 0, 0);
+
+            // [1] Поле для сравнения с типом семейства
             WinForms.TextBox FLPTextBox = new WinForms.TextBox();
+            FLPTextBox.Size = new Size(TextBoxWidth, TextBoxHeight);
+            FLPTextBox.Text = TextBoxText;
+
+            // [2] Выпадающий список с рабочими наборами
+            // Обертка
+            WinForms.FlowLayoutPanel comboBoxWrapper = new WinForms.FlowLayoutPanel();
+            comboBoxWrapper.AutoSize = true;
+            comboBoxWrapper.BorderStyle = BorderStyle.FixedSingle;
+
+            // Выпадающий список
             WinForms.ComboBox FLPComboBox = new WinForms.ComboBox();
+            FLPComboBox.Size = new Size(ComboBoxWidth, ComboBoxHeight);
+
+            //------------
+            // Общая обертка
 
             WinForms.FlowLayoutPanel FLPanel = new WinForms.FlowLayoutPanel();
             FLPanel.FlowDirection = WinForms.FlowDirection.LeftToRight;
             FLPanel.AutoSize = true;
-
-
-            WinForms.Label ConstrLabel = new WinForms.Label();
-            ConstrLabel.Size = new Size(LabelWidth, LabelHeight);
-            ConstrLabel.Text = Name;
-
-            FLPTextBox.Size = new Size(TextBoxWidth, TextBoxHeight);
-            FLPTextBox.Text = TextBoxText;
-
-            FLPComboBox.Size = new Size(ComboBoxWidth, ComboBoxHeight);
-
+            FLPanel.Margin = new Padding(10, 0, 0, 0);
+            
             FLPanel.Controls.Add(ConstrLabel);
             FLPanel.Controls.Add(FLPTextBox);
             FLPanel.Controls.Add(FLPComboBox);
