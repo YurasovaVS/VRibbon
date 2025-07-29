@@ -40,6 +40,7 @@ using Autodesk.Revit.DB.Architecture;
 using Autodesk.Revit.DB;
 using System.IO;
 using static SKRibbon.FormDesign;
+using System.Text.RegularExpressions;
 
 namespace SKRibbon
 {
@@ -249,12 +250,17 @@ namespace SKRibbon
         private void ExportSheets(object sender, EventArgs e)
         {
             TreeView tree = (TreeView)formWrapper.Controls[0];
-            List<ElementId> elemIds = new List<ElementId>();
-
+            
             foreach (TreeNode building in tree.Nodes)
-            {
+            {                
                 foreach (TreeNode tome in building.Nodes)
                 {
+                    List<ElementId> elemIds = new List<ElementId>();
+                    string nameSuffix = "_";
+                    if (!building.Text.Contains("ПРИМЕЧАНИЕ НЕ ЗАДАНО")) nameSuffix += building.Text + "_";
+                    if (!tome.Text.Contains("РАЗДЕЛ НЕ ЗАДАН")) nameSuffix += tome.Text + "_";
+                    nameSuffix = Regex.Replace(nameSuffix, @"\p{C}+", string.Empty); ;
+                    nameSuffix = Regex.Replace(nameSuffix, @"[\~#%&*{}/:<>?|"",;']", string.Empty);
                     foreach (SKRibbon.FormUtils.SheetTreeNode sheet in tome.Nodes)
                     {
                         if (!sheet.Checked)
@@ -263,13 +269,14 @@ namespace SKRibbon
                         }
                         elemIds.Add(sheet.sheet.Id);
                     }
+                    DWGExportOptions exportOptions = new DWGExportOptions();
+                    exportOptions.MergedViews = true;
+                    exportOptions.Colors = ExportColorMode.TrueColorPerView;
+
+                    if (elemIds.Count != 0) Doc.Export(SavePath, NameTextBox.Text + nameSuffix, elemIds, exportOptions);
                 }
             }
-            DWGExportOptions exportOptions = new DWGExportOptions();
-            exportOptions.MergedViews = true;
-            exportOptions.Colors = ExportColorMode.TrueColorPerView;
-
-            Doc.Export(SavePath, NameTextBox.Text, elemIds, exportOptions);
+             //---------------------------------------------------------
 
             this.DialogResult = DialogResult.OK;
             this.Close();
