@@ -8,6 +8,9 @@
     <Compile Update="Forms\AddSigForm.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Update="Forms\FillStampsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="Forms\FixIFCCoordinatesForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -30,9 +33,6 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Update="Forms\DeleteSigForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="Forms\FillStampsForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Update="Forms\FilterByPeopleForm.cs">

@@ -44,6 +44,8 @@ using SK_FU = SKRibbon.FormUtils;
 using SK_FD = SKRibbon.FormDesign;
 using static SKRibbon.FormDesign;
 using System.Windows.Controls;
+using System.Windows.Media.Media3D;
+using System.Xml;
 namespace FillStamps
 {
     [Transaction(TransactionMode.Manual)]
@@ -53,7 +55,23 @@ namespace FillStamps
         FlowLayoutPanel formWrapper;
         FlowLayoutPanel linesWrapper;
         WinForms.CheckBox checkBox;
+        SK_FD.VTextBox dateTextBox;
+        WinForms.CheckBox dateCheckBox;
         SortedDictionary<string, SortedDictionary<string, List<ViewSheet>>> buildingsDict = new SortedDictionary<string, SortedDictionary<string, List<ViewSheet>>>();
+
+
+        FlowLayoutPanel advSettingsPanel = new FlowLayoutPanel();
+        VHeaderLabel advSettingsLabel = new VHeaderLabel();
+
+        SK_FD.VTextBox settingTexBox_1_1 = new SK_FD.VTextBox();
+        SK_FD.VTextBox settingTexBox_1_2 = new SK_FD.VTextBox();
+        SK_FD.VTextBox settingTexBox_2_1 = new SK_FD.VTextBox();
+        SK_FD.VTextBox settingTexBox_2_2 = new SK_FD.VTextBox();
+
+        WinForms.Label advSetHeader_1 = new WinForms.Label();
+        WinForms.Label advSetHeader_2 = new WinForms.Label();
+
+        WinForms.CheckBox advSettingsCheckBox;
 
         public FillStampsForm(Document doc)
         {
@@ -63,7 +81,7 @@ namespace FillStamps
             this.BackColor = System.Drawing.Color.White;
             this.FormBorderStyle = WinForms.FormBorderStyle.FixedSingle;
             this.Width = 880;
-            this.Height = 460;
+            this.Height = 500;
 
 
             Doc = doc;
@@ -91,20 +109,25 @@ namespace FillStamps
             // Инициализируем параметры дерева и добавляем его в форму
             tree.CheckBoxes = true;
             tree.AfterCheck += node_AfterCheck;
-            tree.Width = 300;
-            tree.Height = 365;
+            tree.Width = 360;
+            tree.Height = 700;
             tree.Margin = new Padding(15, 5, 0, 0);
             tree.Anchor = AnchorStyles.Left;
 
             //-----------------------------------------------------------------
-            // Заголовок
+            // Опции
+            // 1. Заголовок
             VHeaderLabel headerLabel = new VHeaderLabel();
             headerLabel.Size = new Size(600, 50);
             headerLabel.Text = "ДАННЫЕ О РАЗРАБОТЧИКАХ";
             headerLabel.Parent = linesWrapper;
             linesWrapper.Controls.Add(headerLabel);
 
-            // Инициализация шаблона штампа
+            // 2. Инициализация шаблона штампа (6 строк)
+
+            int labelWidth = 100;
+            int textBoxWidth = 150;
+            int height = 20;
 
             for (int i = 1; i <= 6; i++)
             {
@@ -116,13 +139,6 @@ namespace FillStamps
                 SK_FD.VTextBox posText = new SK_FD.VTextBox();
                 WinForms.Label nameLabel = new WinForms.Label();
                 SK_FD.VTextBox nameText = new SK_FD.VTextBox();
-
-                int labelWidth = 100;
-                int textBoxWidth = 150;
-                int height = 20;
-
-                //posLabel.BorderStyle = BorderStyle.FixedSingle;
-                //nameLabel.BorderStyle = BorderStyle.FixedSingle;
 
                 posLabel.Font = new Font(WinForms.Label.DefaultFont, FontStyle.Bold);
                 nameLabel.Font = new Font(WinForms.Label.DefaultFont, FontStyle.Bold);
@@ -178,23 +194,243 @@ namespace FillStamps
                 linesWrapper.Controls.Add (lineWrapper);
             }
 
+            // 3. Галочка "Учитывать (перезаписывать) пустые поля"
             checkBox = new WinForms.CheckBox();
             checkBox.Size = new System.Drawing.Size (600, 60);
             checkBox.Anchor = AnchorStyles.Top;
             checkBox.Padding = new Padding(10, 15, 0, 0);
-            checkBox.Text = "Учитывать (перезаписывать) пустые поля";
+            checkBox.Text = "Перезаписывать поля, если они пустые";
+
+            // Разделители
+            VDivider divider1 = new VDivider();
+            VDivider divider2 = new VDivider();
+            VDivider divider3 = new VDivider();
+
+            // 4. Дата принятия штампа
+            // 4.1. Обертка даты
+            FlowLayoutPanel dateLineWrapper = new FlowLayoutPanel();
+            dateLineWrapper.FlowDirection = FlowDirection.LeftToRight;
+            dateLineWrapper.AutoSize = true;
+            dateLineWrapper.Margin = new Padding(0, 10, 0, 0);
+
+            // 4.2. Лейбл даты
+            WinForms.Label dateLabel = new WinForms.Label();
+            dateLabel.Text = "Дата";
+            dateLabel.Font = new Font(WinForms.Label.DefaultFont, FontStyle.Bold);
+            dateLabel.Padding = new Padding(10, 0, 0, 0);
+            dateLabel.Anchor = AnchorStyles.Left;
+
+            // 4.3. Поле даты
+            dateTextBox = new VTextBox();
+            dateTextBox.Size = new System.Drawing.Size(textBoxWidth, height);
+            dateTextBox.Anchor = AnchorStyles.Left;
+
+            // Берем текущую дату
+            DateTime today = DateTime.Now;
+            dateTextBox.Text = today.ToString("MM.yy");
+
+
+            dateLineWrapper.Controls.Add(dateLabel);
+            dateLineWrapper.Controls.Add(dateTextBox);
+            dateLabel.Parent = dateLineWrapper;
+            dateTextBox.Parent = dateLineWrapper;
+
+            // 5. Галочка перезаписывания даты            
+            dateCheckBox = new WinForms.CheckBox();
+            dateCheckBox.Size = new System.Drawing.Size(600, 60);
+            dateCheckBox.Anchor = AnchorStyles.Top;
+            dateCheckBox.Padding = new Padding(10, 0, 0, 0);
+            dateCheckBox.Text = "Перезаписывать дату, если она пустая";
+            dateCheckBox.Checked = true;
+
+            // Дополнительные опции
+            // Заголовок
+            advSettingsLabel.Size = new Size(600, 40);
+            advSettingsLabel.Text = "ПРОДВИНУТЫЕ НАСТРОЙКИ";
+            advSettingsLabel.ForeColor = System.Drawing.Color.Gray;
+
+            // 0. Обертка (не особо нужная, но мне так удобнее)
+            advSettingsPanel.FlowDirection = FlowDirection.TopDown;
+            advSettingsPanel.AutoSize = true;
+            advSettingsPanel.ForeColor = System.Drawing.Color.Gray;
+
+            advSettingsPanel.Controls.Add(advSettingsLabel);
+            advSettingsLabel.Parent = advSettingsPanel;
+
+            // 1. Галочка включения доп. опций
+            advSettingsCheckBox = new WinForms.CheckBox();
+            advSettingsCheckBox.Size = new System.Drawing.Size(600, 60);
+            advSettingsCheckBox.Anchor = AnchorStyles.Top;
+            advSettingsCheckBox.Padding = new Padding(10, 0, 0, 0);
+            advSettingsCheckBox.Margin = new Padding(0, 0, 0, 0);
+            advSettingsCheckBox.Text = "Я знаю, что делаю.";
+            advSettingsCheckBox.Checked = false;
+            advSettingsCheckBox.CheckedChanged += UnlockAdvancedSettings;
+
+            advSettingsPanel.Controls.Add(advSettingsCheckBox);
+            advSettingsCheckBox.Parent = advSettingsPanel;
+
+            // Заголовок перед строкой
+            advSetHeader_1.Text = "ПАРАМЕТР ДОЛЖНОСТИ";
+            advSetHeader_1.Font = new Font(WinForms.Label.DefaultFont, FontStyle.Bold);
+            advSetHeader_1.Anchor = AnchorStyles.Left;
+            advSetHeader_1.Size = new Size (labelWidth * 2 + textBoxWidth * 2, height);
+            advSetHeader_1.Margin = new Padding(5, 0, 0, 0);
+
+            advSettingsPanel.Controls.Add(advSetHeader_1);
+            advSetHeader_1.Parent = advSettingsPanel;
+
+            // 2. Строка "Параметр должности"
+            // 2.1. Обертка
+            FlowLayoutPanel settingPanel_1 = new FlowLayoutPanel();
+            settingPanel_1.FlowDirection = FlowDirection.LeftToRight;
+            settingPanel_1.AutoSize = true;
+
+            advSettingsPanel.Controls.Add(settingPanel_1);
+            settingPanel_1.Parent = advSettingsPanel;
+
+            // 2.2. Лейбл 1
+            WinForms.Label settingLabel_1_1 = new WinForms.Label();
+            settingLabel_1_1.Text = "Префикс";
+            settingLabel_1_1.Font = new Font(WinForms.Label.DefaultFont, FontStyle.Bold);
+            settingLabel_1_1.Anchor = AnchorStyles.Left;
+            settingLabel_1_1.Size = new Size(labelWidth, height);
+            
+
+            settingPanel_1.Controls.Add(settingLabel_1_1);
+            settingLabel_1_1.Parent = settingPanel_1;
+
+            // 2.3. Текстбокс 1
+            settingTexBox_1_1.Size = new Size(textBoxWidth, height);
+            settingTexBox_1_1.Text = "ADSK_Штамп Строка ";
+            settingTexBox_1_1.Enabled = false;
+            settingTexBox_1_1.TextChanged += onAdvancedSettingChange;
+
+            settingPanel_1.Controls.Add(settingTexBox_1_1);
+            settingTexBox_1_1.Parent = settingPanel_1;
+
+            // 2.4. Лейбл 2
+            WinForms.Label settingLabel_1_2 = new WinForms.Label();
+            settingLabel_1_2.Text = "Суффикс";
+            settingLabel_1_2.Font = new Font(WinForms.Label.DefaultFont, FontStyle.Bold);
+            settingLabel_1_2.Anchor = AnchorStyles.Left;
+            settingLabel_1_2.Size = new Size(labelWidth, height);
+
+            settingPanel_1.Controls.Add(settingLabel_1_2);
+            settingLabel_1_2.Parent = settingPanel_1;
+
+            // 2.5. Текстбокс 2
+            settingTexBox_1_2.Size = new Size(textBoxWidth, height);
+            settingTexBox_1_2.Text = " должность";
+            settingTexBox_1_2.Enabled = false;
+            settingTexBox_1_2.TextChanged += onAdvancedSettingChange;
+
+
+            settingPanel_1.Controls.Add(settingTexBox_1_2);
+            settingTexBox_1_2.Parent = settingPanel_1;
+
+            // Заголовок перед строкой
+            advSetHeader_2.Text = "ПАРАМЕТР ФАМИЛИИ";
+            advSetHeader_2.Font = new Font(WinForms.Label.DefaultFont, FontStyle.Bold);
+            advSetHeader_2.Anchor = AnchorStyles.Left;
+            advSetHeader_2.Size = new Size(labelWidth * 2 + textBoxWidth * 2, height);
+            advSetHeader_2.Margin = new Padding(5, 10, 0, 0);
+
+            advSettingsPanel.Controls.Add(advSetHeader_2);
+            advSetHeader_2.Parent = advSettingsPanel;
+
+            // 3. Строка "Параметр фамилии"
+            // 3.1. Обертка
+            FlowLayoutPanel settingPanel_2 = new FlowLayoutPanel();
+            settingPanel_2.FlowDirection = FlowDirection.LeftToRight;
+            settingPanel_2.AutoSize = true;
+
+            advSettingsPanel.Controls.Add(settingPanel_2);
+            settingPanel_2.Parent = advSettingsPanel;
+
+            // 3.2. Лейбл 1
+            WinForms.Label settingLabel_2_1 = new WinForms.Label();
+            settingLabel_2_1.Text = "Префикс";
+            settingLabel_2_1.Font = new Font(WinForms.Label.DefaultFont, FontStyle.Bold);
+            settingLabel_2_1.Anchor = AnchorStyles.Left;
+            settingLabel_2_1.Size = new Size(labelWidth, height);
+
+            settingPanel_2.Controls.Add(settingLabel_2_1);
+            settingLabel_2_1.Parent = settingPanel_2;
+
+            // 3.3. Текстбокс 1
+            settingTexBox_2_1.Size = new Size(textBoxWidth, height);
+            settingTexBox_2_1.Text = "ADSK_Штамп Строка ";
+            settingTexBox_2_1.Enabled = false;
+            settingTexBox_2_1.TextChanged += onAdvancedSettingChange;
+
+            settingPanel_2.Controls.Add(settingTexBox_2_1);
+            settingTexBox_2_1.Parent = settingPanel_2;
+
+
+            // 3.4. Лейбл 2
+            WinForms.Label settingLabel_2_2 = new WinForms.Label();
+            settingLabel_2_2.Text = "Суффикс";
+            settingLabel_2_2.Font = new Font(WinForms.Label.DefaultFont, FontStyle.Bold);
+            settingLabel_2_2.Anchor = AnchorStyles.Left;
+            settingLabel_2_2.Size = new Size(labelWidth, height);
+
+            settingPanel_2.Controls.Add(settingLabel_2_2);
+            settingLabel_2_2.Parent = settingPanel_2;
+
+            // 3.5. Текстбокс 2
+            settingTexBox_2_2.Size = new Size(textBoxWidth, height);
+            settingTexBox_2_2.Text = " фамилия";
+            settingTexBox_2_2.Enabled = false;
+            settingTexBox_2_2.TextChanged += onAdvancedSettingChange;
+
+            settingPanel_2.Controls.Add(settingTexBox_2_2);
+            settingTexBox_2_2.Parent = settingPanel_2;
+
+            advSetHeader_1.Text += " (" + settingTexBox_1_1.Text + "i" + settingTexBox_1_2.Text + ")";
+            advSetHeader_2.Text += " (" + settingTexBox_2_1.Text + "i" + settingTexBox_2_2.Text + ")";
+
+            // 4. Строка "Параметр даты"
+
+
+            // Кнопка запуска программы
 
             SK_FD.VButton button = new SK_FD.VButton();
-            button.Size = new System.Drawing.Size(200, 50);
+            button.Size = new System.Drawing.Size(labelWidth * 2 + textBoxWidth * 2, 50);
+            button.Margin = new Padding(5);
             button.Anchor = AnchorStyles.Top;
             button.Text = "ЗАПОЛНИТЬ ШТАМПЫ";
             button.Click += RunProgram;
 
+            // Порядок элементов в настройках
+
             checkBox.Parent = linesWrapper;
             linesWrapper.Controls.Add(checkBox);
 
+            divider1.Parent = linesWrapper;
+            linesWrapper.Controls.Add(divider1);
+
+            dateLineWrapper.Parent = linesWrapper;
+            linesWrapper.Controls.Add(dateLineWrapper);
+
+            dateCheckBox.Parent = linesWrapper;
+            linesWrapper.Controls.Add(dateCheckBox);
+
+            // Кнопка
             button.Parent = linesWrapper;
             linesWrapper.Controls.Add(button);
+
+            // Разделитель
+            divider2.Margin = new Padding(0, 10, 0, 10);   
+            divider2.Parent = linesWrapper;
+            linesWrapper.Controls.Add(divider2);
+
+            // Продвинутые настройки
+
+            advSettingsPanel.Parent = linesWrapper;
+            linesWrapper.Controls.Add(advSettingsPanel);
+
+            //
 
             tree.Parent = formWrapper;
             formWrapper.Controls.Add(tree);
@@ -231,6 +467,32 @@ namespace FillStamps
             }
         }
 
+        private void UnlockAdvancedSettings(object sender, EventArgs e) 
+        {
+            settingTexBox_1_1.Enabled = advSettingsCheckBox.Checked;
+            settingTexBox_1_2.Enabled = advSettingsCheckBox.Checked;
+            settingTexBox_2_1.Enabled = advSettingsCheckBox.Checked;
+            settingTexBox_2_2.Enabled = advSettingsCheckBox.Checked;
+
+            if (advSettingsCheckBox.Checked)
+            {
+                advSettingsPanel.ForeColor = System.Drawing.Color.Black;
+                advSettingsLabel.ForeColor = System.Drawing.Color.FromArgb(255, 174, 112, 199);
+            }
+            else
+            {
+                advSettingsPanel.ForeColor = System.Drawing.Color.Gray;
+                advSettingsLabel.ForeColor = System.Drawing.Color.Gray;
+            }
+
+        }
+
+        private void onAdvancedSettingChange (object sender, EventArgs e)
+        {
+            advSetHeader_1.Text = "ПАРАМЕТР ДОЛЖНОСТИ (" + settingTexBox_1_1.Text + "i" + settingTexBox_1_2.Text + ")";
+            advSetHeader_2.Text = "ПАРАМЕТР ФАМИЛИИ (" + settingTexBox_2_1.Text + "i" + settingTexBox_2_2.Text + ")";
+        }
+
         private void RunProgram(object sender, EventArgs e)
         {
             WinForms.TreeView tree = (WinForms.TreeView)formWrapper.Controls[0];
@@ -253,7 +515,7 @@ namespace FillStamps
 
                         for (int i = 1; i<=6; i++)
                         {
-                            string paramPos_name = "ADSK_Штамп Строка " + (i).ToString() + " должность";
+                            string paramPos_name = settingTexBox_1_1.Text + (i).ToString() + settingTexBox_1_2.Text;
                             Parameter paramPos = sheet.LookupParameter(paramPos_name);
 
                             // Проверяем, задана ли должность
@@ -262,7 +524,7 @@ namespace FillStamps
                                 continue;
                             }
 
-                            string paramName_name = "ADSK_Штамп Строка " + (i).ToString() + " фамилия";
+                            string paramName_name = settingTexBox_2_1.Text + (i).ToString() + settingTexBox_2_2.Text;
                             Parameter paramName = sheet.LookupParameter(paramName_name);
 
                             // Проверяем, задана ли фамилия
@@ -280,6 +542,19 @@ namespace FillStamps
                             if ((tb1.Text.Length > 0) || (checkBox.Checked)) paramPos.Set(tb1.Text);
                             if ((tb2.Text.Length > 0) || (checkBox.Checked)) paramName.Set(tb2.Text);
                         }
+
+                        if ((dateTextBox.MaxLength > 0) || (dateCheckBox.Checked))
+                        {
+                            /*
+                            Parameter dateParam = sheet.LookupParameter(STRING_NAME);
+                            if (dateParam == null)
+                            {
+                                continue;
+                            }
+                            dateParam.Set(dateTextBox.Text);
+                             */
+                        }
+
                     }
                 }
             }

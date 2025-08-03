@@ -76,7 +76,20 @@ namespace SKRibbon
             }
         }
 
+        public class VDivider : Label
+        {
+            public VDivider()
+            {
+                Text = "";
+                AutoSize = false;
+                Height = 2;
+                Width = 300;
+                BorderStyle = BorderStyle.Fixed3D;
+                Anchor = AnchorStyles.Top;
+                Padding = new Padding(0, 10, 0, 10);
+            }
 
+        }
         // Неиспользуемые классы
         /*
         public class VHeader : FlowLayoutPanel
