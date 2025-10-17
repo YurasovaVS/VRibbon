@@ -26,6 +26,7 @@
  * --------------------------------------------------------------------------------------
  */
 
+using Autodesk.Revit.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,12 +36,11 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.Attributes;
 using Autodesk.Revit.UI.Selection;
-using System.Collections.ObjectModel;
 
 namespace SKRibbon
 {
     [Transaction(TransactionMode.Manual)]
-    internal class PlaceFloors : IExternalCommand
+    class EditParameter : IExternalCommand
     {
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
         {
@@ -50,9 +50,16 @@ namespace SKRibbon
             // Выделение для передачи в форму
             UIDocument uidoc = commandData.Application.ActiveUIDocument;
             Selection selection = uidoc.Selection;
-            ICollection <ElementId> selectionIds = uidoc.Selection.GetElementIds();
+            ICollection<ElementId> selectionIds = uidoc.Selection.GetElementIds();
 
-            using (FormDesign.VForm form = new PlaceFloorsForm(doc, selectionIds, "Полы"))
+            if (selectionIds.Count <= 0)
+            {
+                TaskDialog.Show("Выделение", "Вы ничего не выделили");
+                return Result.Cancelled;
+
+            }
+
+            using (FormDesign.VForm form = new EditParameterForm(doc, selectionIds))
             {
                 if (form.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {

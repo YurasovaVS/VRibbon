@@ -233,6 +233,17 @@ namespace SKRibbon
                             true
                             );
 
+            // Кнопка исправления параметра
+            AddPushPutton(rpModellingTools,
+                            "cmdEditParameter",
+                            "Замена в" + System.Environment.NewLine + "параметре",
+                            thisAssemblyPath,
+                            "SKRibbon.EditParameter",
+                            "editParamIcon.png",
+                            "Позволяет приписать или найти и заменить данные в текстовых параметрах",
+                            true
+                            );
+
             // ------------------------------------------------------
             // Кнопка исправления файлов IFC
             AddPushPutton(rpEngineers,

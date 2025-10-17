@@ -340,6 +340,8 @@
     <Compile Include="Forms\RenameSheetsForm.Designer.cs" />
 	-->
   
+    <None Remove="Resources\editParamIcon.png" />
+  
     <None Remove="Resources\fixIFCcoord_32.png" />
   
     <None Remove="Resources\fixMirroredDoors_16.png" />
@@ -359,6 +361,7 @@
 	
   <ItemGroup>
     <Resource Include="Resources\delete.png" />
+    <Resource Include="Resources\editParamIcon.png" />
   </ItemGroup>
 	
   <ItemGroup>

@@ -53,6 +53,17 @@ namespace SKRibbon
         FlowLayoutPanel formWrapper = new FlowLayoutPanel();
         TreeView sheetTree;
         Label newPath = new Label();
+
+        FlowLayoutPanel CheckBoxWrapper = new FlowLayoutPanel();
+
+        System.Windows.Forms.TextBox SignedName_1 = new System.Windows.Forms.TextBox();
+        System.Windows.Forms.TextBox SignedName_2 = new System.Windows.Forms.TextBox();
+        System.Windows.Forms.TextBox SignedName_3 = new System.Windows.Forms.TextBox();
+        System.Windows.Forms.TextBox SignedName_4 = new System.Windows.Forms.TextBox();
+
+        int Width_1 = 200;
+        int Width_2 = 250;
+
         public AddSigForm(Document doc, string path)
         {
             InitializeComponent();
@@ -113,6 +124,40 @@ namespace SKRibbon
             sheetTree.Height = 200;
             sheetTree.CheckBoxes = true;
             sheetTree.AfterCheck += node_AfterCheck;
+
+            //Разделитель
+            //Измы
+            //-----------------------------------------------------------------------------------------------------
+            CheckBoxWrapper.FlowDirection = FlowDirection.TopDown;
+            CheckBoxWrapper.AutoSize = true;
+
+            for (int i = 0; i < 4; i++)
+            {
+                FlowLayoutPanel lineWrapper = new FlowLayoutPanel();
+                lineWrapper.AutoSize = true;
+                lineWrapper.FlowDirection = FlowDirection.LeftToRight;
+
+                CheckBox lineCheck = new CheckBox();
+                lineCheck.Text = "Подписать строку изм-ов " + (i + 1).ToString();
+                lineCheck.Size = new Size(Width_1, 25);
+
+                VTextBox nameTB = new VTextBox();
+                nameTB.Size = new Size(Width_2, 25);
+
+                lineCheck.Parent = lineWrapper;
+                lineWrapper.Controls.Add(lineCheck);
+                nameTB.Parent = lineWrapper;
+                lineWrapper.Controls.Add(nameTB);
+
+                lineWrapper.Parent = CheckBoxWrapper;
+                CheckBoxWrapper.Controls.Add(lineWrapper);
+            }
+
+            CheckBoxWrapper.Parent = formWrapper;
+            formWrapper.Controls.Add(CheckBoxWrapper);
+
+            //----------------------------------------------------------------------------------------------------- 
+
 
             //Добавляем кнопку
             VButton button = new VButton();
@@ -189,6 +234,35 @@ namespace SKRibbon
                                 sb.AppendLine("Подпись не найдена: " + signaturePath);
                             }
                         } // Конец перебора строк штампа
+
+                        for (int i = 0; i < 4; i++)
+                        {
+                            FlowLayoutPanel panel = (FlowLayoutPanel)CheckBoxWrapper.Controls[i];
+                            CheckBox checkLine = (CheckBox)panel.Controls[0];
+                            System.Windows.Forms.TextBox signatureNameTB = (System.Windows.Forms.TextBox)panel.Controls[1];
+
+                            if (checkLine.Checked)
+                            {
+                                string signaturePath = path + "\\подпись_" + signatureNameTB.Text + ".dwg";
+                                if (File.Exists(signaturePath))
+                                {
+                                    ElementId signatureId;
+                                    Doc.Link(signaturePath, importOptions, sheet, out signatureId);
+                                    Element signature = Doc.GetElement(signatureId);
+                                    signature.Pinned = false;
+                                    Double x = sheetRBpointX - 0.49;
+                                    Double y = 55 - i * 5;
+                                    y = UnitUtils.ConvertToInternalUnits(y, UnitTypeId.Millimeters);
+                                    y = sheetRBpointY + y;
+                                    XYZ move = new XYZ(x, y, 0);
+                                    signature.Location.Move(move);
+                                }
+                                else
+                                {
+                                    sb.AppendLine("Подпись не найдена: " + signaturePath);
+                                }
+                            }
+                        }
                     } // Конец foreach (sheet in tome)
                 } // Конец foreach (tome in building)
             } // Конец foreach (building in tree)
