@@ -78,7 +78,7 @@ namespace SKRibbon
             formWrapper.AutoSize = true;
             formWrapper.Padding = new Padding(5, 5, 5, 5);
 
-            //Создаем заголовок
+            //Заголовок
             Label header = new Label();
             header.Parent = formWrapper;
             formWrapper.Controls.Add(header);
@@ -87,14 +87,14 @@ namespace SKRibbon
             header.Text = "Путь к папке, где лежат DWG-подписи:";
             header.Font = new Font(Label.DefaultFont, FontStyle.Bold);
 
-            //Создаем текстовое поле для пути
+            //Текстовое поле для пути
             newPath.Name = "pathLabel";
             newPath.Parent = formWrapper;
             formWrapper.Controls.Add(newPath);
             newPath.Size = new Size(500, 30);
             newPath.Text = Path;
 
-            // Кнопка смены пути
+            //Кнопка смены пути
             VButton pathButton = new VButton();
             pathButton.Anchor = AnchorStyles.Top;
             pathButton.Size = new Size(300, 30);
@@ -104,7 +104,7 @@ namespace SKRibbon
             pathButton.Parent = formWrapper;
             formWrapper.Controls.Add(pathButton);
 
-            //Создаем заголовок чеклиста
+            //Заголовок чеклиста
             Label checkHeader = new Label();
             checkHeader.Parent = formWrapper;
             formWrapper.Controls.Add(checkHeader);
@@ -113,7 +113,7 @@ namespace SKRibbon
             checkHeader.Text = "Выберите листы:";
             checkHeader.Font = new Font(Label.DefaultFont, FontStyle.Bold);
 
-            // Создаем словарь листов
+            //Словарь листов
             buildingsDict = FormUtils.CollectSheetDictionary(doc, true);
             sheetTree = FormUtils.CreateSheetTreeView(buildingsDict);
 

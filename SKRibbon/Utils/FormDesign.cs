@@ -38,6 +38,9 @@ namespace SKRibbon
             }
         }
 
+        /// <summary>
+        /// Стандартная кнопка для запуска формы
+        /// </summary>
         public class VButton : Button
         {
             Color GeneralColor = Color.FromArgb(255, 174, 112, 199);

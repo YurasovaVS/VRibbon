@@ -47,7 +47,8 @@ namespace SKRibbon
     {
         Document Doc;
 
-        VTextBox ParameterName = new VTextBox();
+        //VTextBox ParameterName = new VTextBox();
+        VComboBox ParameterName = new VComboBox();
         VTextBox PrefixText = new VTextBox();
         VTextBox SuffixText = new VTextBox();
         VTextBox FindText = new VTextBox();
@@ -84,6 +85,9 @@ namespace SKRibbon
             IsTypeParam.Text = "Это параметр типа";
             IsTypeParam.Size = new Size(LWidth+RWidth, RowHeight);
             IsTypeParam.Margin = new Padding(BorderMargin, 0, 0, RowSpace);
+            IsTypeParam.CheckedChanged += IsTypeParam_CheckedChanged;
+
+
 
 
             // Обертка для всей формы
@@ -115,7 +119,16 @@ namespace SKRibbon
             FindText.Size = new Size(RWidth, RowHeight);
             ReplaceText.Size = new Size(RWidth, RowHeight);
 
-            ParameterName.Text = "Наименование";
+
+            FlowLayoutPanel paramNameBorder = new FlowLayoutPanel();
+            paramNameBorder.AutoSize = true;
+            paramNameBorder.BorderStyle = BorderStyle.FixedSingle;
+
+            paramNameBorder.Controls.Add(ParameterName);
+            ParameterName.Parent = paramNameBorder;
+
+            //ParameterName.Text = "Наименование";
+            FillParameterList(IsTypeParam.Checked);
             PrefixText.Text = "";
             SuffixText.Text = "";
             FindText.Text = "";
@@ -146,8 +159,8 @@ namespace SKRibbon
             // Собираем строки
             paramNameLabel.Parent = paramNamePanel;
             paramNamePanel.Controls.Add(paramNameLabel);
-            ParameterName.Parent = paramNamePanel;
-            paramNamePanel.Controls.Add(ParameterName);
+            paramNameBorder.Parent = paramNamePanel;
+            paramNamePanel.Controls.Add(paramNameBorder);
 
             prefixLabel.Parent = prefixPanel;
             prefixPanel.Controls.Add(prefixLabel);
@@ -175,6 +188,7 @@ namespace SKRibbon
             OkButton.Click += RunChanges;
 
             // Добавляем строки в форму
+
             header.Parent = formWrapper;
             formWrapper.Controls.Add(header);
 
@@ -201,6 +215,12 @@ namespace SKRibbon
 
             this.Height = formWrapper.Height + 10;
         }
+
+        private void IsTypeParam_CheckedChanged(object sender, EventArgs e)
+        {
+            FillParameterList(IsTypeParam.Checked);
+        }
+
 
         private void RunChanges(object sender, EventArgs e)
         {
@@ -289,6 +309,73 @@ namespace SKRibbon
             label.Font = new Font(Label.DefaultFont, FontStyle.Bold);
 
             return label;
+        }
+
+        public void FillParameterList (bool isTypeParam)
+        {
+            HashSet<string> paramNames = new HashSet<string>();
+            HashSet<ElementId> elementIds = new HashSet<ElementId>();
+
+            if (isTypeParam)
+            {
+                HashSet<ElementId> elementTypes = new HashSet<ElementId>();
+                foreach (ElementId elementId in SelectionIds)
+                {
+                    Element el = Doc.GetElement(elementId);
+                    ElementId elTypeId = el.GetTypeId();
+                    elementIds.Add(elTypeId);
+                }
+            }
+            else
+            {
+                foreach (ElementId elId in SelectionIds)
+                {
+                    elementIds.Add(elId);
+                }                
+            }
+
+            bool isFirst = true;
+            foreach (ElementId elementId in elementIds)
+            {
+                Element element = Doc.GetElement(elementId);
+                if (isFirst)
+                {
+                    foreach (Parameter param in element.Parameters)
+                    {
+                        if ((!param.IsReadOnly) &&
+                            ((param.Definition.GetDataType() == SpecTypeId.String.Text) ||
+                            (param.Definition.GetDataType() == SpecTypeId.String.MultilineText))) paramNames.Add(param.Definition.Name);
+                    }
+                    isFirst = false;
+                }
+                else
+                {
+                    HashSet<string> temp = new HashSet<string>();
+                    foreach (Parameter param in element.Parameters)
+                    {
+                        if ((!param.IsReadOnly) && 
+                            ((param.Definition.GetDataType() == SpecTypeId.String.Text) || 
+                            (param.Definition.GetDataType() == SpecTypeId.String.MultilineText))) temp.Add(param.Definition.Name);
+                    }
+                    paramNames.IntersectWith(temp);
+                }
+            }
+
+            ParameterName.Items.Clear();
+            if (paramNames.Count > 0)
+            {
+                ParameterName.Enabled = true;
+                foreach (string name in paramNames)
+                {
+                    ParameterName.Items.Add(name);
+                }
+            }
+            else
+            {
+                ParameterName.Enabled = false;
+                ParameterName.Items.Add("Доступные параметры не найдены");
+            }
+            ParameterName.SelectedIndex = 0;
         }
     }    
 }

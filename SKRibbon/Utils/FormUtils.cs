@@ -42,14 +42,21 @@ namespace SKRibbon
 {
     public class FormUtils
     {
-        //   1 - Собираем все листы в основу для древа
+        //   1 - Собираем все листы в основу для древа    |  
 
-        /* Словарь Зданий
-         *      Здание : Словарь Томов
-         *          Том : Список объектов
-         *              Объект ViewSheet
+        /* Словарь Зданий                                 |  Dictionary of Buildings
+         *      Здание : Словарь Томов (Разделов)         |      Building : Dictionary of Tomes (Volumes, Books, etc.)
+         *          Том (Раздел) : Список объектов        |          Tome : List of Objects (ViewSheet)
+         *              Объект ViewSheet                  |               ViewSheet Object
          *                  
         */
+
+        /// <summary>
+        /// Функция обрабатывает все листы в текущем документе (doc) и возвращает трехуровневое дерево (словарь). Иерархия дерева: Здания (Примечание) -> Тома (Раздел проекта) -> Оформленные листы.
+        /// </summary>
+        /// <param name="doc">Текущий документ</param>
+        /// <param name="orderByNumber">Сортировка листов по номеру (Да/Нет)</param>
+        /// <returns></returns>
         public static SortedDictionary<string, SortedDictionary<string, List<ViewSheet>>> CollectSheetDictionary (Document doc, bool orderByNumber)
         {
             SortedDictionary<string, SortedDictionary<string, List<ViewSheet>>> buildingsDict = new SortedDictionary<string, SortedDictionary<string, List<ViewSheet>>>();
@@ -92,7 +99,7 @@ namespace SKRibbon
                     // Добавляем лист в нужный том
                     buildingsDict[building][tome].Add(sheet);
                 }
-            } // Конец создания словаря листов
+            } // Конец создания словаря листов 
 
             if (orderByNumber)
             {
@@ -114,6 +121,13 @@ namespace SKRibbon
             return buildingsDict;
         }
 
+        // 2 - Преобразуем словарь (дерево) из CollectSheetDictionary в 
+
+        /// <summary>
+        /// Элемент формы TreeView для форм, где необходимо дерево листов (ViewSheet).
+        /// </summary>
+        /// <param name="buildingsDict">Словарь (дерево) оформленных листов в текущем документе. Собирается функцией CollectSheetDictionary</param>
+        /// <returns></returns>
         public static WinForms.TreeView CreateSheetTreeView (SortedDictionary<string, SortedDictionary<string, List<ViewSheet>>> buildingsDict)
         {
             WinForms.TreeView tree = new WinForms.TreeView ();

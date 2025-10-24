@@ -537,7 +537,7 @@ namespace FillStamps
                             SK_FD.VTextBox tb1 = (SK_FD.VTextBox)lineWrapper.Controls[1];
                             SK_FD.VTextBox tb2 = (SK_FD.VTextBox)lineWrapper.Controls[3];
 
-                            // ПРОВЕРИТЬ НА ПЕРЕБИВАНИЕ
+                            // Проверка на перебивание
 
                             if ((tb1.Text.Length > 0) || (checkBox.Checked)) paramPos.Set(tb1.Text);
                             if ((tb2.Text.Length > 0) || (checkBox.Checked)) paramName.Set(tb2.Text);
@@ -545,16 +545,14 @@ namespace FillStamps
 
                         if ((dateTextBox.MaxLength > 0) || (dateCheckBox.Checked))
                         {
-                            /*
-                            Parameter dateParam = sheet.LookupParameter(STRING_NAME);
+                            
+                            Parameter dateParam = sheet.LookupParameter("Дата утверждения листа");
                             if (dateParam == null)
                             {
                                 continue;
                             }
-                            dateParam.Set(dateTextBox.Text);
-                             */
+                            dateParam.Set(dateTextBox.Text);                            
                         }
-
                     }
                 }
             }
