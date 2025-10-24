@@ -69,13 +69,13 @@ namespace SKRibbon
             { BuiltInCategory.OST_Mass, "Формы"}
         };
 
-        //Dictionary<string, BuiltInCategory> NamesCategory = new Dictionary<string, BuiltInCategory>();
         HashSet<string> NamesCategory = new HashSet<string>();
 
         Dictionary<string, Workset> Name_Workset = new Dictionary<string, Workset>();
         HashSet<string> Errors = new HashSet<string>();
 
         Document Doc;
+        ICollection<ElementId> SelectionIds;
 
         WinForms.FlowLayoutPanel formWrapper = new WinForms.FlowLayoutPanel();
         WinForms.FlowLayoutPanel CategoriesWrapper = new WinForms.FlowLayoutPanel();
@@ -92,10 +92,12 @@ namespace SKRibbon
 
         int MarginLeft = 35;
 
-        public FixWorkGroupsForm(Document doc)
+        public FixWorkGroupsForm(Document doc, ICollection<ElementId> selectionIds)
         {
             InitializeComponent();
             Doc = doc;
+            SelectionIds = selectionIds;
+
             this.AutoScroll = true;
             this.Width = LabelWidth + TextBoxWidth + ComboBoxWidth + MarginLeft;
             this.Height = 480;
@@ -196,7 +198,20 @@ namespace SKRibbon
 
         private void RunFixing(object sender, EventArgs e)
         {
-            ICollection<Element> elements = new FilteredElementCollector(Doc).WhereElementIsNotElementType().ToElements();
+            ICollection<Element> elements;
+
+            if (SelectionIds.Count > 0)
+            {
+                List<Element> elementsList = new List<Element>();
+                foreach (ElementId elementId in SelectionIds)
+                {
+                    Element element = Doc.GetElement(elementId);
+                    elementsList.Add(element);
+                }
+                elements = elementsList;
+            }                
+            else elements = new FilteredElementCollector(Doc).WhereElementIsNotElementType().ToElements();
+
             StringBuilder sb_ReadOnly = new StringBuilder();
             StringBuilder sb_TypeNotSupported = new StringBuilder();
             StringBuilder sb_ElementHasNoCategory = new StringBuilder();

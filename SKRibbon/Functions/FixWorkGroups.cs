@@ -48,7 +48,12 @@ namespace SKRibbon
             UIApplication uiApp = commandData.Application;
             Document doc = uiApp.ActiveUIDocument.Document;
 
-            using (FormDesign.VForm form = new FixWorkGroupsForm(doc))
+            // Выделение для передачи в форму
+            UIDocument uidoc = commandData.Application.ActiveUIDocument;
+            Selection selection = uidoc.Selection;
+            ICollection<ElementId> selectionIds = uidoc.Selection.GetElementIds();
+
+            using (FormDesign.VForm form = new FixWorkGroupsForm(doc, selectionIds))
             {
                 if (form.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
