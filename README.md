@@ -5,7 +5,7 @@
 Addin for Revit, meant to automate routine tasks for architects.
 
 
-## Текущие поддерживаемые версии Revit | Current supported Revit versions
+## Текущие поддерживаемые версии Revit | Currently supported Revit versions
 Revit 2021, Revit 2024
 
 ## Реализованные на данный момент функции | Currently released features
