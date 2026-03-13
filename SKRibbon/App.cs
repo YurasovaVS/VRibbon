@@ -244,6 +244,28 @@ namespace SKRibbon
                             true
                             );
 
+            // Кнопка копирования параметра (временная)
+            AddPushPutton(rpModellingTools,
+                            "cmdCopyParameter",
+                            "Копирование парам." + System.Environment.NewLine + "помещений",
+                            thisAssemblyPath,
+                            "SKRibbon.CopyParameter",
+                            "editParamIcon.png",
+                            "Копирует имя помещения в параметр",
+                            true
+                            );
+
+            // Выделить элементы, составляющие границы выделенных помещений
+            AddPushPutton(rpModellingTools,
+                            "cmdSelectRoomBoundary",
+                            "Границы" + System.Environment.NewLine + "помещений",
+                            thisAssemblyPath,
+                            "SKRibbon.SelectRoomBoundary",
+                            "editParamIcon.png",
+                            "Изолирует элементы, составляющие границы выделенных помещений",
+                            true
+                            );
+
             // ------------------------------------------------------
             // Кнопка исправления файлов IFC
             AddPushPutton(rpEngineers,
