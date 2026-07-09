@@ -27,16 +27,17 @@
  */
 
 using Autodesk.Revit.Attributes;
+using Autodesk.Revit.DB;
+using Autodesk.Revit.DB.Architecture;
+using Autodesk.Revit.UI;
+using Autodesk.Revit.UI.Selection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
-using Autodesk.Revit.DB;
-using Autodesk.Revit.UI;
+using System.Windows;
 using System.Windows.Controls;
-using Autodesk.Revit.DB.Architecture;
 
 namespace SKRibbon
 {
@@ -51,6 +52,20 @@ namespace SKRibbon
             // Временно
             Document Doc = doc;
 
+            // Выделение 
+            UIDocument uidoc = commandData.Application.ActiveUIDocument;
+            Selection selection = uidoc.Selection;
+            ICollection<ElementId> selectionIds = uidoc.Selection.GetElementIds();
+
+            if (selectionIds.Count <= 0)
+            {
+                TaskDialog.Show("Выделение", "Вы ничего не выделили");
+                return Result.Cancelled;
+
+            }
+
+            // ---------------------------------------------
+
             ICollection<Element> rooms = new FilteredElementCollector(Doc).
                                                     OfCategory(BuiltInCategory.OST_Rooms).
                                                     WhereElementIsNotElementType().
@@ -64,23 +79,73 @@ namespace SKRibbon
             Transaction t = new Transaction(Doc, "Связать полы с помещениями");
             t.Start();
 
-            foreach (Element floor in floors)
+            foreach (ElementId floorId in selectionIds)
             {
+                bool flag = false;
+                Element floor = doc.GetElement(floorId);
                 if (floor.Name.Contains("КЖ_М")) continue;
                 BoundingBoxXYZ boundingBox = floor.get_BoundingBox(null);
-                
-                XYZ point = new XYZ((boundingBox.Max.X + boundingBox.Min.X)/2, (boundingBox.Max.Y + boundingBox.Min.Y) / 2, boundingBox.Max.Z + 2);
-                                
-                foreach (Element room in rooms)
+
+                IList<Reference> topFaceRefs = HostObjectUtils.GetTopFaces(floor as Floor);
+                if (topFaceRefs.Count == 0) continue;
+                Face topFace = floor.GetGeometryObjectFromReference(topFaceRefs[0]) as Face;
+                if (topFace == null) continue;
+
+
+                XYZ point = new XYZ((boundingBox.Max.X + boundingBox.Min.X)/2, (boundingBox.Max.Y + boundingBox.Min.Y) / 2, boundingBox.Max.Z); // в z раньше было +2, добавить перед проверкой на комнату
+
+                // Проецируем точку на грань
+                IntersectionResult projectResult = topFace.Project(point);
+                if (projectResult != null)
                 {
-                    Room trueRoom = room as Room;
-                    if (trueRoom.IsPointInRoom(point))
+                    UV uvPoint = projectResult.UVPoint;
+                    // Verify if the projected point lies within the physical boundary loops
+                    if (topFace.IsInside(uvPoint))
                     {
-                        Parameter groupParam = floor.LookupParameter("ADSK_Группирование");
-                        if (groupParam != null) groupParam.Set(trueRoom.Number.ToString()); 
-                        break;
+                        flag = true;
                     }
-                }                
+                }
+
+                // Если центральная точка не работает, проходимся по всем точкам
+                if (!flag)
+                {
+                    point = new XYZ(boundingBox.Min.X, boundingBox.Min.Y, boundingBox.Max.Z);
+                    do
+                    {
+                        point = new XYZ(point.X + 1, point.Y, point.Z);
+                        do
+                        {
+                            point = new XYZ(point.X, point.Y + 1, point.Z);
+
+                            projectResult = topFace.Project(point);
+                            if (projectResult != null)
+                            {
+                                UV uvPoint = projectResult.UVPoint;
+                                if (topFace.IsInside(uvPoint))
+                                {
+                                    flag = true;
+                                }
+                            }
+                        } while ((point.X < boundingBox.Max.X) && (point.Y < boundingBox.Max.Y) && (flag == false));
+                    } while ((point.X < boundingBox.Max.X) && (point.Y < boundingBox.Max.Y) && (flag == false));
+                }
+
+                // Если точка на полу найдена, проверяем, попадает ли точка над ней в комнату
+                if (flag)
+                {
+                    point = new XYZ(point.X, point.Y, point.Z + 2);
+                    foreach (Element room in rooms)
+                    {
+                        Room trueRoom = room as Room;
+                        if (trueRoom.IsPointInRoom(point))
+                        {
+                            Parameter groupParam = floor.LookupParameter("ADSK_Номер помещения квартиры");
+                            if (groupParam != null) groupParam.Set(trueRoom.Number.ToString());
+                            break;
+                        }
+                    }
+                }
+                                
             }
             t.Commit();
 

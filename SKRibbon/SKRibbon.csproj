@@ -4,7 +4,7 @@
 	<PropertyGroup>
 		<ResolveAssemlyWarningOnErrorOnTargetArchitectureMismatch>None</ResolveAssemlyWarningOnErrorOnTargetArchitectureMismatch>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-		<TargetFramework>net48</TargetFramework>
+		<TargetFramework>net48; net8.0-windows</TargetFramework>
 		<OutputType>Library</OutputType>
 		<UseWindowsForms>true</UseWindowsForms>
 		<Configurations>Debug 2021;2021;Debug 2024;2024</Configurations>
@@ -22,6 +22,12 @@
 			<PropertyGroup>
 				<RevitVersion>2024</RevitVersion>
 				<TargetFramework>net48</TargetFramework>
+			</PropertyGroup>
+		</When>
+		<When Condition="$(Configuration.Contains('2025'))">
+			<PropertyGroup>
+				<RevitVersion>2025</RevitVersion>
+				<TargetFramework>net8.0-windows</TargetFramework>
 			</PropertyGroup>
 		</When>
 		<Otherwise>
@@ -57,106 +63,7 @@
 	</PropertyGroup>
 	
 	<!--
-	
-  <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{74EA6100-7942-4C37-8722-8D539A0F9B1C}</ProjectGuid>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SKRibbon</RootNamespace>
-    <AssemblyName>SKRibbon</AssemblyName>
-    <FileAlignment>512</FileAlignment>
-    <Deterministic>true</Deterministic>
-  </PropertyGroup>
-
-	<PropertyGroup Condition=" '$(RevitVersion)' == '2021' ">
-		<PlatformTarget>x64</PlatformTarget>
-		<DefineConstants>$(DefineConstants);REVIT2021</DefineConstants>
-		<OutputPath>bin\$(Configuration)\2021</OutputPath>
-	</PropertyGroup>
-
-	<PropertyGroup Condition=" '$(RevitVersion)' == '2024' ">
-		<PlatformTarget>x64</PlatformTarget>
-		<DefineConstants>$(DefineConstants);REVIT2024</DefineConstants>
-		<OutputPath>bin\$(Configuration)\2024</OutputPath>
-	</PropertyGroup>
-	
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-	
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
   
-	<ItemGroup Condition=" '$(RevitVersion)' == '2021' ">
-
-		<Reference Include="RevitAPI">
-			<HintPath>..\..\..\..\..\..\Program Files\Autodesk\Revit 2021\RevitAPI.dll</HintPath>
-			<Private>False</Private>
-		</Reference>
-		
-		<Reference Include="RevitAPIIFC">
-			<HintPath>..\..\..\..\..\..\Program Files\Autodesk\Revit 2021\RevitAPIIFC.dll</HintPath>
-			<Private>False</Private>
-		</Reference>
-
-		<Reference Include="RevitAPIUI">
-			<HintPath>..\..\..\..\..\..\Program Files\Autodesk\Revit 2021\RevitAPIUI.dll</HintPath>
-			<Private>False</Private>
-		</Reference>
-
-		<Reference Include="UIFramework">
-			<HintPath>..\..\..\..\..\..\Program Files\Autodesk\Revit 2021\UIFramework.dll</HintPath>
-			<Private>False</Private>
-		</Reference>
-
-		<Reference Include="Xceed.Wpf.AvalonDock">
-			<HintPath>..\..\..\..\..\..\Program Files\Autodesk\Revit 2021\Xceed.Wpf.AvalonDock.dll</HintPath>
-			<Private>False</Private>
-		</Reference>
-		
-	</ItemGroup>
-
-	<ItemGroup Condition=" '$(RevitVersion)' == '2024' ">
-
-		<Reference Include="RevitAPI">
-			<HintPath>..\..\..\..\..\..\Program Files\Autodesk\Revit 2024\RevitAPI.dll</HintPath>
-			<Private>False</Private>
-		</Reference>
-
-		<Reference Include="RevitAPIIFC">
-			<HintPath>..\..\..\..\..\..\Program Files\Autodesk\Revit 2024\RevitAPIIFC.dll</HintPath>
-			<Private>False</Private>
-		</Reference>
-
-		<Reference Include="RevitAPIUI">
-			<HintPath>..\..\..\..\..\..\Program Files\Autodesk\Revit 2024\RevitAPIUI.dll</HintPath>
-			<Private>False</Private>
-		</Reference>
-
-		<Reference Include="UIFramework">
-			<HintPath>..\..\..\..\..\..\Program Files\Autodesk\Revit 2024\UIFramework.dll</HintPath>
-			<Private>False</Private>
-		</Reference>
-
-		<Reference Include="Xceed.Wpf.AvalonDock">
-			<HintPath>..\..\..\..\..\..\Program Files\Autodesk\Revit 2024\Xceed.Wpf.AvalonDock.dll</HintPath>
-			<Private>False</Private>
-		</Reference>
-
-	</ItemGroup>
 -->
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Office.Interop.Excel" Version="15.0.4795.1001" />
@@ -200,7 +107,24 @@
 			<Private>False</Private>
 		</Reference>
 	</ItemGroup>
-	
+
+	<ItemGroup Condition=" '$(RevitVersion)' == '2025' ">
+
+		<Reference Include="RevitAPIIFC">
+			<HintPath>..\..\..\..\..\..\Program Files\Autodesk\Revit 2025\RevitAPIIFC.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+
+		<Reference Include="UIFramework">
+			<HintPath>..\..\..\..\..\..\Program Files\Autodesk\Revit 2025\UIFramework.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+
+		<Reference Include="Xceed.Wpf.AvalonDock">
+			<HintPath>..\..\..\..\..\..\Program Files\Autodesk\Revit 2025\Xceed.Wpf.AvalonDock.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+	</ItemGroup>
 
 	<ItemGroup>
     <Reference Include="Microsoft.Office.Interop.Excel, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
