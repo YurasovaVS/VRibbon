@@ -172,6 +172,7 @@ namespace SKRibbon
             //   - Кнопка исправления дверей
             //   - Кнопка создания полов
             //   - Кнопка связывания полов с помещением
+            //   - Кнопка прописывания номеров или имен помещений в тип пола или потолка
 
             IList<RibbonItem> stackedGroup = rpModellingTools.AddStackedItems(
                 AddStackedButton("cmdFixMirroredDoors",
@@ -208,6 +209,17 @@ namespace SKRibbon
                             "SKRibbon.LinkCeilingToRoom",
                             "floor.png",
                             "Связывает потолки с комнатами",
+                            true
+                            );
+
+            // Кнопка прописывания номеров или имен помещений в тип пола или потолка
+            AddPushPutton(rpModellingTools,
+                            "cmdWriteRoomIdToElementParam",
+                            "Прописать" + System.Environment.NewLine + "помещения",
+                            thisAssemblyPath,
+                            "SKRibbon.WriteRoomIdToElementParam",
+                            "floor.png",
+                            "Прописывает номера или имена помещений в полы, потолки или выбранные элементы",
                             true
                             );
 
