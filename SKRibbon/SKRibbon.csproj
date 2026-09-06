@@ -264,6 +264,8 @@
     <Compile Include="Forms\RenameSheetsForm.Designer.cs" />
 	-->
   
+    <None Remove="Resources\copyParam.png" />
+  
     <None Remove="Resources\editParamIcon.png" />
   
     <None Remove="Resources\fixIFCcoord_32.png" />
@@ -274,17 +276,23 @@
   
     <None Remove="Resources\floor_16.png" />
   
+    <None Remove="Resources\roomBoundary.png" />
+  
     <None Remove="Resources\sortIntoWorkgroups_32.png" />
   
     <None Remove="Resources\vitruvius_ico_16.png" />
+  
+    <None Remove="Resources\writeParam.png" />
   </ItemGroup>
 	
   <ItemGroup>
     <Resource Include="Resources\add.png" />
+    <Resource Include="Resources\copyParam.png" />
   </ItemGroup>
 	
   <ItemGroup>
     <Resource Include="Resources\delete.png" />
+    <Resource Include="Resources\writeParam.png" />
     <Resource Include="Resources\editParamIcon.png" />
   </ItemGroup>
 	
@@ -296,6 +304,7 @@
     <Resource Include="Resources\floor_16.png" />
     <Resource Include="Resources\replaceTags.png" />
     <Resource Include="Resources\copyLists.png" />
+    <Resource Include="Resources\roomBoundary.png" />
     <Resource Include="Resources\sortIntoWorkgroups_32.png" />
     <Resource Include="Resources\vitruvius_ico_16.png" />
     <Resource Include="Resources\whoDidThat.png" />

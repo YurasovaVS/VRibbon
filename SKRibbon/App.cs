@@ -200,7 +200,7 @@ namespace SKRibbon
                             "Связывает полы с комнатами."
                             )
                 );
-
+            /*
             // Кнопка связать потолки с помещениями
             AddPushPutton(rpModellingTools,
                             "cmdLinkCeilingsToRooms",
@@ -211,18 +211,18 @@ namespace SKRibbon
                             "Связывает потолки с комнатами",
                             true
                             );
-
+            */
             // Кнопка прописывания номеров или имен помещений в тип пола или потолка
             AddPushPutton(rpModellingTools,
                             "cmdWriteRoomIdToElementParam",
                             "Прописать" + System.Environment.NewLine + "помещения",
                             thisAssemblyPath,
                             "SKRibbon.WriteRoomIdToElementParam",
-                            "floor.png",
+                            "writeParam.png",
                             "Прописывает номера или имена помещений в полы, потолки или выбранные элементы",
                             true
                             );
-
+            /*
             // Кнопка нумерации помещений
             AddPushPutton(rpModellingTools,
                             "cmdNumerateRooms",
@@ -233,7 +233,7 @@ namespace SKRibbon
                             "Пронумеровать комнаты по методике метрополитена",
                             true
                             );
-
+            */
             // Кнопка распределения по рабочим наборам
             AddPushPutton(rpModellingTools,
                             "cmdFixWorkGroups",
@@ -262,7 +262,7 @@ namespace SKRibbon
                             "Копирование парам." + System.Environment.NewLine + "помещений",
                             thisAssemblyPath,
                             "SKRibbon.CopyParameter",
-                            "editParamIcon.png",
+                            "copyParam.png",
                             "Копирует имя помещения в параметр",
                             true
                             );
@@ -273,7 +273,7 @@ namespace SKRibbon
                             "Границы" + System.Environment.NewLine + "помещений",
                             thisAssemblyPath,
                             "SKRibbon.SelectRoomBoundary",
-                            "editParamIcon.png",
+                            "roomBoundary.png",
                             "Изолирует элементы, составляющие границы выделенных помещений",
                             true
                             );
